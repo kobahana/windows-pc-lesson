@@ -32,6 +32,7 @@ const fingerMap: Record<string, { hand: 'left' | 'right', finger: number }> = {
   ' ': { hand: 'right', finger: 0 },
 }
 
+// 🌈 手のイラストコンポーネント (指全体が担当カラーになり、押すべき指が光るように修正)
 const HandGuide = ({ activeHand, activeFinger }: { activeHand?: 'left' | 'right', activeFinger?: number }) => {
   const renderHand = (side: 'left' | 'right') => {
     const isLeft = side === 'left';
@@ -46,8 +47,8 @@ const HandGuide = ({ activeHand, activeFinger }: { activeHand?: 'left' | 'right'
           return (
             <g key={f}>
               <rect x={xBase - 12} y={yBase - (f === 0 ? 25 : 45)} width={f === 0 ? 35 : 24} height={f === 0 ? 25 : 55} rx="12" 
-                className={cn("transition-colors duration-300 shadow-sm", isActive ? config.bg : "fill-slate-100 stroke-slate-200")} strokeWidth="2" />
-              {isActive && <circle cx={xBase + (f === 0 ? 10 : 0)} cy={yBase - (f === 0 ? 30 : 55)} r="8" className="fill-blue-500 animate-bounce" />}
+                className={cn("transition-colors duration-300 shadow-sm", config.bg, "stroke-slate-100")} strokeWidth="2" />
+              {isActive && <circle cx={xBase + (f === 0 ? 10 : 0)} cy={yBase - (f === 0 ? 30 : 55)} r="8" className="fill-red-500 animate-bounce" />}
             </g>
           );
         })}
@@ -73,7 +74,7 @@ export default function Lesson2() {
     { name: "ホームポジションぜんぶ", keys: ["s", "l", "a", ";", "g", "h", "a", "s", "d", "f", "j", "k", "l", ";"] },
     { name: "上の段 (だん)", keys: ["r", "u", "e", "i", "w", "o", "q", "p", "t", "y"] },
     { name: "下の段 (だん)", keys: ["v", "n", "c", "m", "x", ",", "z", ".", "b", "/"] },
-    { name: "数字 (すうじ) とスペース", keys: ["1", "2", "3", "4", "5", " ", "6", "7", "8", "9", "0", " "] },
+    { name: "数字 (すすじ) とスペース", keys: ["1", "2", "3", "4", "5", " ", "6", "7", "8", "9", "0", " "] },
   ];
 
   const practiceSequence = stages[currentStage].keys;
@@ -112,8 +113,8 @@ export default function Lesson2() {
   const activeFingerInfo = fingerMap[targetKey];
 
   return (
-    <div className="h-screen bg-slate-50 p-2 flex flex-col items-center overflow-hidden">
-      {showSuccess && <SuccessOverlay show={true} message="すべてのキーをマスターしたね！" />}
+    <div className="h-screen bg-slate-50 p-2 flex flex-col items-center overflow-hidden relative">
+      {showSuccess && <SuccessOverlay show={true} message="ホームポジションをマスターしたね！" />}
       
       <div className="w-full max-w-4xl space-y-2 relative z-10 flex flex-col h-full text-slate-800">
         <div className="flex justify-between items-center shrink-0 px-2">
@@ -127,40 +128,51 @@ export default function Lesson2() {
         </div>
 
         {subStep === 'intro' ? (
-          <div className="flex-1 flex flex-col justify-center space-y-3 animate-in fade-in zoom-in-95 duration-500">
-            <Character message="新（あたら）しい色（いろ）の組み合わせだよ！指（ゆび）とキーの色（いろ）をチェックしてね。" mood="happy" />
-            <div className="bg-white rounded-[2rem] p-8 shadow-xl border border-slate-100 text-center">
-              <div className="grid grid-cols-4 gap-3 mb-8 px-4">
-                {[4, 3, 2, 1].map((f) => {
-                  const config = fingerColors[f as keyof typeof fingerColors];
-                  const labels = ["", "人差し指", "中指", "薬指", "小指"];
-                  return (
-                    <div key={f} className={cn("p-3 rounded-2xl border-2 transition-all", config.light, config.border)}>
-                      <div className={cn("w-8 h-8 rounded-lg mx-auto mb-2 flex items-center justify-center text-white text-xs font-bold shadow-sm", config.bg)}>{f}</div>
-                      <p className={cn("text-[10px] font-bold", config.text)}>{labels[f]}</p>
-                    </div>
-                  );
-                })}
+          <div className="flex-1 flex flex-col justify-center space-y-3 animate-in fade-in zoom-in-95 duration-500 overflow-y-auto">
+            <Character message="まずは、指（ゆび）をおく場所（ばしょ）をおぼえよう！基本（きほん）がとっても大切だよ。" mood="happy" />
+            
+            <div className="bg-white rounded-[2rem] p-8 shadow-xl border border-slate-100">
+              <h3 className="text-xl font-bold mb-8 text-center flex items-center justify-center gap-3">
+                <CheckCircle2 className="text-green-500 w-8 h-8" /> ホームポジションのじゅんび
+              </h3>
+              
+              <div className="grid grid-cols-2 gap-8 mb-10 text-center">
+                <div className="p-8 bg-blue-50 rounded-3xl border-2 border-blue-100 shadow-inner">
+                  <div className="w-20 h-20 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-4xl font-bold mx-auto border-b-8 border-blue-800 mb-4">F</div>
+                  <p className="font-bold text-lg text-blue-800">ひだり手 の 人差し指</p>
+                  <p className="text-sm text-slate-600 mt-2">「F」にある<span className="text-red-500 font-bold underline">でっぱり</span>を、指（ゆび）でさがしてね！</p>
+                </div>
+                <div className="p-8 bg-blue-50 rounded-3xl border-2 border-blue-100 shadow-inner">
+                  <div className="w-20 h-20 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-4xl font-bold mx-auto border-b-8 border-blue-800 mb-4">J</div>
+                  <p className="font-bold text-lg text-blue-800">みぎ手 の 人差し指</p>
+                  <p className="text-sm text-slate-600 mt-2">「J」にも<span className="text-red-500 font-bold underline">でっぱり</span>があるよ。そこに指をおこう！</p>
+                </div>
               </div>
+
               <HandGuide activeHand={undefined} />
-              <Button size="lg" className="mt-8 bg-blue-600 hover:bg-blue-700 px-16 h-14 text-lg rounded-full font-bold shadow-lg w-full max-w-xs mx-auto text-white" onClick={() => setSubStep('practice')}>トレーニングを開始！</Button>
+              
+              <div className="mt-10 flex justify-center">
+                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 px-24 h-20 text-2xl rounded-full shadow-2xl font-bold" onClick={() => setSubStep('practice')}>
+                  わかった！練習（れんしゅう）する
+                </Button>
+              </div>
             </div>
           </div>
         ) : (
-          <div className="flex-1 flex flex-col justify-between py-1 animate-in slide-in-from-right-10 duration-500 overflow-hidden">
+          <div className="flex-1 flex flex-col justify-between py-1 animate-in slide-in-from-right-10 duration-500 overflow-hidden relative">
             <div className="text-center shrink-0">
-              <Character message={showSuccess ? "完璧！" : "指（ゆび）の色（いろ）と同じキーをおそう！"} mood={showSuccess ? "celebrating" : "happy"} />
+              <Character message={showSuccess ? "完璧！" : "光（ひか）っているキーを、同じ色（いろ）の指（ゆび）でおそう！"} mood={showSuccess ? "celebrating" : "happy"} />
             </div>
 
-            <div className="flex justify-center gap-1 py-1 shrink-0">
+            <div className="flex justify-center gap-1 py-1 shrink-0 overflow-x-auto">
               {practiceSequence.map((key, index) => {
                 const info = fingerMap[key];
                 const color = fingerColors[info?.finger as keyof typeof fingerColors];
                 return (
                   <div key={index} className={cn(
-                    "w-10 h-12 rounded-xl border-2 flex items-center justify-center text-sm font-bold transition-all shrink-0",
+                    "w-10 h-12 rounded-xl border-2 flex items-center justify-center text-xl font-bold transition-all shrink-0",
                     index === progress ? `${color.bg} text-white scale-110 shadow-lg ring-2 ring-white z-10` : 
-                    index < progress ? "bg-slate-50 text-slate-200 border-transparent opacity-50" : "bg-white border-slate-100 text-slate-300"
+                    index < progress ? "bg-slate-50 text-slate-200 border-transparent opacity-50" : "border-slate-200 text-slate-300 bg-white"
                   )}>
                     {key === " " ? "SPC" : key.toUpperCase()}
                   </div>
@@ -168,7 +180,7 @@ export default function Lesson2() {
               })}
             </div>
 
-            <div className="bg-white p-5 rounded-[2.5rem] shadow-xl border border-slate-100 flex flex-col items-center justify-center">
+            <div className="bg-white p-5 rounded-[2.5rem] shadow-xl border border-slate-100 flex flex-col items-center justify-center relative">
               <div className="space-y-1 mb-4 w-full max-w-[620px]">
                 {rows.map((row, i) => (
                   <div key={i} className="flex justify-center gap-1">
@@ -182,9 +194,7 @@ export default function Lesson2() {
                           isActive ? `${color.bg} text-white scale-115 shadow-xl z-20 border-white ring-2 ring-slate-100` : 
                           `${color.light} ${color.border} ${color.text} opacity-30`,
                           (key === "f" || key === "j") && !isActive && "border-b-4"
-                        )}>
-                          {key.toUpperCase()}
-                        </div>
+                        )}>{key.toUpperCase()}</div>
                       )
                     })}
                   </div>
@@ -192,11 +202,19 @@ export default function Lesson2() {
                 <div className="flex justify-center mt-1">
                   <div className={cn(
                     "w-64 h-11 rounded-2xl border flex items-center justify-center text-[10px] font-bold transition-all",
-                    targetKey === " " ? "bg-slate-600 text-white scale-105 shadow-xl" : "bg-slate-50 border-slate-100 text-slate-300 opacity-20"
+                    targetKey === " " ? "bg-slate-600 text-white scale-105 shadow-xl" : "bg-slate-50 border-slate-200 text-slate-300 opacity-20"
                   )}>SPACE</div>
                 </div>
               </div>
               <HandGuide activeHand={activeFingerInfo?.hand} activeFinger={activeFingerInfo?.finger} />
+              
+              {showSuccess && (
+                <div className="absolute inset-0 bg-white/70 backdrop-blur-sm rounded-[2.5rem] flex flex-col items-center justify-center gap-6 z-50">
+                  <Star className="w-20 h-20 text-yellow-400 fill-yellow-400 animate-in zoom-in-50" />
+                  <p className="text-3xl font-bold text-slate-800">全（ぜん）ステージクリア！</p>
+                  <Button size="lg" className="bg-green-600 px-10 h-14 rounded-full text-lg shadow-xl" onClick={() => onComplete()}>ホームにもどる</Button>
+                </div>
+              )}
             </div>
           </div>
         )}
