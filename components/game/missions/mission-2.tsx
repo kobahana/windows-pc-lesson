@@ -1,0 +1,626 @@
+"use client"
+
+import { useState, useCallback, useRef, useEffect } from "react"
+import { cn } from "@/lib/utils"
+import { Character, Ruby } from "../character"
+import { SuccessOverlay } from "../success-overlay"
+import { Button } from "@/components/ui/button"
+
+interface Mission2Props {
+  onComplete: () => void
+}
+
+type Step = 
+  | "intro" 
+  | "tutorial-ime" 
+  | "tutorial-conversion"
+  | "tutorial-backspace"
+  | "tutorial-copypaste"
+  | "ime-switch" 
+  | "hiragana-input"
+  | "kanji-conversion" 
+  | "katakana-conversion"
+  | "delete-undo" 
+  | "copy-paste" 
+  | "complete"
+
+export function Mission2({ onComplete }: Mission2Props) {
+  const [step, setStep] = useState<Step>("intro")
+  const [showSuccess, setShowSuccess] = useState(false)
+  const [successMessage, setSuccessMessage] = useState("")
+  const [imeMode, setImeMode] = useState<"en" | "ja">("en")
+  const [inputValue, setInputValue] = useState("")
+  const [deleteStepText, setDeleteStepText] = useState("こんにちあ")
+  const [undoStack, setUndoStack] = useState<string[]>(["こんにちあ"])
+  const [clipboard, setClipboard] = useState("")
+  const [selectedAll, setSelectedAll] = useState(false)
+  const [pasteAreaText, setPasteAreaText] = useState("")
+  const [copySourceFocused, setCopySourceFocused] = useState(true)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const pasteInputRef = useRef<HTMLInputElement>(null)
+
+  const triggerSuccess = useCallback((message: string, nextStep: Step) => {
+    setSuccessMessage(message)
+    setShowSuccess(true)
+    setTimeout(() => {
+      setShowSuccess(false)
+      setStep(nextStep)
+    }, 1500)
+  }, [])
+
+  // Global keyboard handler for copy/paste
+  useEffect(() => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      if (step === "copy-paste") {
+        if (e.ctrlKey && e.key === "a" && copySourceFocused) {
+          e.preventDefault()
+          setSelectedAll(true)
+        }
+        if (e.ctrlKey && e.key === "c" && selectedAll && copySourceFocused) {
+          e.preventDefault()
+          setClipboard(inputValue || "サンプルテキスト")
+        }
+        // Allow native paste - we'll detect completion via onChange
+      }
+    }
+
+    window.addEventListener("keydown", handleGlobalKeyDown)
+    return () => window.removeEventListener("keydown", handleGlobalKeyDown)
+  }, [step, selectedAll, clipboard, inputValue, copySourceFocused])
+
+  // Check paste completion - when paste area has the correct text
+  useEffect(() => {
+    if (step === "copy-paste" && pasteAreaText) {
+      const sourceText = inputValue || "サンプルテキスト"
+      // Check if paste area has content that matches (or user manually typed it)
+      if (pasteAreaText === sourceText || pasteAreaText === clipboard) {
+        triggerSuccess("完璧だ！コピペマスター！", "complete")
+        setTimeout(() => {
+          onComplete()
+        }, 2000)
+      }
+    }
+  }, [step, pasteAreaText, inputValue, clipboard, triggerSuccess, onComplete])
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Delete/Undo step
+    if (step === "delete-undo") {
+      if (e.key === "Backspace" && deleteStepText.length > 0) {
+        const newText = deleteStepText.slice(0, -1)
+        setUndoStack([...undoStack, deleteStepText])
+        setDeleteStepText(newText)
+      }
+      if (e.ctrlKey && e.key === "z") {
+        e.preventDefault()
+        if (undoStack.length > 1) {
+          const prevText = undoStack[undoStack.length - 1]
+          setDeleteStepText(prevText)
+          setUndoStack(undoStack.slice(0, -1))
+        }
+      }
+    }
+  }
+
+  const toggleIme = () => {
+    const newMode = imeMode === "en" ? "ja" : "en"
+    setImeMode(newMode)
+    if (newMode === "ja" && step === "ime-switch") {
+      triggerSuccess("よし！日本語モードになったね！", "hiragana-input")
+    }
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setInputValue(value)
+    
+    // Hiragana input check
+    if (step === "hiragana-input") {
+      if (value === "あした" || value === "明日") {
+        triggerSuccess("ひらがなで入力できたね！", "kanji-conversion")
+        setInputValue("")
+      }
+    }
+    
+    // Kanji conversion check
+    if (step === "kanji-conversion") {
+      if (value === "今日" || value === "きょう") {
+        if (value === "今日") {
+          triggerSuccess("漢字に変換できた！すごい！", "katakana-conversion")
+          setInputValue("")
+        }
+      }
+    }
+    
+    // Katakana conversion check
+    if (step === "katakana-conversion") {
+      if (value === "コンピュータ" || value === "コンピューター" || value === "こんぴゅーた") {
+        if (value === "コンピュータ" || value === "コンピューター") {
+          triggerSuccess("カタカナに変換できた！完璧！", "delete-undo")
+          setInputValue("")
+        }
+      }
+    }
+  }
+
+  // Check for correct text in delete step
+  useEffect(() => {
+    if (step === "delete-undo" && deleteStepText === "こんにちは") {
+      triggerSuccess("綺麗に直せたね！", "copy-paste")
+    }
+  }, [deleteStepText, step, triggerSuccess])
+
+  const getMessage = (): React.ReactNode => {
+    switch (step) {
+      case "intro":
+        return (
+          <>
+            <Ruby rt="つぎ">次</Ruby>は<Ruby rt="もじ">文字</Ruby><Ruby rt="にゅうりょく">入力</Ruby>の<Ruby rt="れんしゅう">練習</Ruby>だ！<Ruby rt="にほん">日本</Ruby>のキーボードには<Ruby rt="ひみつ">秘密</Ruby>があるよ。
+          </>
+        )
+      case "tutorial-ime":
+        return (
+          <div className="space-y-2">
+            <p className="font-bold text-primary">【IMEの<Ruby rt="きりかえ">切替</Ruby>】</p>
+            <p>「<span className="font-bold text-primary"><Ruby rt="はんかく">半角</Ruby>/<Ruby rt="ぜんかく">全角</Ruby></span>」キーを<Ruby rt="お">押</Ruby>すと、<Ruby rt="にほんご">日本語</Ruby>と<Ruby rt="えいご">英語</Ruby>を<Ruby rt="き">切</Ruby>り<Ruby rt="か">替</Ruby>えられるよ！</p>
+            <div className="mt-4 flex justify-center items-center gap-4">
+              <div className="bg-gray-800 text-white px-4 py-2 rounded font-mono text-sm"><Ruby rt="はんかく">半角</Ruby>/<Ruby rt="ぜんかく">全角</Ruby></div>
+              <span className="text-lg">→</span>
+              <div className="flex gap-2">
+                <span className="bg-primary text-primary-foreground px-3 py-1 rounded">A</span>
+                <span>↔</span>
+                <span className="bg-primary text-primary-foreground px-3 py-1 rounded">あ</span>
+              </div>
+            </div>
+          </div>
+        )
+      case "tutorial-conversion":
+        return (
+          <div className="space-y-2">
+            <p className="font-bold text-primary">【<Ruby rt="へんかん">変換</Ruby>の<Ruby rt="やりかた">やり方</Ruby>】</p>
+            <p><Ruby rt="にほんご">日本語</Ruby>を<Ruby rt="にゅうりょく">入力</Ruby>したあと、<span className="font-bold text-primary">スペースキー</span>を<Ruby rt="お">押</Ruby>すと<Ruby rt="かんじ">漢字</Ruby>やカタカナに<Ruby rt="へんかん">変換</Ruby>できるよ！</p>
+            <div className="mt-4 flex justify-center items-center gap-2">
+              <span className="bg-gray-100 px-3 py-1 rounded">きょう</span>
+              <span className="text-lg">→</span>
+              <div className="bg-gray-800 text-white px-4 py-2 rounded font-mono text-sm">スペース</div>
+              <span className="text-lg">→</span>
+              <span className="bg-success/20 text-success px-3 py-1 rounded font-bold"><Ruby rt="きょう">今日</Ruby></span>
+            </div>
+            <p className="text-sm text-muted-foreground text-center mt-2">Enter（エンター）で<Ruby rt="かくてい">確定</Ruby>！</p>
+          </div>
+        )
+      case "tutorial-backspace":
+        return (
+          <div className="space-y-2">
+            <p className="font-bold text-primary">【Backspaceと<Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>す】</p>
+            <p><span className="font-bold text-primary">Backspace（←）</span>で1<Ruby rt="もじ">文字</Ruby><Ruby rt="け">消</Ruby>せるよ！</p>
+            <p><span className="font-bold text-primary">Ctrl + Z</span>で<Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>せるよ！</p>
+            <div className="mt-4 flex justify-center gap-4">
+              <div className="text-center">
+                <div className="bg-gray-800 text-white px-4 py-2 rounded font-mono text-sm">← Backspace</div>
+                <p className="text-xs text-muted-foreground mt-1"><Ruby rt="け">消</Ruby>す</p>
+              </div>
+              <div className="text-center">
+                <div className="flex gap-1">
+                  <div className="bg-gray-800 text-white px-3 py-2 rounded font-mono text-sm">Ctrl</div>
+                  <div className="bg-gray-800 text-white px-3 py-2 rounded font-mono text-sm">Z</div>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1"><Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>す</p>
+              </div>
+            </div>
+          </div>
+        )
+      case "tutorial-copypaste":
+        return (
+          <div className="space-y-2">
+            <p className="font-bold text-primary">【コピー＆ペースト】</p>
+            <p><Ruby rt="じぶん">自分</Ruby>のキーボードで<Ruby rt="れんしゅう">練習</Ruby>するよ！</p>
+            <div className="grid grid-cols-3 gap-4 mt-4">
+              <div className="text-center">
+                <div className="flex gap-1 justify-center">
+                  <div className="bg-gray-800 text-white px-2 py-1 rounded font-mono text-xs">Ctrl</div>
+                  <div className="bg-gray-800 text-white px-2 py-1 rounded font-mono text-xs">A</div>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1"><Ruby rt="ぜんぶえら">全部選</Ruby>ぶ</p>
+              </div>
+              <div className="text-center">
+                <div className="flex gap-1 justify-center">
+                  <div className="bg-gray-800 text-white px-2 py-1 rounded font-mono text-xs">Ctrl</div>
+                  <div className="bg-gray-800 text-white px-2 py-1 rounded font-mono text-xs">C</div>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">コピー</p>
+              </div>
+              <div className="text-center">
+                <div className="flex gap-1 justify-center">
+                  <div className="bg-gray-800 text-white px-2 py-1 rounded font-mono text-xs">Ctrl</div>
+                  <div className="bg-gray-800 text-white px-2 py-1 rounded font-mono text-xs">V</div>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">ペースト</p>
+              </div>
+            </div>
+          </div>
+        )
+      case "ime-switch":
+        return (
+          <>
+            「<Ruby rt="はんかく">半角</Ruby>/<Ruby rt="ぜんかく">全角</Ruby>」または「A/あ」キーを<Ruby rt="お">押</Ruby>して、<Ruby rt="にほんご">日本語</Ruby>が<Ruby rt="か">書</Ruby>けるようにしてみて！<Ruby rt="した">下</Ruby>の「あ/A」ボタンをクリックしてもOK！
+          </>
+        )
+      case "hiragana-input":
+        return (
+          <>
+            まずはひらがなで「<span className="font-bold text-primary">あした</span>」と<Ruby rt="にゅうりょく">入力</Ruby>してみよう！そのままEnterで<Ruby rt="かくてい">確定</Ruby>してね。
+          </>
+        )
+      case "kanji-conversion":
+        return (
+          <>
+            <Ruby rt="つぎ">次</Ruby>は<Ruby rt="かんじ">漢字</Ruby>に<Ruby rt="へんかん">変換</Ruby>してみよう！「<span className="font-bold">きょう</span>」と<Ruby rt="にゅうりょく">入力</Ruby>して、<span className="font-bold text-primary">スペースキー</span>を<Ruby rt="お">押</Ruby>して「<Ruby rt="きょう">今日</Ruby>」に<Ruby rt="へんかん">変換</Ruby>、Enterで<Ruby rt="かくてい">確定</Ruby>！
+          </>
+        )
+      case "katakana-conversion":
+        return (
+          <>
+            <Ruby rt="さいご">最後</Ruby>はカタカナ！「<span className="font-bold">こんぴゅーた</span>」と<Ruby rt="にゅうりょく">入力</Ruby>して、スペースを<Ruby rt="なんかい">何回</Ruby>か<Ruby rt="お">押</Ruby>して「<span className="font-bold text-primary">コンピュータ</span>」に<Ruby rt="へんかん">変換</Ruby>してみよう！
+          </>
+        )
+      case "delete-undo":
+        return deleteStepText === "こんにちは" 
+          ? <><Ruby rt="かんぺき">完璧</Ruby>！<Ruby rt="つぎ">次</Ruby>に<Ruby rt="すす">進</Ruby>もう！</> 
+          : deleteStepText === "こんにち"
+            ? <><Ruby rt="け">消</Ruby>しすぎちゃったかも…「Ctrl+Z」で<Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>そう！</>
+            : <>この<Ruby rt="もじ">文字</Ruby>、<Ruby rt="まちが">間違</Ruby>ってる…。「Backspace（←）」で「あ」を<Ruby rt="け">消</Ruby>して「は」に<Ruby rt="なお">直</Ruby>そう！</>
+      case "copy-paste":
+        return selectedAll && clipboard 
+          ? <><Ruby rt="うえ">上</Ruby>の<Ruby rt="はこ">箱</Ruby>でコピーできた！<Ruby rt="した">下</Ruby>の<Ruby rt="はこ">箱</Ruby>をクリックして<span className="font-bold text-primary">「Ctrl+V」</span>でペーストして！</>
+          : selectedAll 
+            ? <><Ruby rt="ぜんぶえら">全部選</Ruby>べたね！キーボードで<span className="font-bold text-primary">「Ctrl+C」</span>を<Ruby rt="お">押</Ruby>してコピーして！</>
+            : <><Ruby rt="うえ">上</Ruby>の<Ruby rt="はこ">箱</Ruby>をクリックして、キーボードで<span className="font-bold text-primary">「Ctrl+A」</span>を<Ruby rt="お">押</Ruby>して<Ruby rt="ぜんぶえら">全部選</Ruby>んで！</>
+      case "complete":
+        return <>ミッション2クリア！タイピングマスターだね！</>
+      default:
+        return ""
+    }
+  }
+
+  const getMood = (): "happy" | "neutral" | "encouraging" | "celebrating" => {
+    if (showSuccess || step === "complete") return "celebrating"
+    if (step === "intro" || step.startsWith("tutorial")) return "happy"
+    return "encouraging"
+  }
+
+  const isTutorialStep = step.startsWith("tutorial")
+
+  return (
+    <div className="flex flex-col h-full">
+      <SuccessOverlay show={showSuccess} message={successMessage} />
+      
+      {/* Character Section */}
+      <div className="p-4 md:p-6 bg-gradient-to-b from-secondary to-background">
+        <Character message={getMessage()} mood={getMood()} />
+        
+        {/* Tutorial navigation */}
+        {step === "intro" && (
+          <div className="mt-4 flex justify-center">
+            <Button onClick={() => setStep("tutorial-ime")} size="lg" className="text-lg px-8">
+              スタート！
+            </Button>
+          </div>
+        )}
+        
+        {step === "tutorial-ime" && (
+          <div className="mt-4 flex justify-center">
+            <Button onClick={() => setStep("tutorial-conversion")} size="lg" className="text-lg px-8">
+              <Ruby rt="つぎ">次</Ruby>へ
+            </Button>
+          </div>
+        )}
+        
+        {step === "tutorial-conversion" && (
+          <div className="mt-4 flex justify-center">
+            <Button onClick={() => setStep("tutorial-backspace")} size="lg" className="text-lg px-8">
+              <Ruby rt="つぎ">次</Ruby>へ
+            </Button>
+          </div>
+        )}
+        
+        {step === "tutorial-backspace" && (
+          <div className="mt-4 flex justify-center">
+            <Button onClick={() => setStep("tutorial-copypaste")} size="lg" className="text-lg px-8">
+              <Ruby rt="つぎ">次</Ruby>へ
+            </Button>
+          </div>
+        )}
+        
+        {step === "tutorial-copypaste" && (
+          <div className="mt-4 flex justify-center">
+            <Button onClick={() => setStep("ime-switch")} size="lg" className="text-lg px-8">
+              <Ruby rt="れんしゅう">練習</Ruby>をはじめる！
+            </Button>
+          </div>
+        )}
+      </div>
+
+      {/* Simulation Area */}
+      {!isTutorialStep && (
+        <div className="flex-1 p-4 md:p-6 overflow-hidden">
+          <div className="h-full bg-card rounded-2xl border border-border shadow-lg overflow-hidden">
+            <div className="h-full bg-white p-6 flex flex-col">
+              {/* IME Switch Step */}
+              {step === "ime-switch" && (
+                <div className="flex-1 flex flex-col items-center justify-center gap-6">
+                  <div className="text-center">
+                    <p className="text-lg text-gray-700 mb-4"><Ruby rt="にゅうりょく">入力</Ruby>モード：</p>
+                    <div className="text-6xl font-bold text-primary">
+                      {imeMode === "en" ? "A" : "あ"}
+                    </div>
+                    <p className="text-sm text-gray-500 mt-2">
+                      {imeMode === "en" ? "英語モード" : "日本語モード"}
+                    </p>
+                  </div>
+                  <Button 
+                    onClick={toggleIme}
+                    size="lg"
+                    variant="outline"
+                    className={cn(
+                      "text-xl px-8 py-6",
+                      "ring-4 ring-warning animate-pulse"
+                    )}
+                  >
+                    あ/A <Ruby rt="きりかえ">切替</Ruby>
+                  </Button>
+                  <p className="text-sm text-gray-500">
+                    キーボードの「<Ruby rt="はんかく">半角</Ruby>/<Ruby rt="ぜんかく">全角</Ruby>」キーでも<Ruby rt="きりか">切替</Ruby>えられるよ！
+                  </p>
+                </div>
+              )}
+
+              {/* Hiragana Input Step */}
+              {step === "hiragana-input" && (
+                <div className="flex-1 flex flex-col items-center justify-center gap-6">
+                  <div className="w-full max-w-md">
+                    <div className="bg-success/10 border border-success/30 rounded-lg p-4 mb-4">
+                      <p className="text-success font-medium text-center">ステップ1: ひらがな<Ruby rt="にゅうりょく">入力</Ruby></p>
+                    </div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      「<span className="font-bold text-primary">あした</span>」と<Ruby rt="にゅうりょく">入力</Ruby>してね：
+                    </label>
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      value={inputValue}
+                      onChange={handleInputChange}
+                      className={cn(
+                        "w-full px-4 py-3 text-xl border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary",
+                        "ring-4 ring-warning"
+                      )}
+                      placeholder="あした"
+                      autoFocus
+                    />
+                    <p className="text-sm text-muted-foreground mt-2 text-center">
+                      <Ruby rt="にゅうりょく">入力</Ruby>したらEnterで<Ruby rt="かくてい">確定</Ruby>！
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Kanji Conversion Step */}
+              {step === "kanji-conversion" && (
+                <div className="flex-1 flex flex-col items-center justify-center gap-6">
+                  <div className="w-full max-w-md">
+                    <div className="bg-success/10 border border-success/30 rounded-lg p-4 mb-4">
+                      <p className="text-success font-medium text-center">ステップ2: <Ruby rt="かんじ">漢字</Ruby><Ruby rt="へんかん">変換</Ruby></p>
+                    </div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      「きょう」→「<span className="font-bold text-primary"><Ruby rt="きょう">今日</Ruby></span>」に<Ruby rt="へんかん">変換</Ruby>してね：
+                    </label>
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      value={inputValue}
+                      onChange={handleInputChange}
+                      className={cn(
+                        "w-full px-4 py-3 text-xl border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary",
+                        "ring-4 ring-warning"
+                      )}
+                      placeholder="きょう → スペースで変換 → Enter"
+                      autoFocus
+                    />
+                    <div className="mt-4 flex justify-center items-center gap-2 text-sm text-muted-foreground">
+                      <span>①「きょう」</span>
+                      <span>→</span>
+                      <span className="bg-gray-200 px-2 py-1 rounded">スペース</span>
+                      <span>→</span>
+                      <span className="bg-gray-200 px-2 py-1 rounded">Enter</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Katakana Conversion Step */}
+              {step === "katakana-conversion" && (
+                <div className="flex-1 flex flex-col items-center justify-center gap-6">
+                  <div className="w-full max-w-md">
+                    <div className="bg-success/10 border border-success/30 rounded-lg p-4 mb-4">
+                      <p className="text-success font-medium text-center">ステップ3: カタカナ<Ruby rt="へんかん">変換</Ruby></p>
+                    </div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      「こんぴゅーた」→「<span className="font-bold text-primary">コンピュータ</span>」に<Ruby rt="へんかん">変換</Ruby>してね：
+                    </label>
+                    <input
+                      ref={inputRef}
+                      type="text"
+                      value={inputValue}
+                      onChange={handleInputChange}
+                      className={cn(
+                        "w-full px-4 py-3 text-xl border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary",
+                        "ring-4 ring-warning"
+                      )}
+                      placeholder="こんぴゅーた → スペースで変換"
+                      autoFocus
+                    />
+                    <p className="text-sm text-muted-foreground mt-2 text-center">
+                      スペースを<Ruby rt="なんかい">何回</Ruby>か<Ruby rt="お">押</Ruby>すと<Ruby rt="べつ">別</Ruby>の<Ruby rt="こうほ">候補</Ruby>が<Ruby rt="で">出</Ruby>るよ！
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Delete/Undo Step */}
+              {step === "delete-undo" && (
+                <div className="flex-1 flex flex-col items-center justify-center gap-6">
+                  <div className="w-full max-w-md">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      この<Ruby rt="もじ">文字</Ruby>を<Ruby rt="なお">直</Ruby>そう（「あ」→「は」）：
+                    </label>
+                    <input
+                      type="text"
+                      value={deleteStepText}
+                      onChange={(e) => {
+                        const newVal = e.target.value
+                        setUndoStack([...undoStack, deleteStepText])
+                        setDeleteStepText(newVal)
+                      }}
+                      onKeyDown={handleKeyDown}
+                      className={cn(
+                        "w-full px-4 py-3 text-xl border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary",
+                        deleteStepText === "こんにちあ" && "ring-4 ring-destructive"
+                      )}
+                      autoFocus
+                    />
+                    <div className="mt-4 flex gap-4 justify-center">
+                      <div className="text-center">
+                        <div className="w-20 h-12 bg-gray-800 rounded flex items-center justify-center text-white text-xs">
+                          ← Backspace
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1"><Ruby rt="け">消</Ruby>す</p>
+                      </div>
+                      <div className="text-center">
+                        <div className="w-20 h-12 bg-gray-800 rounded flex items-center justify-center text-white text-xs">
+                          Ctrl + Z
+                        </div>
+                        <p className="text-xs text-gray-500 mt-1"><Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>す</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Copy/Paste Step - Keyboard only */}
+              {step === "copy-paste" && (
+                <div className="flex-1 flex flex-col items-center justify-center gap-4">
+                  <div className="w-full max-w-md space-y-4">
+                    {/* Instructions */}
+                    <div className="bg-primary/10 border border-primary/30 rounded-lg p-3 text-center">
+                      <p className="text-sm text-primary font-medium">
+                        <Ruby rt="じぶん">自分</Ruby>のキーボードで<Ruby rt="そうさ">操作</Ruby>してね！
+                      </p>
+                    </div>
+
+                    {/* Source input */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        コピー<Ruby rt="もと">元</Ruby>（ここをクリック → Ctrl+A → Ctrl+C）：
+                      </label>
+                      <input
+                        ref={inputRef}
+                        type="text"
+                        value={inputValue || "サンプルテキスト"}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onFocus={() => setCopySourceFocused(true)}
+                        className={cn(
+                          "w-full px-4 py-3 text-xl border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary",
+                          selectedAll && "bg-blue-100",
+                          !selectedAll && "ring-4 ring-warning animate-pulse"
+                        )}
+                        autoFocus
+                      />
+                      {selectedAll && (
+                        <p className="text-sm text-success mt-1 text-center">
+                          {clipboard ? "コピーできた！" : "<Ruby rt=\"つぎ\">次</Ruby>は Ctrl+C！"}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Target input */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        ペースト<Ruby rt="さき">先</Ruby>（ここをクリック → Ctrl+V）：
+                      </label>
+                      <input
+                        ref={pasteInputRef}
+                        type="text"
+                        value={pasteAreaText}
+                        onChange={(e) => setPasteAreaText(e.target.value)}
+                        onPaste={(e) => {
+                          // Allow native paste and capture the pasted text
+                          const pastedText = e.clipboardData.getData('text')
+                          if (pastedText) {
+                            setPasteAreaText(pastedText)
+                          }
+                        }}
+                        onFocus={() => setCopySourceFocused(false)}
+                        className={cn(
+                          "w-full px-4 py-3 text-xl border-2 border-dashed rounded-lg focus:outline-none focus:ring-2 focus:ring-primary",
+                          clipboard && !pasteAreaText && "ring-4 ring-warning animate-pulse"
+                        )}
+                        placeholder="ここにペースト！"
+                      />
+                      {pasteAreaText && (
+                        <p className="text-sm text-success mt-1 text-center">
+                          ペーストできた！
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Keyboard hints */}
+                    <div className="flex gap-2 justify-center flex-wrap">
+                      <div className={cn(
+                        "text-center px-3 py-2 rounded-lg border",
+                        !selectedAll ? "bg-warning/20 border-warning" : "bg-success/20 border-success"
+                      )}>
+                        <div className="flex gap-1 justify-center">
+                          <span className="bg-gray-800 text-white px-2 py-1 rounded text-xs">Ctrl</span>
+                          <span className="bg-gray-800 text-white px-2 py-1 rounded text-xs">A</span>
+                        </div>
+                        <p className="text-xs mt-1">{selectedAll ? "✓" : "1"}</p>
+                      </div>
+                      <div className={cn(
+                        "text-center px-3 py-2 rounded-lg border",
+                        selectedAll && !clipboard ? "bg-warning/20 border-warning" : clipboard ? "bg-success/20 border-success" : "bg-gray-100 border-gray-200"
+                      )}>
+                        <div className="flex gap-1 justify-center">
+                          <span className="bg-gray-800 text-white px-2 py-1 rounded text-xs">Ctrl</span>
+                          <span className="bg-gray-800 text-white px-2 py-1 rounded text-xs">C</span>
+                        </div>
+                        <p className="text-xs mt-1">{clipboard ? "✓" : "2"}</p>
+                      </div>
+                      <div className={cn(
+                        "text-center px-3 py-2 rounded-lg border",
+                        clipboard && !pasteAreaText ? "bg-warning/20 border-warning" : pasteAreaText ? "bg-success/20 border-success" : "bg-gray-100 border-gray-200"
+                      )}>
+                        <div className="flex gap-1 justify-center">
+                          <span className="bg-gray-800 text-white px-2 py-1 rounded text-xs">Ctrl</span>
+                          <span className="bg-gray-800 text-white px-2 py-1 rounded text-xs">V</span>
+                        </div>
+                        <p className="text-xs mt-1">{pasteAreaText ? "✓" : "3"}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Complete */}
+              {step === "complete" && (
+                <div className="flex-1 flex items-center justify-center">
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-success">タイピングマスター！</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
