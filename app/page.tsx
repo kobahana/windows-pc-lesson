@@ -31,8 +31,8 @@ export default function Home() {
       ruby: "にほんごをローマじにゅうりょくしよう",
       description: "「ん」や「っ」など、難しい打ち方を練習しよう！",
       icon: <Languages className="w-10 h-10 text-slate-400" />,
-      link: "#",
-      available: false,
+      link: "/lessons/lesson3",
+      available: true,
     },
     {
       id: 4,
@@ -40,8 +40,8 @@ export default function Home() {
       ruby: "かんじへんかんマスターになろう",
       description: "正しい漢字を選んで、文章を完成させよう！",
       icon: <PenTool className="w-10 h-10 text-slate-400" />,
-      link: "#",
-      available: false,
+      link: "/lessons/lesson4",
+      available: true,
     },
   ]
 
