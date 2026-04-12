@@ -11,13 +11,13 @@ function cn(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-// 🎨 ご指定のカラー・チャート（小指から人差し指へ）
+// 🎨 指ごとのカラーコード定義（SVG用）
 const fingerColors = {
-  4: { bg: "bg-red-500", light: "bg-red-50", border: "border-red-200", text: "text-red-600" },      // 小指：赤
-  3: { bg: "bg-amber-400", light: "bg-amber-50", border: "border-amber-200", text: "text-amber-600" }, // 薬指：黄
-  2: { bg: "bg-emerald-500", light: "bg-emerald-50", border: "border-emerald-200", text: "text-emerald-600" }, // 中指：緑
-  1: { bg: "bg-purple-500", light: "bg-purple-50", border: "border-purple-200", text: "text-purple-600" }, // 人差し指：紫
-  0: { bg: "bg-slate-500", light: "bg-slate-50", border: "border-slate-200", text: "text-slate-600" }, // 親指：グレー
+  4: { hex: "#ef4444", light: "bg-red-50", border: "border-red-200", text: "text-red-600", bg: "bg-red-500" },      // 小指：赤
+  3: { hex: "#fbbf24", light: "bg-amber-50", border: "border-amber-200", text: "text-amber-600", bg: "bg-amber-400" }, // 薬指：黄
+  2: { hex: "#10b981", light: "bg-emerald-50", border: "border-emerald-200", text: "text-emerald-600", bg: "bg-emerald-500" }, // 中指：緑
+  1: { hex: "#a855f7", light: "bg-purple-50", border: "border-purple-200", text: "text-purple-600", bg: "bg-purple-500" }, // 人差し指：紫
+  0: { hex: "#64748b", light: "bg-slate-50", border: "border-slate-200", text: "text-slate-600", bg: "bg-slate-500" }, // 親指：グレー
 };
 
 const fingerMap: Record<string, { hand: 'left' | 'right', finger: number }> = {
@@ -32,24 +32,38 @@ const fingerMap: Record<string, { hand: 'left' | 'right', finger: number }> = {
   ' ': { hand: 'right', finger: 0 },
 }
 
-// 🌈 手のイラストコンポーネント (アクティブな指だけが指定色でライトアップされ、他はグレーに戻るように修正)
 const HandGuide = ({ activeHand, activeFinger }: { activeHand?: 'left' | 'right', activeFinger?: number }) => {
   const renderHand = (side: 'left' | 'right') => {
     const isLeft = side === 'left';
     return (
       <svg width="140" height="120" viewBox="0 0 200 180" className={cn("transition-all duration-300", activeHand === side ? "opacity-100" : "opacity-20")}>
+        {/* 手のひらライン */}
         <path d={isLeft ? "M150,170 Q100,170 80,140 Q60,100 80,60" : "M50,170 Q100,170 120,140 Q140,100 120,60"} fill="none" stroke="#cbd5e1" strokeWidth="3" />
         {[0, 1, 2, 3, 4].map((f) => {
           const isActive = activeHand === side && activeFinger === f;
           const config = fingerColors[f as keyof typeof fingerColors];
           const xBase = isLeft ? (f === 0 ? 120 : 160 - f * 28) : (f === 0 ? 80 : 40 + f * 28);
           const yBase = f === 0 ? 110 : 65 + Math.abs(2 - f) * 12;
+          
           return (
             <g key={f}>
-              {/* 指のrect: isActiveの時だけ指定色(config.bg)を適用、他は薄いグレー(fill-slate-100) */}
-              <rect x={xBase - 12} y={yBase - (f === 0 ? 25 : 45)} width={f === 0 ? 35 : 24} height={f === 0 ? 25 : 55} rx="12" 
-                className={cn("transition-colors duration-300 shadow-sm", isActive ? config.bg : "fill-slate-100 stroke-slate-200")} strokeWidth="2" />
-              {isActive && <circle cx={xBase + (f === 0 ? 10 : 0)} cy={yBase - (f === 0 ? 30 : 55)} r="8" className="fill-blue-500 animate-bounce" />}
+              <rect 
+                x={xBase - 12} 
+                y={yBase - (f === 0 ? 25 : 45)} 
+                width={f === 0 ? 35 : 24} 
+                height={f === 0 ? 25 : 55} 
+                rx="12" 
+                fill={isActive ? config.hex : "#f1f5f9"} 
+                stroke={isActive ? config.hex : "#e2e8f0"}
+                strokeWidth="2"
+                className="transition-all duration-300 shadow-sm"
+              />
+              {isActive && (
+                <g className="animate-bounce">
+                  <circle cx={xBase + (f === 0 ? 10 : 0)} cy={yBase - (f === 0 ? 40 : 65)} r="8" fill={config.hex} />
+                  <path d={`M${xBase + (f === 0 ? 10 : 0)} ${yBase - (f === 0 ? 32 : 57)} L${xBase + (f === 0 ? 10 : 0)} ${yBase - (f === 0 ? 25 : 50)}`} stroke={config.hex} strokeWidth="4" />
+                </g>
+              )}
             </g>
           );
         })}
@@ -75,7 +89,7 @@ export default function Lesson2() {
     { name: "ホームポジションぜんぶ", keys: ["s", "l", "a", ";", "g", "h", "a", "s", "d", "f", "j", "k", "l", ";"] },
     { name: "上の段 (だん)", keys: ["r", "u", "e", "i", "w", "o", "q", "p", "t", "y"] },
     { name: "下の段 (だん)", keys: ["v", "n", "c", "m", "x", ",", "z", ".", "b", "/"] },
-    { name: "数字 (すすめじ) とスペース", keys: ["1", "2", "3", "4", "5", " ", "6", "7", "8", "9", "0", " "] },
+    { name: "数字 (すすじ) とスペース", keys: ["1", "2", "3", "4", "5", " ", "6", "7", "8", "9", "0", " "] },
   ];
 
   const practiceSequence = stages[currentStage].keys;
@@ -139,12 +153,12 @@ export default function Lesson2() {
               
               <div className="grid grid-cols-2 gap-8 mb-10 text-center">
                 <div className="p-8 bg-blue-50 rounded-3xl border-2 border-blue-100 shadow-inner">
-                  <div className="w-20 h-20 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-4xl font-bold mx-auto border-b-8 border-blue-800 mb-4">F</div>
+                  <div className="w-20 h-20 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-4xl font-bold mx-auto border-b-8 border-blue-800 mb-4 shadow-xl">F</div>
                   <p className="font-bold text-lg text-blue-800">ひだり手 の 人差し指</p>
                   <p className="text-sm text-slate-600 mt-2">「F」にある<span className="text-red-500 font-bold underline">でっぱり</span>を、指（ゆび）でさがしてね！</p>
                 </div>
                 <div className="p-8 bg-blue-50 rounded-3xl border-2 border-blue-100 shadow-inner">
-                  <div className="w-20 h-20 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-4xl font-bold mx-auto border-b-8 border-blue-800 mb-4">J</div>
+                  <div className="w-20 h-20 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-4xl font-bold mx-auto border-b-8 border-blue-800 mb-4 shadow-xl">J</div>
                   <p className="font-bold text-lg text-blue-800">みぎ手 の 人差し指</p>
                   <p className="text-sm text-slate-600 mt-2">「J」にも<span className="text-red-500 font-bold underline">でっぱり</span>があるよ。そこに指をおこう！</p>
                 </div>
@@ -181,7 +195,7 @@ export default function Lesson2() {
               })}
             </div>
 
-            <div className="bg-white p-5 rounded-[2.5rem] shadow-xl border border-slate-100 flex flex-col items-center justify-center Relative">
+            <div className="bg-white p-5 rounded-[2.5rem] shadow-xl border border-slate-100 flex flex-col items-center justify-center relative">
               <div className="space-y-1 mb-4 w-full max-w-[620px]">
                 {rows.map((row, i) => (
                   <div key={i} className="flex justify-center gap-1">
