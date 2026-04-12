@@ -36,37 +36,57 @@ export function Character({ message, mood, className }: CharacterProps) {
   return (
     <div className={cn("flex items-start gap-4", className)}>
       {/* Character Avatar */}
-      <div className={cn("relative flex-shrink-0", getMoodStyles())}>
-        <div className="w-24 h-24 md:w-32 md:h-32 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center shadow-lg border-4 border-card">
-          {/* Simple cute face */}
-          <div className="relative w-16 h-16 md:w-20 md:h-20">
-            {/* Eyes */}
-            <div className="absolute top-4 left-2 w-3 h-4 md:w-4 md:h-5 bg-card rounded-full flex items-center justify-center">
-              <div className={cn("w-1.5 h-2 md:w-2 md:h-2.5 bg-foreground rounded-full transition-transform", getEyeExpression())} />
-            </div>
-            <div className="absolute top-4 right-2 w-3 h-4 md:w-4 md:h-5 bg-card rounded-full flex items-center justify-center">
-              <div className={cn("w-1.5 h-2 md:w-2 md:h-2.5 bg-foreground rounded-full transition-transform", getEyeExpression())} />
-            </div>
-            {/* Blush */}
-            <div className="absolute top-8 left-0 w-2 h-1.5 bg-pink-300/60 rounded-full" />
-            <div className="absolute top-8 right-0 w-2 h-1.5 bg-pink-300/60 rounded-full" />
-            {/* Mouth */}
-            <div className={cn(
-              "absolute bottom-2 left-1/2 -translate-x-1/2 transition-all",
-              mood === "celebrating" || mood === "happy" 
-                ? "w-6 h-3 md:w-8 md:h-4 border-b-4 border-foreground rounded-b-full" 
-                : "w-4 h-2 md:w-5 md:h-2.5 border-b-3 border-foreground rounded-b-full"
-            )} />
-          </div>
+      <div className={cn("relative flex-shrink-0 pt-6", getMoodStyles())}>
+        
+        {/* --- アンテナ部分（テレタビーズ風） --- */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 flex flex-col items-center">
+          {/* 丸い輪っかのアンテナ */}
+          <div className="w-6 h-6 border-4 border-primary rounded-full bg-background mb-[-4px] z-10" />
+          <div className="w-1.5 h-6 bg-primary rounded-full" />
         </div>
+
+        {/* 本体ボディー */}
+        <div className="w-24 h-24 md:w-32 md:h-32 bg-primary rounded-[3rem] flex items-center justify-center shadow-lg border-4 border-card relative overflow-hidden">
+          
+          {/* お腹のモニターパネル（顔） */}
+          <div className="w-20 h-16 md:w-26 md:h-22 bg-slate-100 rounded-2xl flex items-center justify-center border-4 border-primary/20 shadow-inner">
+            
+            {/* Simple cute face */}
+            <div className="relative w-14 h-14 md:w-18 md:h-18">
+              {/* Eyes */}
+              <div className="absolute top-4 left-1 w-3 h-4 md:w-4 md:h-5 bg-white rounded-full flex items-center justify-center shadow-sm">
+                <div className={cn("w-1.5 h-2 md:w-2 md:h-2.5 bg-slate-900 rounded-full transition-transform", getEyeExpression())} />
+              </div>
+              <div className="absolute top-4 right-1 w-3 h-4 md:w-4 md:h-5 bg-white rounded-full flex items-center justify-center shadow-sm">
+                <div className={cn("w-1.5 h-2 md:w-2 md:h-2.5 bg-slate-900 rounded-full transition-transform", getEyeExpression())} />
+              </div>
+              
+              {/* Blush */}
+              <div className="absolute top-8 left-0 w-2 h-1.5 bg-pink-300 rounded-full opacity-60" />
+              <div className="absolute top-8 right-0 w-2 h-1.5 bg-pink-300 rounded-full opacity-60" />
+              
+              {/* Mouth */}
+              <div className={cn(
+                "absolute bottom-2 left-1/2 -translate-x-1/2 transition-all",
+                mood === "celebrating" || mood === "happy" 
+                  ? "w-6 h-3 md:w-8 md:h-4 border-b-4 border-slate-700 rounded-b-full" 
+                  : "w-4 h-2 md:w-5 md:h-2.5 border-b-2 border-slate-700 rounded-b-full"
+              )} />
+            </div>
+          </div>
+          
+          {/* ボディーの光沢感 */}
+          <div className="absolute top-2 left-4 w-8 h-4 bg-white/20 rounded-full -rotate-15" />
+        </div>
+
         {/* Character name badge */}
-        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-card px-3 py-1 rounded-full text-xs font-bold text-primary shadow-md border border-border whitespace-nowrap">
+        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-card px-3 py-1 rounded-full text-xs font-bold text-primary shadow-md border border-border whitespace-nowrap z-20">
           パソ<ruby>先生<rt>せんせい</rt></ruby>
         </div>
       </div>
 
       {/* Speech Bubble */}
-      <div className="relative flex-1 bg-card rounded-2xl rounded-tl-sm p-4 md:p-6 shadow-lg border border-border">
+      <div className="relative flex-1 bg-card rounded-2xl rounded-tl-sm p-4 md:p-6 shadow-lg border border-border mt-4">
         {/* Bubble tail */}
         <div className="absolute -left-3 top-4 w-0 h-0 border-t-[10px] border-t-transparent border-r-[12px] border-r-card border-b-[10px] border-b-transparent" />
         <div className="absolute -left-[14px] top-4 w-0 h-0 border-t-[11px] border-t-transparent border-r-[13px] border-r-border border-b-[11px] border-b-transparent -z-10" />
