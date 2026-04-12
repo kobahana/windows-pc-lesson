@@ -9,6 +9,7 @@ interface CharacterProps {
 }
 
 export function Character({ message, mood, className }: CharacterProps) {
+  // アニメーションのロジックはそのまま継承
   const getMoodStyles = () => {
     switch (mood) {
       case "happy":
@@ -22,7 +23,7 @@ export function Character({ message, mood, className }: CharacterProps) {
     }
   }
 
-  // 瞳の瞬きアニメーション（アニメっぽくするために少し複雑に）
+  // 目の表情（瞬き）のロジックもそのまま継承
   const getEyeExpression = () => {
     switch (mood) {
       case "celebrating":
@@ -30,88 +31,58 @@ export function Character({ message, mood, className }: CharacterProps) {
       case "happy":
         return "scale-y-75"
       default:
-        return "scale-y-100"
+        return ""
     }
   }
 
-  // 日本アニメ風の「うるうるお目目」をCSSで表現
-  const AnimeEye = () => (
-    <div className="relative w-5 h-6.5 md:w-6.5 md:h-8">
-      {/* 目の形（白目） */}
-      <div className="absolute inset-0 bg-white rounded-full shadow-inner border border-slate-100" />
-      
-      {/* 瞳（黒目） */}
-      <div className={cn("absolute inset-0.5 bg-slate-950 rounded-full transition-transform duration-150 origin-center", getEyeExpression())}>
-        {/* アンプハイライト1：大きな光 */}
-        <div className="absolute top-1 right-1 w-2.5 h-3 md:w-3.5 md:h-4 bg-white rounded-full" />
-        {/* アンプハイライト2：小さな光 */}
-        <div className="absolute bottom-1.5 left-1 w-1 h-1.5 bg-white rounded-full" />
-      </div>
-      
-      {/* アイライン */}
-      <div className="absolute -top-0.5 left-0.5 w-4 h-1.5 md:w-5.5 md:h-2 border-t-2 md:border-t-3 border-slate-950 rounded-full" />
-    </div>
-  )
-
   return (
-    <div className={cn("flex items-start gap-4 p-3 md:p-5", className)}>
-      {/* Character Avatar */}
-      <div className={cn("relative flex-shrink-0 pt-8", getMoodStyles())}>
-        
-        {/* --- 輪っかアンテナ（グリーン） --- */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 flex flex-col items-center">
-          <div className="w-8 h-8 md:w-10 md:h-10 border-[5px] md:border-[6px] border-emerald-500 rounded-full bg-background mb-[-6px] z-10" />
-          <div className="w-2.5 h-8 md:w-3 md:h-10 bg-emerald-500 rounded-full" />
-        </div>
+    <div className={cn("flex items-start gap-4 p-4 rounded-2xl bg-white shadow-sm border border-slate-100", className)}>
+      {/* Paso-Sensei Avatar (8-bit Pixel Art Style) */}
+      <div className={cn("shrink-0 relative mt-2", getMoodStyles())}>
+        <svg width="80" height="90" viewBox="0 0 80 90" fill="none" xmlns="http://www.w3.org/2000/svg" className="drop-shadow-sm">
+          {/* Main Body (Pink, 8-bit style) */}
+          <rect x="15" y="30" width="50" height="50" rx="25" fill="#f43f5e" />
+          <rect x="20" y="35" width="40" height="40" rx="20" fill="#f43f5e" />
+          {/* Subtle green accent (like the vacuum) */}
+          <rect x="35" y="70" width="10" height="5" rx="2.5" fill="#10b981" />
 
-        {/* 本体ボディー（ピンク） */}
-        <div className="w-24 h-24 md:w-32 md:h-32 bg-pink-500 rounded-full flex items-center justify-center shadow-lg border-4 border-card relative overflow-hidden">
+          {/* Eyes (Simple, circular, wide-set like image_17.png) */}
+          <circle cx="30" cy="45" r="7" fill="white" />
+          <circle cx="50" cy="45" r="7" fill="white" />
           
-          {/* お顔パネル */}
-          <div className="w-20 h-20 md:w-26 md:h-26 bg-slate-50 rounded-full flex flex-col items-center justify-center border-4 border-pink-200 shadow-inner p-1">
-            
-            {/* 顔のパーツコンテナ */}
-            <div className="relative w-full h-full flex flex-col items-center justify-center pt-2">
-              
-              {/* 両目 */}
-              <div className="flex gap-1.5 md:gap-2.5 mb-2">
-                <AnimeEye />
-                <AnimeEye />
-              </div>
-              
-              {/* 小鼻 */}
-              <div className="w-1 h-1 bg-pink-300 rounded-full opacity-70" />
-              
-              {/* Blush (うるうる感を出すために鮮やかに) */}
-              <div className="absolute top-9 left-1 w-3.5 h-2.5 bg-pink-400 rounded-full opacity-60 blur-[1px]" />
-              <div className="absolute top-9 right-1 w-3.5 h-2.5 bg-pink-400 rounded-full opacity-60 blur-[1px]" />
-              
-              {/* Mouth */}
-              <div className={cn(
-                "absolute bottom-2 left-1/2 -translate-x-1/2 transition-all",
-                mood === "celebrating" || mood === "happy" 
-                  ? "w-7 h-3.5 md:w-9 md:h-4.5 border-b-4 border-slate-700 rounded-b-full" 
-                  : "w-5 h-2.5 md:w-6 md:h-3 border-b-2 border-slate-700 rounded-b-full"
-              )} />
-            </div>
-          </div>
-          
-          {/* ボディーのつや感 */}
-          <div className="absolute top-3 left-6 w-8 h-4 bg-white/30 rounded-full -rotate-12" />
-        </div>
+          {/* Pupils (8-bit, simple with a tiny highlight) */}
+          <g fill="#111827">
+            {/* Pupil form changes with mood */}
+            <rect x="28" y="43" width="4" height="4" className={cn("transition-transform", getEyeExpression())} />
+            <rect x="48" y="43" width="4" height="4" className={cn("transition-transform", getEyeExpression())} />
+            {/* Small light highlight */}
+            <rect x="30" y="44" width="1" height="1" fill="white" />
+            <rect x="50" y="44" width="1" height="1" fill="white" />
+          </g>
 
-        {/* Character name badge（グリーンの文字） */}
-        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-card px-3 py-1 rounded-full text-xs font-bold text-emerald-600 shadow-md border border-border whitespace-nowrap z-20 uppercase tracking-wider">
-          Paso<ruby>Sensei<rt>せんせい</rt></ruby>
+          {/* Simple mouth (8-bit style) */}
+          <path 
+            d={mood === "celebrating" || mood === "happy" ? "M30 65 Q40 70 50 65" : "M32 68H48"} 
+            stroke="#111827" 
+            strokeWidth="3" 
+            strokeLinecap="round" 
+            fill="none" 
+          />
+
+          {/* Blush (8-bit style) */}
+          <rect x="22" y="52" width="4" height="2" fill="#fda4af" opacity="0.6" />
+          <rect x="54" y="52" width="4" height="2" fill="#fda4af" opacity="0.6" />
+          
+        </svg>
+
+        <div className="absolute -bottom-1 -right-1 bg-white px-2 py-0.5 rounded-full border border-slate-200 shadow-sm">
+          <span className="text-[10px] font-black text-rose-600">パソ<ruby>先生<rt>せんせい</rt></ruby></span>
         </div>
       </div>
 
       {/* Speech Bubble */}
-      <div className="relative flex-1 bg-card rounded-2xl rounded-tl-sm p-4 md:p-6 shadow-lg border border-border mt-6">
-        <div className="absolute -left-3 top-4 w-0 h-0 border-t-[10px] border-t-transparent border-r-[12px] border-r-card border-b-[10px] border-b-transparent" />
-        <div className="absolute -left-[14px] top-4 w-0 h-0 border-t-[11px] border-t-transparent border-r-[13px] border-r-border border-b-[11px] border-b-transparent -z-10" />
-        
-        <div className="text-base md:text-lg leading-relaxed text-card-foreground font-medium">
+      <div className="flex-1 pt-2">
+        <div className="text-slate-700 leading-relaxed font-medium">
           {message}
         </div>
       </div>
@@ -124,7 +95,7 @@ export function Ruby({ children, rt }: { children: React.ReactNode; rt: string }
   return (
     <ruby>
       {children}
-      <rt className="text-[0.6em] text-slate-400">{rt}</rt>
+      <rt className="text-[0.6em] text-slate-400 font-normal">{rt}</rt>
     </ruby>
   )
 }
