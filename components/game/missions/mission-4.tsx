@@ -5,23 +5,19 @@ import { cn } from "@/lib/utils"
 import { Character, Ruby } from "../character"
 import { SuccessOverlay } from "../success-overlay"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { 
-  Wifi, 
-  WifiOff, 
-  Battery, 
-  Volume2,
-  Save,
-  Power,
-  Monitor,
-  Check,
-  ChevronRight
+  Wifi, WifiOff, Battery, Volume2, Save, Power, 
+  ChevronRight, ArrowLeft, Lock, SignalHigh, 
+  Bluetooth, Plane, Moon, Accessibility, Sun, Laptop, Search, Settings, User
 } from "lucide-react"
 
 interface Mission4Props {
   onComplete: () => void
 }
 
-type Step = "intro" | "tutorial-wifi" | "tutorial-save" | "tutorial-shutdown" | "wifi" | "save" | "shutdown" | "complete"
+type Step = "intro" | "wifi" | "save" | "shutdown" | "complete"
+type WifiSubStep = "quick-settings" | "wifi-list" | "password"
 
 const wifiNetworks = [
   { name: "Campus_WiFi", secured: true, strength: 3 },
@@ -34,8 +30,10 @@ export function Mission4({ onComplete }: Mission4Props) {
   const [showSuccess, setShowSuccess] = useState(false)
   const [successMessage, setSuccessMessage] = useState("")
   const [wifiConnected, setWifiConnected] = useState(false)
-  const [showWifiPanel, setShowWifiPanel] = useState(false)
+  const [showQuickSettings, setShowQuickSettings] = useState(false)
   const [selectedNetwork, setSelectedNetwork] = useState<string | null>(null)
+  const [wifiSubStep, setWifiSubStep] = useState<WifiSubStep>("quick-settings")
+  const [wifiPassword, setWifiPassword] = useState("")
   const [documentSaved, setDocumentSaved] = useState(false)
   const [showStartMenu, setShowStartMenu] = useState(false)
   const [showPowerMenu, setShowPowerMenu] = useState(false)
@@ -50,36 +48,28 @@ export function Mission4({ onComplete }: Mission4Props) {
     }, 1500)
   }, [])
 
-  // Handle Ctrl+S for save
+  // Ctrl+S ブロック機能
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (step === "save" && e.ctrlKey && e.key === "s") {
-        e.preventDefault()
-        if (!documentSaved) {
-          setDocumentSaved(true)
-          triggerSuccess("これで安心だね！", "shutdown")
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        if (step === "save" && !documentSaved) {
+          setDocumentSaved(true);
+          triggerSuccess("正しく保存ほぞんできたね！", "shutdown");
         }
       }
-    }
-    window.addEventListener("keydown", handleKeyDown)
-    return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [step, documentSaved, triggerSuccess])
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [step, documentSaved, triggerSuccess]);
 
-  const handleWifiConnect = (networkName: string) => {
-    setSelectedNetwork(networkName)
-    if (networkName === "Campus_WiFi") {
-      setTimeout(() => {
-        setWifiConnected(true)
-        setShowWifiPanel(false)
-        triggerSuccess("これでインターネットにつながったね！", "save")
-      }, 1000)
-    }
-  }
-
-  const handleSave = () => {
-    if (step === "save") {
-      setDocumentSaved(true)
-      triggerSuccess("これで安心だね！", "shutdown")
+  const handleWifiConnect = () => {
+    if (wifiPassword === "password123") {
+      setWifiConnected(true)
+      setShowQuickSettings(false)
+      triggerSuccess("インターネットにつながったね！", "save")
+    } else {
+      alert("パスワードが違ちがうみたい。「password123」と入力にゅうりょくしてね。")
     }
   }
 
@@ -88,363 +78,172 @@ export function Mission4({ onComplete }: Mission4Props) {
     setShowPowerMenu(false)
     setShowStartMenu(false)
     setTimeout(() => {
-      triggerSuccess("お疲れ様！今日もよく頑張ったね！また一緒に練習しよう！", "complete")
-      setTimeout(() => {
-        onComplete()
-      }, 2000)
+      triggerSuccess("ミッションクリア！よく頑張がんばったね！", "complete")
+      setTimeout(() => onComplete(), 2000)
     }, 2000)
   }
 
   const getMessage = (): React.ReactNode => {
     switch (step) {
-      case "intro":
-        return (
-          <>
-            <Ruby rt="さいご">最後</Ruby>のミッションだ！これができれば<Ruby rt="いちにんまえ">一人前</Ruby>！
-          </>
-        )
-      case "tutorial-wifi":
-        return (
-          <div className="space-y-2">
-            <p className="font-bold text-primary">【Wi-Fi<Ruby rt="せつぞく">接続</Ruby>の<Ruby rt="やりかた">やり方</Ruby>】</p>
-            <p><Ruby rt="がめん">画面</Ruby>の<Ruby rt="みぎした">右下</Ruby>にあるWi-Fiアイコンをクリックして、ネットワークを<Ruby rt="えら">選</Ruby>ぶよ！</p>
-            <div className="mt-4 flex justify-center items-center gap-4">
-              <div className="bg-gray-800 p-2 rounded">
-                <WifiOff className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-lg">→</span>
-              <div className="bg-gray-100 border rounded p-2">
-                <p className="text-xs">Campus_WiFi</p>
-                <p className="text-xs text-muted-foreground">Guest_Network</p>
-              </div>
-              <span className="text-lg">→</span>
-              <div className="bg-gray-800 p-2 rounded">
-                <Wifi className="w-6 h-6 text-blue-400" />
-              </div>
-            </div>
-          </div>
-        )
-      case "tutorial-save":
-        return (
-          <div className="space-y-2">
-            <p className="font-bold text-primary">【<Ruby rt="ほぞん">保存</Ruby>の<Ruby rt="やりかた">やり方</Ruby>】</p>
-            <p>パソコンは<Ruby rt="ほぞん">保存</Ruby>しないとデータが<Ruby rt="き">消</Ruby>えちゃう！</p>
-            <div className="mt-4 flex justify-center items-center gap-4">
-              <div className="text-center">
-                <div className="bg-gray-800 p-2 rounded inline-block mb-1">
-                  <Save className="w-6 h-6 text-white" />
-                </div>
-                <p className="text-xs text-muted-foreground"><Ruby rt="ほぞん">保存</Ruby>アイコン</p>
-              </div>
-              <span className="text-lg">または</span>
-              <div className="text-center">
-                <div className="flex gap-1 justify-center">
-                  <div className="bg-gray-800 text-white px-2 py-1 rounded text-sm">Ctrl</div>
-                  <div className="bg-gray-800 text-white px-2 py-1 rounded text-sm">S</div>
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">ショートカット</p>
-              </div>
-            </div>
-          </div>
-        )
-      case "tutorial-shutdown":
-        return (
-          <div className="space-y-2">
-            <p className="font-bold text-primary">【<Ruby rt="ただ">正</Ruby>しいシャットダウン】</p>
-            <p><Ruby rt="でんげん">電源</Ruby>ボタンを<Ruby rt="ちょくせつお">直接押</Ruby>さないで！<Ruby rt="ひだりした">左下</Ruby>のWindowsマークから<Ruby rt="ただ">正</Ruby>しく<Ruby rt="き">切</Ruby>ろう。</p>
-            <div className="mt-4 flex justify-center items-center gap-2">
-              <div className="bg-gray-800 p-2 rounded">
-                <div className="w-5 h-5 grid grid-cols-2 gap-0.5">
-                  <div className="bg-blue-400 rounded-sm" />
-                  <div className="bg-green-400 rounded-sm" />
-                  <div className="bg-red-400 rounded-sm" />
-                  <div className="bg-yellow-400 rounded-sm" />
-                </div>
-              </div>
-              <span className="text-lg">→</span>
-              <div className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded">
-                <Power className="w-4 h-4" />
-                <span className="text-sm"><Ruby rt="でんげん">電源</Ruby></span>
-              </div>
-              <span className="text-lg">→</span>
-              <span className="text-sm bg-gray-100 px-2 py-1 rounded">シャットダウン</span>
-            </div>
-          </div>
-        )
-      case "wifi":
-        return (
-          <>
-            <Ruby rt="した">下</Ruby>のパソコン<Ruby rt="がめん">画面</Ruby>の<Ruby rt="みぎした">右下</Ruby>にあるWi-Fiアイコンをクリックして、「<span className="font-bold text-primary">Campus_WiFi</span>」に<Ruby rt="せつぞく">接続</Ruby>して！
-          </>
-        )
-      case "save":
-        return (
-          <>
-            パソコンは「<Ruby rt="ほぞん">保存</Ruby>（Save）」を<Ruby rt="お">押</Ruby>さないとデータが<Ruby rt="き">消</Ruby>えちゃう！フロッピーディスクのアイコン、または「<span className="font-bold text-primary">Ctrl+S</span>」を<Ruby rt="お">押</Ruby>して<Ruby rt="ほぞん">保存</Ruby>して！
-          </>
-        )
-      case "shutdown":
-        return (
-          <>
-            <Ruby rt="ひだりした">左下</Ruby>のWindowsマークをクリックして、<Ruby rt="でんげん">電源</Ruby>を<Ruby rt="ただ">正</Ruby>しく<Ruby rt="き">切</Ruby>って！
-          </>
-        )
-      case "complete":
-        return (
-          <>
-            <Ruby rt="ぜん">全</Ruby>ミッションクリア！パソコンの<Ruby rt="きほん">基本</Ruby>をマスターしたね！お<Ruby rt="つか">疲</Ruby>れ<Ruby rt="さま">様</Ruby>でした！
-          </>
-        )
-      default:
-        return ""
+      case "intro": return <><Ruby rt="さいご">最後</Ruby>のミッション！これができれば<Ruby rt="かんぺき">完璧</Ruby>だよ！</>
+      case "wifi": return <><Ruby rt="みぎした">右下</Ruby>のアイコンを<Ruby rt="お">押</Ruby>して、「<span className="text-primary font-bold">Campus_WiFi</span>」につないでみよう！</>
+      case "save": return <>大事だいじなデータだから「<span className="text-primary font-bold">Ctrl + S</span>」で<Ruby rt="ほぞん">保存</Ruby>してね！</>
+      case "shutdown": return <>Windowsマークをクリックして、<Ruby rt="でんげん">電源</Ruby>を<Ruby rt="き">切</Ruby>ってみよう！</>
+      case "complete": return <>おめでとう！パソコンマスターだね！</>
+      default: return ""
     }
   }
 
-  const getMood = (): "happy" | "neutral" | "encouraging" | "celebrating" => {
-    if (showSuccess || step === "complete") return "celebrating"
-    if (step === "intro" || step.startsWith("tutorial")) return "happy"
-    return "encouraging"
-  }
-
-  const isTutorialStep = step.startsWith("tutorial")
-  const isPracticeStep = step === "wifi" || step === "save" || step === "shutdown"
-
   return (
-    <div className="flex flex-col h-full min-h-0">
+    <div className="flex flex-col h-full bg-slate-100">
       <SuccessOverlay show={showSuccess} message={successMessage} />
-
-      {/* Character Section - compact when in practice mode */}
-      <div className={cn(
-        "bg-gradient-to-b from-secondary to-background shrink-0",
-        isPracticeStep ? "p-3 md:p-4" : "p-4 md:p-6"
-      )}>
-        <Character message={getMessage()} mood={getMood()} className={isPracticeStep ? "scale-90 origin-top-left" : ""} />
-
-        {/* Tutorial navigation */}
+      
+      {/* キャラクター指示エリア（大きく、見やすく） */}
+      <div className="shrink-0 p-6 bg-white border-b shadow-sm">
+        <Character message={getMessage()} mood={showSuccess ? "celebrating" : "encouraging"} />
         {step === "intro" && (
-          <div className="mt-4 flex justify-center">
-            <Button onClick={() => setStep("tutorial-wifi")} size="lg" className="text-lg px-8">
-              スタート！
-            </Button>
-          </div>
-        )}
-
-        {step === "tutorial-wifi" && (
-          <div className="mt-4 flex justify-center">
-            <Button onClick={() => setStep("tutorial-save")} size="lg" className="text-lg px-8">
-              <Ruby rt="つぎ">次</Ruby>へ
-            </Button>
-          </div>
-        )}
-
-        {step === "tutorial-save" && (
-          <div className="mt-4 flex justify-center">
-            <Button onClick={() => setStep("tutorial-shutdown")} size="lg" className="text-lg px-8">
-              <Ruby rt="つぎ">次</Ruby>へ
-            </Button>
-          </div>
-        )}
-
-        {step === "tutorial-shutdown" && (
-          <div className="mt-4 flex justify-center">
-            <Button onClick={() => setStep("wifi")} size="lg" className="text-lg px-8">
-              <Ruby rt="れんしゅう">練習</Ruby>をはじめる！
-            </Button>
+          <div className="mt-6 flex justify-center">
+            <Button onClick={() => setStep("wifi")} size="lg" className="text-xl px-12 h-16 shadow-lg">スタート！</Button>
           </div>
         )}
       </div>
 
-      {/* Simulation Area - takes all remaining vertical space */}
-      {isPracticeStep && (
-        <div className="flex-1 min-h-0 p-3 md:p-4">
-          <div className="h-full bg-card rounded-2xl border border-border shadow-lg overflow-hidden relative">
-            {/* Shutdown Animation */}
+      {(step !== "intro" && step !== "complete") && (
+        <div className="flex-1 p-8 flex items-center justify-center overflow-hidden">
+          {/* シミュレーター本体：見切れ防止のため aspect-ratio を削除し w-full h-full で制御 */}
+          <div className="w-full h-full max-w-6xl max-h-[700px] bg-slate-900 rounded-[2rem] shadow-[0_40px_100px_rgba(0,0,0,0.5)] overflow-hidden relative border-[12px] border-slate-800 flex flex-col">
+            
+            {/* シャットダウン画面 */}
             {shuttingDown && (
-              <div className="absolute inset-0 bg-black z-50 flex items-center justify-center animate-fade-in">
-                <div className="text-center">
-                  <div className="w-16 h-16 border-4 border-blue-400 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                  <p className="text-white text-lg">シャットダウンしています...</p>
-                </div>
+              <div className="absolute inset-0 bg-black z-[100] flex flex-col items-center justify-center animate-fade-in text-white">
+                <div className="w-16 h-16 border-4 border-blue-400 border-t-transparent rounded-full animate-spin mb-6" />
+                <p className="text-2xl font-light">シャットダウンしています</p>
               </div>
             )}
 
-            {/* Desktop - Full layout visible */}
-            <div className="h-full bg-gradient-to-br from-blue-900 to-blue-950 flex flex-col relative">
-              {/* Main desktop area */}
-              <div className="flex-1 p-4 relative overflow-visible min-h-0">
-                {/* Document Window for Save step */}
-                {step === "save" && !documentSaved && (
-                  <div className="absolute top-4 left-1/2 -translate-x-1/2 w-80 bg-white rounded-lg shadow-2xl overflow-hidden z-10">
-                    <div className="bg-gray-800 px-3 py-2 flex items-center justify-between">
-                      <span className="text-white text-sm">ドキュメント.txt</span>
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={handleSave}
-                          className={cn(
-                            "w-8 h-6 bg-gray-600 rounded flex items-center justify-center hover:bg-gray-500",
-                            "ring-4 ring-warning animate-pulse"
-                          )}
-                          title="保存 (Ctrl+S)"
-                        >
-                          <Save className="w-4 h-4 text-white" />
-                        </button>
+            <div className="flex-1 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900 relative p-10">
+              
+              {/* メモ帳（保存ミッション） */}
+              {step === "save" && !documentSaved && (
+                <div className="absolute top-10 left-10 w-[500px] bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-300 animate-in zoom-in-95">
+                  <div className="bg-slate-100 px-5 py-3 border-b flex justify-between items-center">
+                    <span className="text-sm font-bold text-slate-600">メモ帳 - 練習れんしゅう.txt</span>
+                    <Save className="w-6 h-6 text-blue-600 cursor-pointer hover:scale-110 transition-transform" onClick={() => { setDocumentSaved(true); triggerSuccess("保存できたね！", "shutdown"); }}/>
+                  </div>
+                  <div className="p-10 text-2xl font-mono text-slate-800 leading-relaxed">
+                    これは大事だいじなデータです。<br />
+                    保存ほぞんしないと消きえちゃいます！
+                  </div>
+                </div>
+              )}
+
+              {/* クイック設定パネル（Windows 11 風） */}
+              {showQuickSettings && (
+                <div className="absolute bottom-4 right-4 w-[400px] bg-slate-900/90 backdrop-blur-3xl border border-white/20 rounded-[1.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.6)] z-50 overflow-hidden animate-in slide-in-from-bottom-4">
+                  {wifiSubStep === "quick-settings" ? (
+                    <div className="p-8">
+                      <div className="grid grid-cols-3 gap-4 mb-8">
+                        <div className="col-span-1 flex h-20 bg-blue-600 rounded-xl overflow-hidden shadow-lg border border-white/10">
+                          <div className="flex-1 flex items-center justify-center"><Wifi className="w-8 h-8 text-white" /></div>
+                          <button onClick={() => setWifiSubStep("wifi-list")} className={cn("w-10 border-l border-white/20 flex items-center justify-center hover:bg-white/10", !selectedNetwork && "bg-yellow-400/30 animate-pulse")}>
+                            <ChevronRight className="w-6 h-6 text-white" />
+                          </button>
+                        </div>
+                        {[Bluetooth, Plane, Moon, Sun, Accessibility].map((Icon, i) => (
+                          <div key={i} className="bg-white/10 h-20 rounded-xl flex items-center justify-center"><Icon className="w-8 h-8 text-white/40" /></div>
+                        ))}
+                      </div>
+                      <div className="space-y-6 px-2">
+                        <div className="flex items-center gap-6"><Sun className="w-6 h-6 text-white/60" /><div className="flex-1 h-2 bg-white/20 rounded-full relative"><div className="absolute w-5 h-5 bg-white rounded-full -top-1.5 left-3/4 shadow-md" /></div></div>
+                        <div className="flex items-center gap-6"><Volume2 className="w-6 h-6 text-white/60" /><div className="flex-1 h-2 bg-white/20 rounded-full relative"><div className="absolute w-5 h-5 bg-white rounded-full -top-1.5 left-1/2 shadow-md" /></div></div>
                       </div>
                     </div>
-                    <div className="p-4 text-gray-800 text-sm">
-                      <p><Ruby rt="たいせつ">大切</Ruby>なデータ...</p>
-                      <p className="mt-2"><Ruby rt="ほぞん">保存</Ruby>しないと<Ruby rt="き">消</Ruby>えちゃうよ！</p>
-                    </div>
-                    <div className="bg-gray-100 px-4 py-2 text-xs text-muted-foreground">
-                      <Ruby rt="じぶん">自分</Ruby>のキーボードで「Ctrl+S」でもOK！
-                    </div>
-                  </div>
-                )}
-
-                {/* Saved notification */}
-                {documentSaved && step === "save" && (
-                  <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-success text-success-foreground px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 z-10">
-                    <Check className="w-5 h-5" />
-                    <span><Ruby rt="ほぞん">保存</Ruby>しました！</span>
-                  </div>
-                )}
-
-                {/* Wi-Fi Panel - anchored to taskbar bottom */}
-                {showWifiPanel && (
-                  <div className="absolute bottom-0 right-2 w-72 bg-gray-900/95 backdrop-blur rounded-t-lg shadow-2xl overflow-hidden z-40">
-                    <div className="p-4 border-b border-gray-700">
-                      <h3 className="text-white font-medium">Wi-Fi ネットワーク</h3>
-                    </div>
-                    <div className="p-2">
-                      {wifiNetworks.map((network) => (
-                        <button
-                          key={network.name}
-                          onClick={() => handleWifiConnect(network.name)}
-                          className={cn(
-                            "w-full px-3 py-3 text-left text-white hover:bg-gray-700 rounded flex items-center justify-between transition-all",
-                            selectedNetwork === network.name && "bg-gray-700",
-                            network.name === "Campus_WiFi" && "ring-2 ring-warning animate-pulse"
-                          )}
-                        >
-                          <div className="flex items-center gap-3">
-                            <Wifi className="w-5 h-5" />
-                            <span>{network.name}</span>
+                  ) : (
+                    <div className="p-6 h-[450px] flex flex-col">
+                      <button onClick={() => setWifiSubStep("quick-settings")} className="flex items-center gap-3 text-sm text-white/60 mb-6 hover:text-white"><ArrowLeft className="w-5 h-5" /> Wi-Fi 設定せってい</button>
+                      <div className="flex-1 space-y-2 overflow-y-auto pr-2">
+                        {wifiNetworks.map(n => (
+                          <button key={n.name} onClick={() => setSelectedNetwork(n.name)} className={cn("w-full p-4 text-left text-base rounded-xl transition-all", selectedNetwork === n.name ? "bg-blue-600 text-white shadow-lg" : "text-white/80 hover:bg-white/10")}>
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-4"><Wifi className="w-5 h-5" /> {n.name}</div>
+                              {selectedNetwork === n.name && <ChevronRight className="w-5 h-5" />}
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                      {selectedNetwork && wifiSubStep === "wifi-list" && <Button size="lg" className="mt-4 h-14 text-lg bg-blue-600 hover:bg-blue-500" onClick={() => setWifiSubStep("password")}>接続せつぞくする</Button>}
+                      {wifiSubStep === "password" && (
+                        <div className="mt-4 space-y-4 animate-in slide-in-from-right-4">
+                          <div className="p-4 bg-blue-900/40 rounded-xl border border-blue-400/30">
+                            <p className="text-white text-sm font-medium mb-3">パスワードを入力にゅうりょくしてください：</p>
+                            <Input type="password" placeholder="ヒント：password123" className="h-12 text-base bg-slate-800 border-white/10 text-white shadow-inner" value={wifiPassword} onChange={e => setWifiPassword(e.target.value)} autoFocus />
+                            <p className="text-xs text-blue-300 mt-3 font-bold">※練習用れんしゅうようパスワード：password123</p>
                           </div>
-                          {selectedNetwork === network.name && network.name === "Campus_WiFi" && (
-                            <div className="w-4 h-4 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
-                          )}
-                        </button>
+                          <div className="flex gap-3">
+                            <Button variant="ghost" className="flex-1 text-white" onClick={() => setWifiSubStep("wifi-list")}>キャンセル</Button>
+                            <Button className="flex-1 bg-blue-600" onClick={handleWifiConnect}>次つぎへ</Button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* スタートメニュー（中央配置） */}
+              {showStartMenu && (
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[550px] h-[600px] bg-slate-900/95 backdrop-blur-3xl border border-white/10 rounded-[2rem] shadow-[0_50px_100px_rgba(0,0,0,0.7)] z-50 p-10 flex flex-col animate-in slide-in-from-bottom-10">
+                  <div className="flex-1">
+                    <div className="grid grid-cols-4 gap-8">
+                      {[Settings, User, Laptop, Search, Plane, Sun, Bluetooth, Accessibility].map((Icon, i) => (
+                        <div key={i} className="flex flex-col items-center gap-3 group cursor-pointer">
+                          <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center border border-white/5 group-hover:bg-white/10 transition-all"><Icon className="w-8 h-8 text-white/70"/></div>
+                          <div className="w-10 h-1.5 bg-white/10 rounded-full"/>
+                        </div>
                       ))}
                     </div>
                   </div>
-                )}
-
-                {/* Start Menu - Opens upward */}
-                {showStartMenu && (
-                  <div className="absolute bottom-0 left-0 w-72 bg-gray-900/95 backdrop-blur rounded-tr-lg shadow-2xl overflow-visible z-40">
-                    <div className="p-4 border-b border-gray-700">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                          <span className="text-white font-bold">U</span>
-                        </div>
-                        <span className="text-white">ユーザー</span>
-                      </div>
+                  <div className="pt-8 border-t border-white/10 flex justify-between items-center relative">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">U</div>
+                      <span className="text-lg text-white font-medium">ユーザー</span>
                     </div>
-                    <div className="p-2">
-                      <button className="w-full px-3 py-2 text-left text-white hover:bg-gray-700 rounded flex items-center gap-3">
-                        <Monitor className="w-5 h-5" />
-                        <span><Ruby rt="せってい">設定</Ruby></span>
-                      </button>
-                      <button
-                        onClick={() => setShowPowerMenu(!showPowerMenu)}
-                        className={cn(
-                          "w-full px-3 py-2 text-left text-white hover:bg-gray-700 rounded flex items-center justify-between",
-                          step === "shutdown" && "ring-2 ring-warning"
-                        )}
-                      >
-                        <div className="flex items-center gap-3">
-                          <Power className="w-5 h-5" />
-                          <span><Ruby rt="でんげん">電源</Ruby></span>
-                        </div>
-                        <ChevronRight className="w-4 h-4" />
-                      </button>
-                    </div>
-
-                    {/* Power submenu - Opens to the right */}
+                    <button onClick={() => setShowPowerMenu(!showPowerMenu)} className={cn("p-4 rounded-xl hover:bg-white/10 transition-colors", step === "shutdown" && "ring-4 ring-yellow-400 animate-pulse")}><Power className="w-8 h-8 text-white" /></button>
                     {showPowerMenu && (
-                      <div className="absolute left-full bottom-0 w-48 bg-gray-800 rounded-lg shadow-xl ml-1">
-                        <button className="w-full px-4 py-3 text-left text-white hover:bg-gray-700 rounded-t-lg">
-                          スリープ
-                        </button>
-                        <button
-                          onClick={handleShutdown}
-                          className={cn(
-                            "w-full px-4 py-3 text-left text-white hover:bg-gray-700 rounded-b-lg",
-                            "ring-2 ring-warning animate-pulse"
-                          )}
-                        >
-                          シャットダウン
-                        </button>
+                      <div className="absolute right-0 bottom-full mb-4 w-56 bg-slate-800 rounded-xl border border-white/10 overflow-hidden shadow-2xl z-[70] animate-in zoom-in-95">
+                        <button onClick={handleShutdown} className="w-full p-5 text-left text-base text-white hover:bg-blue-600 flex items-center gap-4"><Power className="w-5 h-5" /> シャットダウン</button>
                       </div>
                     )}
                   </div>
-                )}
-
-                {/* Desktop icons */}
-                <div className="flex flex-col gap-4">
-                  <div className="w-16 text-center">
-                    <div className="w-12 h-12 mx-auto bg-blue-500 rounded-lg flex items-center justify-center">
-                      <Monitor className="w-8 h-8 text-white" />
-                    </div>
-                    <span className="text-white text-xs mt-1 block">PC</span>
-                  </div>
                 </div>
-              </div>
+              )}
+            </div>
 
-              {/* Taskbar - Fixed at bottom, always visible */}
-              <div className="h-12 bg-gray-900/95 backdrop-blur flex items-center px-2 shrink-0">
-                {/* Start button */}
-                <button
-                  onClick={() => {
-                    setShowStartMenu(!showStartMenu)
-                    setShowWifiPanel(false)
-                  }}
-                  className={cn(
-                    "h-10 px-4 hover:bg-gray-700 text-white rounded flex items-center gap-2 transition-all",
-                    step === "shutdown" && !showStartMenu && "ring-4 ring-warning animate-pulse"
-                  )}
+            {/* タスクバー（高さアップ・中央スタートボタン） */}
+            <div className="h-20 bg-slate-900/95 backdrop-blur-2xl border-t border-white/10 flex items-center px-6 justify-between shrink-0 relative z-[70]">
+              <div className="w-1/3" />
+              <div className="w-1/3 flex justify-center gap-2">
+                <button 
+                  onClick={() => { setShowStartMenu(!showStartMenu); setShowQuickSettings(false); }} 
+                  className={cn("p-3 hover:bg-white/10 rounded-xl transition-all", step === "shutdown" && !showStartMenu && "ring-4 ring-yellow-400 animate-pulse")}
                 >
-                  <div className="w-5 h-5 grid grid-cols-2 gap-0.5">
-                    <div className="bg-blue-400 rounded-sm" />
-                    <div className="bg-green-400 rounded-sm" />
-                    <div className="bg-red-400 rounded-sm" />
-                    <div className="bg-yellow-400 rounded-sm" />
+                  <div className="grid grid-cols-2 gap-1 w-7 h-7">
+                    <div className="bg-blue-500 rounded-sm"/><div className="bg-blue-500 rounded-sm"/>
+                    <div className="bg-blue-500 rounded-sm"/><div className="bg-blue-500 rounded-sm"/>
                   </div>
                 </button>
-
-                <div className="flex-1" />
-
-                {/* System tray */}
-                <div className="flex items-center gap-3 text-white">
-                  <button
-                    onClick={() => {
-                      setShowWifiPanel(!showWifiPanel)
-                      setShowStartMenu(false)
-                    }}
-                    className={cn(
-                      "p-2 hover:bg-gray-700 rounded transition-all",
-                      step === "wifi" && !showWifiPanel && "ring-4 ring-warning animate-pulse"
-                    )}
-                  >
-                    {wifiConnected ? (
-                      <Wifi className="w-5 h-5 text-blue-400" />
-                    ) : (
-                      <WifiOff className="w-5 h-5" />
-                    )}
-                  </button>
-                  <Volume2 className="w-5 h-5" />
-                  <Battery className="w-5 h-5" />
-                  <span className="text-xs">12:00</span>
-                </div>
+                <div className="w-12 h-12 flex items-center justify-center opacity-30"><Search className="w-7 h-7 text-white"/></div>
+              </div>
+              <div className="w-1/3 flex justify-end">
+                <button 
+                  onClick={() => { setShowQuickSettings(!showQuickSettings); setShowStartMenu(false); setWifiSubStep("quick-settings"); }} 
+                  className={cn("flex items-center gap-4 px-5 hover:bg-white/10 rounded-xl h-14 transition-all", step === "wifi" && !showQuickSettings && "ring-4 ring-yellow-400 animate-pulse")}
+                >
+                  {wifiConnected ? <Wifi className="w-6 h-6 text-white" /> : <WifiOff className="w-6 h-6 text-white/40" />}
+                  <Volume2 className="w-6 h-6 text-white" />
+                  <Battery className="w-6 h-6 text-white" />
+                  <div className="text-sm text-white/80 font-mono pl-2">14:00</div>
+                </button>
               </div>
             </div>
           </div>
