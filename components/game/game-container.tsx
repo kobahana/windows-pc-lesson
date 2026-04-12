@@ -23,12 +23,17 @@ export function GameContainer() {
   ]
 
   const handleMissionComplete = (missionId: number) => {
-    setCompletedMissions([...completedMissions, missionId])
+    setCompletedMissions(prev => prev.includes(missionId) ? prev : [...prev, missionId])
     if (missionId < 4) {
       setCurrentMission(missionId + 1)
     } else {
       setGameComplete(true)
     }
+  }
+
+  const handleMissionSelect = (missionId: number) => {
+    setCurrentMission(missionId)
+    setGameComplete(false)
   }
 
   const handleRestart = () => {
@@ -40,7 +45,7 @@ export function GameContainer() {
   if (gameComplete) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
-        <MissionHeader missions={missions} currentMission={currentMission} />
+        <MissionHeader missions={missions} currentMission={currentMission} onMissionSelect={handleMissionSelect} />
         <div className="flex-1 flex items-center justify-center p-8">
           <div className="max-w-lg text-center">
             <div className="w-32 h-32 mx-auto mb-8 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center shadow-xl animate-bounce-subtle">
@@ -88,9 +93,9 @@ export function GameContainer() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <MissionHeader missions={missions} currentMission={currentMission} />
-      <main className="flex-1 flex flex-col overflow-hidden">
+    <div className="h-screen bg-background flex flex-col">
+      <MissionHeader missions={missions} currentMission={currentMission} onMissionSelect={handleMissionSelect} />
+      <main className="flex-1 flex flex-col overflow-hidden min-h-0">
         {currentMission === 1 && (
           <Mission1 onComplete={() => handleMissionComplete(1)} />
         )}

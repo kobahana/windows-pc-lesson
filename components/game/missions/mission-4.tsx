@@ -210,13 +210,16 @@ export function Mission4({ onComplete }: Mission4Props) {
   const isPracticeStep = step === "wifi" || step === "save" || step === "shutdown"
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full min-h-0">
       <SuccessOverlay show={showSuccess} message={successMessage} />
-      
-      {/* Character Section */}
-      <div className="p-4 md:p-6 bg-gradient-to-b from-secondary to-background">
-        <Character message={getMessage()} mood={getMood()} />
-        
+
+      {/* Character Section - compact when in practice mode */}
+      <div className={cn(
+        "bg-gradient-to-b from-secondary to-background shrink-0",
+        isPracticeStep ? "p-3 md:p-4" : "p-4 md:p-6"
+      )}>
+        <Character message={getMessage()} mood={getMood()} className={isPracticeStep ? "scale-90 origin-top-left" : ""} />
+
         {/* Tutorial navigation */}
         {step === "intro" && (
           <div className="mt-4 flex justify-center">
@@ -225,7 +228,7 @@ export function Mission4({ onComplete }: Mission4Props) {
             </Button>
           </div>
         )}
-        
+
         {step === "tutorial-wifi" && (
           <div className="mt-4 flex justify-center">
             <Button onClick={() => setStep("tutorial-save")} size="lg" className="text-lg px-8">
@@ -233,7 +236,7 @@ export function Mission4({ onComplete }: Mission4Props) {
             </Button>
           </div>
         )}
-        
+
         {step === "tutorial-save" && (
           <div className="mt-4 flex justify-center">
             <Button onClick={() => setStep("tutorial-shutdown")} size="lg" className="text-lg px-8">
@@ -241,7 +244,7 @@ export function Mission4({ onComplete }: Mission4Props) {
             </Button>
           </div>
         )}
-        
+
         {step === "tutorial-shutdown" && (
           <div className="mt-4 flex justify-center">
             <Button onClick={() => setStep("wifi")} size="lg" className="text-lg px-8">
@@ -251,9 +254,9 @@ export function Mission4({ onComplete }: Mission4Props) {
         )}
       </div>
 
-      {/* Simulation Area */}
+      {/* Simulation Area - takes all remaining vertical space */}
       {isPracticeStep && (
-        <div className="flex-1 p-4 md:p-6 overflow-hidden">
+        <div className="flex-1 min-h-0 p-3 md:p-4">
           <div className="h-full bg-card rounded-2xl border border-border shadow-lg overflow-hidden relative">
             {/* Shutdown Animation */}
             {shuttingDown && (
@@ -268,14 +271,14 @@ export function Mission4({ onComplete }: Mission4Props) {
             {/* Desktop - Full layout visible */}
             <div className="h-full bg-gradient-to-br from-blue-900 to-blue-950 flex flex-col relative">
               {/* Main desktop area */}
-              <div className="flex-1 p-4 relative overflow-hidden">
+              <div className="flex-1 p-4 relative overflow-visible min-h-0">
                 {/* Document Window for Save step */}
                 {step === "save" && !documentSaved && (
                   <div className="absolute top-4 left-1/2 -translate-x-1/2 w-80 bg-white rounded-lg shadow-2xl overflow-hidden z-10">
                     <div className="bg-gray-800 px-3 py-2 flex items-center justify-between">
                       <span className="text-white text-sm">ドキュメント.txt</span>
                       <div className="flex items-center gap-2">
-                        <button 
+                        <button
                           onClick={handleSave}
                           className={cn(
                             "w-8 h-6 bg-gray-600 rounded flex items-center justify-center hover:bg-gray-500",
@@ -305,13 +308,13 @@ export function Mission4({ onComplete }: Mission4Props) {
                   </div>
                 )}
 
-                {/* Wi-Fi Panel - Now opens ABOVE the taskbar for better visibility */}
+                {/* Wi-Fi Panel - anchored to taskbar bottom */}
                 {showWifiPanel && (
                   <div className="absolute bottom-0 right-2 w-72 bg-gray-900/95 backdrop-blur rounded-t-lg shadow-2xl overflow-hidden z-40">
                     <div className="p-4 border-b border-gray-700">
                       <h3 className="text-white font-medium">Wi-Fi ネットワーク</h3>
                     </div>
-                    <div className="p-2 max-h-48 overflow-y-auto">
+                    <div className="p-2">
                       {wifiNetworks.map((network) => (
                         <button
                           key={network.name}
@@ -351,7 +354,7 @@ export function Mission4({ onComplete }: Mission4Props) {
                         <Monitor className="w-5 h-5" />
                         <span><Ruby rt="せってい">設定</Ruby></span>
                       </button>
-                      <button 
+                      <button
                         onClick={() => setShowPowerMenu(!showPowerMenu)}
                         className={cn(
                           "w-full px-3 py-2 text-left text-white hover:bg-gray-700 rounded flex items-center justify-between",
@@ -365,14 +368,14 @@ export function Mission4({ onComplete }: Mission4Props) {
                         <ChevronRight className="w-4 h-4" />
                       </button>
                     </div>
-                    
+
                     {/* Power submenu - Opens to the right */}
                     {showPowerMenu && (
                       <div className="absolute left-full bottom-0 w-48 bg-gray-800 rounded-lg shadow-xl ml-1">
                         <button className="w-full px-4 py-3 text-left text-white hover:bg-gray-700 rounded-t-lg">
                           スリープ
                         </button>
-                        <button 
+                        <button
                           onClick={handleShutdown}
                           className={cn(
                             "w-full px-4 py-3 text-left text-white hover:bg-gray-700 rounded-b-lg",
@@ -400,7 +403,7 @@ export function Mission4({ onComplete }: Mission4Props) {
               {/* Taskbar - Fixed at bottom, always visible */}
               <div className="h-12 bg-gray-900/95 backdrop-blur flex items-center px-2 shrink-0">
                 {/* Start button */}
-                <button 
+                <button
                   onClick={() => {
                     setShowStartMenu(!showStartMenu)
                     setShowWifiPanel(false)
@@ -417,12 +420,12 @@ export function Mission4({ onComplete }: Mission4Props) {
                     <div className="bg-yellow-400 rounded-sm" />
                   </div>
                 </button>
-                
+
                 <div className="flex-1" />
-                
+
                 {/* System tray */}
                 <div className="flex items-center gap-3 text-white">
-                  <button 
+                  <button
                     onClick={() => {
                       setShowWifiPanel(!showWifiPanel)
                       setShowStartMenu(false)
