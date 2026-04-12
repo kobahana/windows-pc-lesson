@@ -70,14 +70,14 @@ export default function Lesson3() {
     { id: 1, name: "あいうえお", words: [{ h: "あいうえお", r: "aiueo" }] },
     { id: 2, name: "か〜な行", words: [{ h: "かきくけこ", r: "kakikukeko" }, { h: "さしすせそ", r: "sasisuseso" }, { h: "たちつてと", r: "tatituteto" }, { h: "なにぬねの", r: "naninuneno" }] },
     { id: 3, name: "は〜わ行", words: [{ h: "はひふへほ", r: "hahihuheho" }, { h: "まみむめも", r: "mamimumemo" }, { h: "やゆよ", r: "yayuyo" }, { h: "らりるれろ", r: "rarirurero" }, { h: "わをん", r: "wawonn" }] },
-    { id: 4, name: "濁音・半濁音", words: [{ h: "がぎぐげご", r: "gagigugego" }, { h: "ざじずぜぞ", r: "zazizuzeto" }, { h: "だぢづでど", r: "dadidudedo" }, { h: "ばびぶべぼ", r: "babibubebo" }, { h: "ぱぴぷぺぽ", r: "papipupepo" }] },
+    { id: 4, name: "濁音・半濁音", words: [{ h: "がぎぐげご", r: "gagigugego" }, { h: "ざじずぜぞ", r: "zazizuzezo" }, { h: "だぢづでど", r: "dadidudedo" }, { h: "ばびぶべぼ", r: "babibubebo" }, { h: "ぱぴぷぺぽ", r: "papipupepo" }] },
     { id: 5, name: "拗音 (K/S/T/N)", words: [{ h: "きゃきゅきょ", r: "kyakyukyo" }, { h: "しゃしゅしょ", r: "syasyusyo" }, { h: "ちゃちゅちょ", r: "tyatyutyo" }, { h: "にゃにゅにょ", r: "nyanyunyo" }] },
-    { id: 6, name: "拗音 (H/M/R/G/Z)", words: [{ h: "ひゃひゅひょ", r: "hyahyuhyo" }, { h: "みゃみゅみょ", r: "myamyumyo" }, { h: "りゃりゅりょ", r: "ryaryuryo" }, { h: "ぎゃぎゅぎょ", r: "gyagyugyo" }, { h: "じゃじゅじょ", r: "zyazyuzyo" }] },
+    { id: 6, name: "拗音 (H/M/R/G/Z)", words: [{ h: "ひゃひゅひょ", r: "hyahyuhyo" }, { h: "みゃみゅみょ", r: "myamyumyo" }, { h: "りゃりゅりょ", r: "ryaryuryo" }, { h: "ぎゃぎゅぎょ", r: "gyagyugyo" }, { h: "じゃじゅじょ", r: "jajujo" }] },
     { id: 7, name: "拗音 (D/B/P)", words: [{ h: "ぢゃぢゅぢょ", r: "dyadyudyo" }, { h: "びゃびゅびょ", r: "byabyubyo" }, { h: "ぴゃぴゅぴょ", r: "pyapyupyo" }] },
     { id: 8, name: "外来語 (F)", words: [{ h: "ふぁふぃふぇふぉ", r: "fafifefo" }] },
     { id: 9, name: "捨て仮名 (X)", words: [{ h: "ぁぃぅぇぉ", r: "xaxixuxexo" }, { h: "っ", r: "xtu" }] },
     { id: 10, name: "ん・っ・ー", words: [{ h: "にほん", r: "nihonn" }, { h: "きって", r: "kitte" }, { h: "コーヒー", r: "ko-hi-" }] },
-    { id: 11, name: "実戦あいさつ", words: [{ h: "こんにちは", r: "konnnitiwa" }, { h: "なまえは", r: "namaeha" }, { h: "ありがとう", r: "arigatou" }] },
+    { id: 11, name: "実戦あいさつ", words: [{ h: "こんにちは", r: "konnnitiha" }, { h: "なまえは", r: "namaeha" }, { h: "ありがとう", r: "arigatou" }] },
   ];
 
   const currentWord = stages[currentStage].words[wordIndex];
