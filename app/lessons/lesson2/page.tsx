@@ -32,7 +32,7 @@ const fingerMap: Record<string, { hand: 'left' | 'right', finger: number }> = {
   ' ': { hand: 'right', finger: 0 },
 }
 
-// 🌈 手のイラストコンポーネント (指全体が担当カラーになり、押すべき指が光るように修正)
+// 🌈 手のイラストコンポーネント (アクティブな指だけが指定色でライトアップされ、他はグレーに戻るように修正)
 const HandGuide = ({ activeHand, activeFinger }: { activeHand?: 'left' | 'right', activeFinger?: number }) => {
   const renderHand = (side: 'left' | 'right') => {
     const isLeft = side === 'left';
@@ -46,9 +46,10 @@ const HandGuide = ({ activeHand, activeFinger }: { activeHand?: 'left' | 'right'
           const yBase = f === 0 ? 110 : 65 + Math.abs(2 - f) * 12;
           return (
             <g key={f}>
+              {/* 指のrect: isActiveの時だけ指定色(config.bg)を適用、他は薄いグレー(fill-slate-100) */}
               <rect x={xBase - 12} y={yBase - (f === 0 ? 25 : 45)} width={f === 0 ? 35 : 24} height={f === 0 ? 25 : 55} rx="12" 
-                className={cn("transition-colors duration-300 shadow-sm", config.bg, "stroke-slate-100")} strokeWidth="2" />
-              {isActive && <circle cx={xBase + (f === 0 ? 10 : 0)} cy={yBase - (f === 0 ? 30 : 55)} r="8" className="fill-red-500 animate-bounce" />}
+                className={cn("transition-colors duration-300 shadow-sm", isActive ? config.bg : "fill-slate-100 stroke-slate-200")} strokeWidth="2" />
+              {isActive && <circle cx={xBase + (f === 0 ? 10 : 0)} cy={yBase - (f === 0 ? 30 : 55)} r="8" className="fill-blue-500 animate-bounce" />}
             </g>
           );
         })}
@@ -74,7 +75,7 @@ export default function Lesson2() {
     { name: "ホームポジションぜんぶ", keys: ["s", "l", "a", ";", "g", "h", "a", "s", "d", "f", "j", "k", "l", ";"] },
     { name: "上の段 (だん)", keys: ["r", "u", "e", "i", "w", "o", "q", "p", "t", "y"] },
     { name: "下の段 (だん)", keys: ["v", "n", "c", "m", "x", ",", "z", ".", "b", "/"] },
-    { name: "数字 (すすじ) とスペース", keys: ["1", "2", "3", "4", "5", " ", "6", "7", "8", "9", "0", " "] },
+    { name: "数字 (すすめじ) とスペース", keys: ["1", "2", "3", "4", "5", " ", "6", "7", "8", "9", "0", " "] },
   ];
 
   const practiceSequence = stages[currentStage].keys;
@@ -113,7 +114,7 @@ export default function Lesson2() {
   const activeFingerInfo = fingerMap[targetKey];
 
   return (
-    <div className="h-screen bg-slate-50 p-2 flex flex-col items-center overflow-hidden relative">
+    <div className="h-screen bg-slate-50 p-2 flex flex-col items-center overflow-hidden">
       {showSuccess && <SuccessOverlay show={true} message="ホームポジションをマスターしたね！" />}
       
       <div className="w-full max-w-4xl space-y-2 relative z-10 flex flex-col h-full text-slate-800">
@@ -180,7 +181,7 @@ export default function Lesson2() {
               })}
             </div>
 
-            <div className="bg-white p-5 rounded-[2.5rem] shadow-xl border border-slate-100 flex flex-col items-center justify-center relative">
+            <div className="bg-white p-5 rounded-[2.5rem] shadow-xl border border-slate-100 flex flex-col items-center justify-center Relative">
               <div className="space-y-1 mb-4 w-full max-w-[620px]">
                 {rows.map((row, i) => (
                   <div key={i} className="flex justify-center gap-1">
@@ -202,19 +203,11 @@ export default function Lesson2() {
                 <div className="flex justify-center mt-1">
                   <div className={cn(
                     "w-64 h-11 rounded-2xl border flex items-center justify-center text-[10px] font-bold transition-all",
-                    targetKey === " " ? "bg-slate-600 text-white scale-105 shadow-xl" : "bg-slate-50 border-slate-200 text-slate-300 opacity-20"
+                    targetKey === " " ? "bg-slate-600 text-white scale-105 shadow-xl" : "bg-slate-50 border-slate-100 text-slate-300 opacity-20"
                   )}>SPACE</div>
                 </div>
               </div>
               <HandGuide activeHand={activeFingerInfo?.hand} activeFinger={activeFingerInfo?.finger} />
-              
-              {showSuccess && (
-                <div className="absolute inset-0 bg-white/70 backdrop-blur-sm rounded-[2.5rem] flex flex-col items-center justify-center gap-6 z-50">
-                  <Star className="w-20 h-20 text-yellow-400 fill-yellow-400 animate-in zoom-in-50" />
-                  <p className="text-3xl font-bold text-slate-800">全（ぜん）ステージクリア！</p>
-                  <Button size="lg" className="bg-green-600 px-10 h-14 rounded-full text-lg shadow-xl" onClick={() => onComplete()}>ホームにもどる</Button>
-                </div>
-              )}
             </div>
           </div>
         )}
