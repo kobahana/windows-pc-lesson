@@ -7,8 +7,8 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Windowsのきそ - パソコン演習',
-  description: '留学生向けゲーム風パソコン演習Webアプリ。Windowsパソコンの基礎操作、タイピング、キーボードルールをゲーム感覚で学ぼう！',
+  title: 'パソコンレッスン',
+  description: '留学生のためのパソコン演習アプリ。Windowsパソコンの基礎操作、タイピング、キーボードルールをゲーム感覚で学ぼう！',
   generator: 'v0.app',
   icons: {
     icon: [
