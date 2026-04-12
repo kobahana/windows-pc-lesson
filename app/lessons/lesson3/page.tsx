@@ -69,12 +69,15 @@ export default function Lesson3() {
   const stages = [
     { id: 1, name: "あいうえお", words: [{ h: "あいうえお", r: "aiueo" }] },
     { id: 2, name: "か〜な行", words: [{ h: "かきくけこ", r: "kakikukeko" }, { h: "さしすせそ", r: "sasisuseso" }, { h: "たちつてと", r: "tatituteto" }, { h: "なにぬねの", r: "naninuneno" }] },
-    { id: 3, name: "は〜わ行", words: [{ h: "はひふへほ", r: "hahifuheho" }, { h: "まみむめも", r: "mamimumemo" }, { h: "やゆよ", r: "yayuyo" }, { h: "らりるれろ", r: "rarirurero" }, { h: "わをん", r: "wawonn" }] },
+    { id: 3, name: "は〜わ行", words: [{ h: "はひふへほ", r: "hahihuheho" }, { h: "まみむめも", r: "mamimumemo" }, { h: "やゆよ", r: "yayuyo" }, { h: "らりるれろ", r: "rarirurero" }, { h: "わをん", r: "wawonn" }] },
     { id: 4, name: "濁音・半濁音", words: [{ h: "がぎぐげご", r: "gagigugego" }, { h: "ざじずぜぞ", r: "zazizuzeto" }, { h: "だぢづでど", r: "dadidudedo" }, { h: "ばびぶべぼ", r: "babibubebo" }, { h: "ぱぴぷぺぽ", r: "papipupepo" }] },
-    { id: 5, name: "拗音 (SYA / TYA)", words: [{ h: "しゃしゅしょ", r: "syasyusyo" }, { h: "ちゃちゅちょ", r: "tyatyutyo" }, { h: "にゃにゅにょ", r: "nyanyunyo" }] },
-    { id: 6, name: "捨て仮名 (X)", words: [{ h: "ぁぃぅぇぉ", r: "xaxixuxexo" }, { h: "っ", r: "xtu" }] },
-    { id: 7, name: "ん・っ・ー", words: [{ h: "にほん", r: "nihonn" }, { h: "きって", r: "kitte" }, { h: "コーヒー", r: "ko-hi-" }] },
-    { id: 8, name: "実戦あいさつ", words: [{ h: "こんにちは", r: "konnnitiwa" }, { h: "おなまえは", r: "onamaewa" }, { h: "ありがとう", r: "arigatou" }] },
+    { id: 5, name: "拗音 (K/S/T/N)", words: [{ h: "きゃきゅきょ", r: "kyakyukyo" }, { h: "しゃしゅしょ", r: "syasyusyo" }, { h: "ちゃちゅちょ", r: "tyatyutyo" }, { h: "にゃにゅにょ", r: "nyanyunyo" }] },
+    { id: 6, name: "拗音 (H/M/R/G/Z)", words: [{ h: "ひゃひゅひょ", r: "hyahyuhyo" }, { h: "みゃみゅみょ", r: "myamyumyo" }, { h: "りゃりゅりょ", r: "ryaryuryo" }, { h: "ぎゃぎゅぎょ", r: "gyagyugyo" }, { h: "じゃじゅじょ", r: "zyazyuzyo" }] },
+    { id: 7, name: "拗音 (D/B/P)", words: [{ h: "ぢゃぢゅぢょ", r: "dyadyudyo" }, { h: "びゃびゅびょ", r: "byabyubyo" }, { h: "ぴゃぴゅぴょ", r: "pyapyupyo" }] },
+    { id: 8, name: "外来語 (F)", words: [{ h: "ふぁふぃふぇふぉ", r: "fafifefo" }] },
+    { id: 9, name: "捨て仮名 (X)", words: [{ h: "ぁぃぅぇぉ", r: "xaxixuxexo" }, { h: "っ", r: "xtu" }] },
+    { id: 10, name: "ん・っ・ー", words: [{ h: "にほん", r: "nihonn" }, { h: "きって", r: "kitte" }, { h: "コーヒー", r: "ko-hi-" }] },
+    { id: 11, name: "実戦あいさつ", words: [{ h: "こんにちは", r: "konnnitiwa" }, { h: "なまえは", r: "namaeha" }, { h: "ありがとう", r: "arigatou" }] },
   ];
 
   const currentWord = stages[currentStage].words[wordIndex];
@@ -123,24 +126,23 @@ export default function Lesson3() {
       {showSuccess && <SuccessOverlay show={true} message="ローマ字入力の達人！" />}
       
       <div className="w-full max-w-5xl space-y-2 relative z-10 flex flex-col h-full text-slate-800">
-        <div className="flex flex-col gap-2 shrink-0">
+        <div className="flex flex-col gap-1.5 shrink-0">
           <div className="flex justify-between items-center px-2">
             <Link href="/"><Button variant="ghost" size="sm" className="gap-1 h-7 text-xs text-slate-500"><ArrowLeft className="w-3 h-3"/> もどる</Button></Link>
-            <div className="bg-blue-600 text-white px-4 py-1 rounded-full font-bold text-xs shadow-md">
+            <div className="bg-blue-600 text-white px-3 py-1 rounded-full font-bold text-[10px] shadow-md tracking-wider">
               STAGE {currentStage + 1}: {stages[currentStage].name}
             </div>
           </div>
           
-          {/* ステージ選択バー */}
           <div className="flex justify-between gap-1 px-4">
             {stages.map((stage, i) => (
               <button
                 key={stage.id}
                 onClick={() => { setCurrentStage(i); setWordIndex(0); setCharIndex(0); }}
                 className={cn(
-                  "flex-1 h-2 rounded-full transition-all duration-300",
+                  "flex-1 h-1.5 rounded-full transition-all duration-300",
                   i < currentStage ? "bg-green-500" : 
-                  i === currentStage ? "bg-blue-600 ring-4 ring-blue-100" : "bg-slate-200"
+                  i === currentStage ? "bg-blue-600 ring-2 ring-blue-100 scale-y-125 shadow-sm" : "bg-slate-200 hover:bg-slate-300"
                 )}
               />
             ))}
@@ -149,17 +151,17 @@ export default function Lesson3() {
 
         <div className="flex-1 flex flex-col justify-between py-1 overflow-hidden">
           <div className="text-center shrink-0">
-            <Character message="ひらがなを見て、ローマ字（Romaji）を打とう！" mood="happy" />
+            <Character message="ひらがなを見て、下（した）のアルファベットを打（う）とう！" mood="happy" />
           </div>
 
-          <div className="flex flex-col items-center justify-center py-6 shrink-0 bg-white/60 rounded-3xl mx-10 border border-white shadow-sm">
-            <div className="text-7xl font-bold mb-4 text-slate-800 tracking-tight">{currentWord.h}</div>
-            <div className="flex gap-2">
+          <div className="flex flex-col items-center justify-center py-5 shrink-0 bg-white/40 rounded-3xl mx-10 border border-white shadow-inner">
+            <div className="text-7xl font-bold mb-3 text-slate-800 tracking-tight drop-shadow-sm">{currentWord.h}</div>
+            <div className="flex gap-1.5">
               {currentWord.r.split("").map((letter, i) => (
                 <div key={i} className={cn(
-                  "text-4xl font-mono font-black w-12 h-16 flex items-center justify-center border-b-8 transition-all duration-150",
-                  i < charIndex ? "text-green-500 border-green-500 opacity-30" : 
-                  i === charIndex ? "text-blue-600 border-blue-600 scale-110" : "text-slate-200 border-slate-100"
+                  "text-4xl font-mono font-black w-11 h-14 flex items-center justify-center border-b-8 transition-all duration-150",
+                  i < charIndex ? "text-green-500 border-green-500 opacity-40" : 
+                  i === charIndex ? "text-blue-600 border-blue-600 scale-110 shadow-sm" : "text-slate-200 border-slate-100"
                 )}>
                   {letter.toUpperCase()}
                 </div>
@@ -167,19 +169,20 @@ export default function Lesson3() {
             </div>
           </div>
 
-          <div className="bg-white p-5 rounded-[3rem] shadow-2xl border border-slate-100 flex flex-col items-center justify-center">
-            <div className="space-y-1 mb-4 w-full max-w-[650px]">
+          <div className="bg-white p-4 rounded-[2.5rem] shadow-2xl border border-slate-100 flex flex-col items-center justify-center">
+            <div className="space-y-1 mb-3 w-full max-w-[650px]">
               {rows.map((row, i) => (
-                <div key={i} className="flex justify-center gap-1.5">
+                <div key={i} className="flex justify-center gap-1">
                   {row.map((key) => {
                     const info = fingerMap[key];
                     const color = fingerColors[info?.finger as keyof typeof fingerColors];
                     const isActive = key === targetChar;
                     return (
                       <div key={key} className={cn(
-                        "w-11 h-11 rounded-xl border-2 flex items-center justify-center text-sm font-bold transition-all duration-150",
-                        isActive ? `${color.bg} text-white scale-115 shadow-xl z-20` : 
-                        `${color?.light || "bg-slate-50"} ${color?.border || "border-slate-100"} ${color?.text || "text-slate-200"} opacity-20`,
+                        "w-10 h-10 rounded-lg border-2 flex items-center justify-center text-sm font-bold transition-all duration-150",
+                        isActive ? `${color.bg} text-white scale-115 shadow-xl z-20 border-white ring-2 ring-slate-100` : 
+                        `${color?.light || "bg-slate-50"} ${color?.border || "border-slate-100"} ${color?.text || "text-slate-200"} opacity-15`,
+                        (key === "f" || key === "j") && !isActive && "border-b-4 border-slate-300"
                       )}>{key.toUpperCase()}</div>
                     )
                   })}
