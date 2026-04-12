@@ -12,13 +12,13 @@ import {
   Bluetooth, Plane, Moon, Accessibility, Sun, Laptop, Search, Settings, User
 } from "lucide-react"
 
-// 未接続時の「地球儀🚫」アイコンを自作
+// 未接続時の「地球儀🚫」アイコン（白くはっきり見えるように修正）
 const DisconnectedGlobe = ({ className }: { className?: string }) => (
   <div className={cn("relative inline-block", className)}>
-    <Globe className="w-full h-full opacity-40" />
-    <div className="absolute -bottom-1 -right-1 bg-slate-900 rounded-full p-0.5">
-      <div className="w-2.5 h-2.5 rounded-full border-2 border-white/40 relative">
-        <div className="absolute top-1/2 left-0 w-full h-[2px] bg-white/40 -rotate-45 -translate-y-1/2" />
+    <Globe className="w-full h-full text-white/90" />
+    <div className="absolute -bottom-0.5 -right-0.5 bg-slate-900 rounded-full p-[1px]">
+      <div className="w-3 h-3 rounded-full border-2 border-white/90 relative">
+        <div className="absolute top-1/2 left-0 w-full h-[1.5px] bg-white/90 -rotate-45 -translate-y-1/2" />
       </div>
     </div>
   </div>
@@ -106,7 +106,7 @@ export function Mission4({ onComplete }: Mission4Props) {
   }
 
   return (
-    <div className="flex flex-col h-full bg-slate-100">
+    <div className="flex flex-col h-full bg-slate-100 font-sans">
       <SuccessOverlay show={showSuccess} message={successMessage} />
       <div className="shrink-0 p-6 bg-white border-b shadow-sm">
         <Character message={getMessage()} mood={showSuccess ? "celebrating" : "encouraging"} />
@@ -119,7 +119,7 @@ export function Mission4({ onComplete }: Mission4Props) {
 
       {(step !== "intro" && step !== "complete") && (
         <div className="flex-1 p-8 flex items-center justify-center overflow-hidden">
-          <div className="w-full h-full max-w-6xl max-h-[700px] bg-slate-900 rounded-[2rem] shadow-[0_40px_100px_rgba(0,0,0,0.5)] overflow-hidden relative border-[12px] border-slate-800 flex flex-col">
+          <div className="w-full h-full max-w-6xl max-h-[700px] bg-slate-900 rounded-[2.5rem] shadow-[0_40px_100px_rgba(0,0,0,0.5)] overflow-hidden relative border-[12px] border-slate-800 flex flex-col">
             {shuttingDown && (
               <div className="absolute inset-0 bg-black z-[100] flex flex-col items-center justify-center animate-fade-in text-white">
                 <div className="w-16 h-16 border-4 border-blue-400 border-t-transparent rounded-full animate-spin mb-6" />
@@ -127,6 +127,7 @@ export function Mission4({ onComplete }: Mission4Props) {
               </div>
             )}
             <div className="flex-1 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900 relative p-10">
+              {/* メモ帳 */}
               {step === "save" && !documentSaved && (
                 <div className="absolute top-10 left-10 w-[500px] bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-300 animate-in zoom-in-95">
                   <div className="bg-slate-100 px-5 py-3 border-b flex justify-between items-center text-slate-600">
@@ -137,26 +138,36 @@ export function Mission4({ onComplete }: Mission4Props) {
                 </div>
               )}
 
+              {/* クイック設定パネル */}
               {showQuickSettings && (
                 <div className="absolute bottom-4 right-4 w-[400px] bg-slate-900/90 backdrop-blur-3xl border border-white/20 rounded-[1.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.6)] z-50 overflow-hidden animate-in slide-in-from-bottom-4">
                   {wifiSubStep === "quick-settings" ? (
                     <div className="p-8">
-                      <div className="grid grid-cols-3 gap-4 mb-8">
-                        <div className="col-span-1 flex h-20 bg-blue-600 rounded-xl overflow-hidden shadow-lg border border-white/10">
-                          <div className="flex-1 flex items-center justify-center">
-                            {wifiConnected ? <Wifi className="w-8 h-8 text-white" /> : <DisconnectedGlobe className="w-8 h-8 text-white" />}
+                      <div className="grid grid-cols-3 gap-y-8 gap-x-4 mb-8">
+                        {/* Wi-Fiボタン (パネル内は常にWi-Fiアイコン) */}
+                        <div className="flex flex-col items-center gap-2">
+                          <div className="w-full flex h-16 bg-blue-600 rounded-xl overflow-hidden shadow-lg border border-white/10">
+                            <div className="flex-1 flex items-center justify-center"><Wifi className="w-7 h-7 text-white" /></div>
+                            <button onClick={() => setWifiSubStep("wifi-list")} className={cn("w-10 border-l border-white/20 flex items-center justify-center hover:bg-white/10", !wifiConnected && "bg-white/10")}>
+                              <ChevronRight className="w-5 h-5 text-white" />
+                            </button>
                           </div>
-                          <button onClick={() => setWifiSubStep("wifi-list")} className={cn("w-10 border-l border-white/20 flex items-center justify-center hover:bg-white/10", !selectedNetwork && "bg-yellow-400/30 animate-pulse")}>
-                            <ChevronRight className="w-6 h-6 text-white" />
-                          </button>
+                          <span className="text-[10px] text-white/80 font-medium">使用可能</span>
                         </div>
-                        {[Bluetooth, Plane, Moon, Sun, Accessibility].map((Icon, i) => (
-                          <div key={i} className="bg-white/10 h-20 rounded-xl flex items-center justify-center"><Icon className="w-8 h-8 text-white/40" /></div>
-                        ))}
+                        {/* Bluetooth */}
+                        <div className="flex flex-col items-center gap-2">
+                          <div className="w-full h-16 bg-blue-600 rounded-xl flex items-center justify-center border border-white/10"><Bluetooth className="w-7 h-7 text-white" /></div>
+                          <span className="text-[10px] text-white/80 font-medium">未接続</span>
+                        </div>
+                        {/* 機内モード */}
+                        <div className="flex flex-col items-center gap-2">
+                          <div className="w-full h-16 bg-white/10 rounded-xl flex items-center justify-center border border-white/5"><Plane className="w-7 h-7 text-white/40" /></div>
+                          <span className="text-[10px] text-white/40 font-medium">機内モード</span>
+                        </div>
                       </div>
                       <div className="space-y-6 px-2">
-                        <div className="flex items-center gap-6"><Sun className="w-6 h-6 text-white/60" /><div className="flex-1 h-2 bg-white/20 rounded-full relative"><div className="absolute w-5 h-5 bg-white rounded-full -top-1.5 left-3/4 shadow-md" /></div></div>
-                        <div className="flex items-center gap-6"><Volume2 className="w-6 h-6 text-white/60" /><div className="flex-1 h-2 bg-white/20 rounded-full relative"><div className="absolute w-5 h-5 bg-white rounded-full -top-1.5 left-1/2 shadow-md" /></div></div>
+                        <div className="flex items-center gap-6"><Sun className="w-6 h-6 text-white/60" /><div className="flex-1 h-1.5 bg-white/20 rounded-full relative"><div className="absolute w-4 h-4 bg-white rounded-full -top-1.5 left-3/4 shadow-md" /></div></div>
+                        <div className="flex items-center gap-6"><Volume2 className="w-6 h-6 text-white/60" /><div className="flex-1 h-1.5 bg-white/20 rounded-full relative"><div className="absolute w-4 h-4 bg-white rounded-full -top-1.5 left-1/2 shadow-md" /></div></div>
                       </div>
                     </div>
                   ) : (
@@ -187,6 +198,7 @@ export function Mission4({ onComplete }: Mission4Props) {
                 </div>
               )}
 
+              {/* スタートメニュー */}
               {showStartMenu && (
                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[550px] h-[600px] bg-slate-900/95 backdrop-blur-3xl border border-white/10 rounded-[2rem] shadow-[0_50px_100px_rgba(0,0,0,0.7)] z-50 p-10 flex flex-col animate-in slide-in-from-bottom-10">
                   <div className="flex-1">
@@ -199,12 +211,12 @@ export function Mission4({ onComplete }: Mission4Props) {
                       ))}
                     </div>
                   </div>
-                  <div className="pt-8 border-t border-white/10 flex justify-between items-center relative">
-                    <div className="flex items-center gap-4"><div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">U</div><span className="text-lg text-white font-medium">ユーザー</span></div>
-                    <button onClick={() => setShowPowerMenu(!showPowerMenu)} className={cn("p-4 rounded-xl hover:bg-white/10 transition-colors", step === "shutdown" && "ring-4 ring-yellow-400 animate-pulse")}><Power className="w-8 h-8 text-white" /></button>
+                  <div className="pt-8 border-t border-white/10 flex justify-between items-center relative text-white">
+                    <div className="flex items-center gap-4"><div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center font-bold text-xl shadow-lg">U</div><span className="text-lg font-medium">ユーザー</span></div>
+                    <button onClick={() => setShowPowerMenu(!showPowerMenu)} className={cn("p-4 rounded-xl hover:bg-white/10 transition-colors", step === "shutdown" && "ring-4 ring-yellow-400 animate-pulse")}><Power className="w-8 h-8" /></button>
                     {showPowerMenu && (
-                      <div className="absolute right-0 bottom-full mb-4 w-56 bg-slate-800 rounded-xl border border-white/10 overflow-hidden shadow-2xl z-[70] animate-in zoom-in-95">
-                        <button onClick={handleShutdown} className="w-full p-5 text-left text-base text-white hover:bg-blue-600 flex items-center gap-4"><Power className="w-5 h-5" /> シャットダウン</button>
+                      <div className="absolute right-0 bottom-full mb-4 w-56 bg-slate-800 rounded-xl border border-white/10 overflow-hidden shadow-2xl z-[70] animate-in zoom-in-95 text-white">
+                        <button onClick={handleShutdown} className="w-full p-5 text-left text-base hover:bg-blue-600 flex items-center gap-4"><Power className="w-5 h-5" /> シャットダウン</button>
                       </div>
                     )}
                   </div>
@@ -212,6 +224,7 @@ export function Mission4({ onComplete }: Mission4Props) {
               )}
             </div>
 
+            {/* タスクバー */}
             <div className="h-20 bg-slate-900/95 backdrop-blur-2xl border-t border-white/10 flex items-center px-6 justify-between shrink-0 relative z-[70]">
               <div className="w-1/3" />
               <div className="w-1/3 flex justify-center gap-2">
