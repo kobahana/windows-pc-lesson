@@ -22,8 +22,8 @@ export default function Home() {
       ruby: "ホームポジションになれよう",
       description: "正しい指の置き方を覚えて、タイピングの準備をしよう！",
       icon: <Keyboard className="w-10 h-10 text-slate-400" />,
-      link: "#",
-      available: false,
+      link: "/lessons/lesson2",
+      available: true,
     },
     {
       id: 3,
