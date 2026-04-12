@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils"
 import { Character, Ruby } from "../character"
 import { SuccessOverlay } from "../success-overlay"
 import { Button } from "@/components/ui/button"
+import { sounds } from "@/lib/sounds"
 import { 
   Monitor, 
   FolderOpen, 
@@ -50,6 +51,7 @@ export function Mission1({ onComplete }: Mission1Props) {
   const [appOpened, setAppOpened] = useState(false)
 
   const triggerSuccess = useCallback((message: React.ReactNode, nextStep: Step) => {
+    sounds?.playSuccess()
     setSuccessMessage(typeof message === 'string' ? message : '')
     setShowSuccess(true)
     setTimeout(() => {

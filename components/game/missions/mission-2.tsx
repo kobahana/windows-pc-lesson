@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils"
 import { Character, Ruby } from "../character"
 import { SuccessOverlay } from "../success-overlay"
 import { Button } from "@/components/ui/button"
+import { sounds } from "@/lib/sounds"
 
 interface Mission2Props {
   onComplete: () => void
@@ -40,6 +41,7 @@ export function Mission2({ onComplete }: Mission2Props) {
   const pasteInputRef = useRef<HTMLInputElement>(null)
 
   const triggerSuccess = useCallback((message: string, nextStep: Step) => {
+    sounds?.playSuccess()
     setSuccessMessage(message)
     setShowSuccess(true)
     setTimeout(() => {

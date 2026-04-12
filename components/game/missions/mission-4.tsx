@@ -11,6 +11,7 @@ import {
   ChevronRight, ArrowLeft, Globe, 
   Bluetooth, Plane, Moon, Accessibility, Sun, Laptop, Search, Settings, User
 } from "lucide-react"
+import { sounds } from "@/lib/sounds"
 
 // 未接続時の「地球儀🚫」アイコン（白くはっきり見えるように修正）
 const DisconnectedGlobe = ({ className }: { className?: string }) => (
@@ -52,6 +53,7 @@ export function Mission4({ onComplete }: Mission4Props) {
   const [shuttingDown, setShuttingDown] = useState(false)
 
   const triggerSuccess = useCallback((message: string, nextStep: Step) => {
+    sounds?.playSuccess()
     setSuccessMessage(message)
     setShowSuccess(true)
     setTimeout(() => {

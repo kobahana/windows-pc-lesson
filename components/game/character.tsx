@@ -1,6 +1,7 @@
 "use client"
 
 import { cn } from "@/lib/utils"
+import { useSettings } from "../providers/settings-provider"
 
 interface CharacterProps {
   message: React.ReactNode
@@ -81,10 +82,13 @@ export function Character({ message, mood, className }: CharacterProps) {
 
 // Helper component for furigana
 export function Ruby({ children, rt }: { children: React.ReactNode; rt: string }) {
+  const { showRuby } = useSettings()
+
   return (
     <ruby>
       {children}
-      <rt className="text-[0.6em]">{rt}</rt>
+      {showRuby && <rt className="text-[0.6em]">{rt}</rt>}
     </ruby>
   )
 }
+

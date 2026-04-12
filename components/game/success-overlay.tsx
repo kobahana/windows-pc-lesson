@@ -46,14 +46,16 @@ export function SuccessOverlay({ show, message = "すごい！" }: SuccessOverla
         </div>
       ))}
       
-      {/* Success message */}
-      <div className="bg-success text-success-foreground px-8 py-4 rounded-2xl shadow-2xl animate-bounce-in">
-        <div className="flex items-center gap-3">
-          <Sparkles className="w-8 h-8" />
-          <span className="text-2xl font-bold">{message}</span>
-          <Sparkles className="w-8 h-8" />
+      {/* Success message (only if provided) */}
+      {message && (
+        <div className="bg-success text-success-foreground px-8 py-4 rounded-2xl shadow-2xl animate-bounce-in">
+          <div className="flex items-center gap-3">
+            <Sparkles className="w-8 h-8" />
+            <span className="text-2xl font-bold">{message}</span>
+            <Sparkles className="w-8 h-8" />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

@@ -4,8 +4,10 @@ import { useState, useEffect, useCallback } from "react"
 import { Character, Ruby } from "@/components/game/character"
 import { SuccessOverlay } from "@/components/game/success-overlay"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, Star } from "lucide-react"
-import Link from "next/link"
+import { ArrowLeft, Star, RotateCcw, Trophy, Clock, Target } from "lucide-react"
+import { LessonHeader } from "@/components/layout/lesson-header"
+import { useSettings } from "@/components/providers/settings-provider"
+import { sounds } from "@/lib/sounds"
 
 function cn(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(" ");
@@ -65,6 +67,13 @@ export default function Lesson3() {
   const [wordIndex, setWordIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
   const [showSuccess, setShowSuccess] = useState(false);
+  
+  // Score state
+  const [missCount, setMissCount] = useState(0);
+  const [startTime, setStartTime] = useState<number | null>(null);
+  const [elapsedTime, setElapsedTime] = useState(0);
+
+  const { markLessonCompleted } = useSettings();
 
   const stages = [
     { id: 1, name: "あいうえお", words: [{ h: "あいうえお", r: "aiueo" }] },
@@ -83,34 +92,65 @@ export default function Lesson3() {
   const currentWord = stages[currentStage].words[wordIndex];
   const targetChar = currentWord.r[charIndex];
 
+  useEffect(() => {
+    if (!showSuccess && !startTime) {
+      setStartTime(Date.now());
+    }
+  }, [showSuccess, startTime]);
+
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (showSuccess) return;
     const pressedKey = e.key.toLowerCase();
     
+    // ignore meta keys
+    if (e.metaKey || e.ctrlKey || e.altKey || pressedKey.length > 1) return;
+
     if (pressedKey === targetChar) {
+      sounds?.playClick();
       if (charIndex + 1 < currentWord.r.length) {
         setCharIndex(prev => prev + 1);
       } else {
         if (wordIndex + 1 < stages[currentStage].words.length) {
+          sounds?.playSuccess();
           setWordIndex(prev => prev + 1);
           setCharIndex(0);
         } else {
           if (currentStage + 1 < stages.length) {
+            sounds?.playSuccess();
             setCurrentStage(prev => prev + 1);
             setWordIndex(0);
             setCharIndex(0);
           } else {
+            // Finished all
+            const end = Date.now();
+            setElapsedTime(startTime ? Math.floor((end - startTime) / 1000) : 0);
+            sounds?.playClear();
             setShowSuccess(true);
+            markLessonCompleted(3);
           }
         }
       }
+    } else {
+      sounds?.playError();
+      setMissCount(prev => prev + 1);
     }
-  }, [targetChar, charIndex, currentWord.r.length, wordIndex, stages, currentStage, showSuccess]);
+  }, [targetChar, charIndex, currentWord.r.length, wordIndex, stages, currentStage, showSuccess, startTime, markLessonCompleted]);
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
+
+  const handleRetry = () => {
+    sounds?.playClick();
+    setCurrentStage(0);
+    setWordIndex(0);
+    setCharIndex(0);
+    setMissCount(0);
+    setStartTime(null);
+    setElapsedTime(0);
+    setShowSuccess(false);
+  }
 
   const rows = [
     ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-"],
@@ -121,24 +161,68 @@ export default function Lesson3() {
 
   const activeFingerInfo = fingerMap[targetChar];
 
-  return (
-    <div className="h-screen bg-slate-50 p-2 flex flex-col items-center overflow-hidden">
-      {showSuccess && <SuccessOverlay show={true} message="ローマ字入力の達人！" />}
-      
-      <div className="w-full max-w-5xl space-y-2 relative z-10 flex flex-col h-full text-slate-800">
-        <div className="flex flex-col gap-1.5 shrink-0">
-          <div className="flex justify-between items-center px-2">
-            <Link href="/"><Button variant="ghost" size="sm" className="gap-1 h-7 text-xs text-slate-500"><ArrowLeft className="w-3 h-3"/> もどる</Button></Link>
-            <div className="bg-blue-600 text-white px-3 py-1 rounded-full font-bold text-[10px] shadow-md tracking-wider">
-              STAGE {currentStage + 1}: {stages[currentStage].name}
+  if (showSuccess) {
+    let evaluationMessage = "すばらしい！ローマ字マスターです！";
+    if (missCount > 5) evaluationMessage = "よくがんばりました！次はノーミスをめざそう！";
+    if (missCount > 15) evaluationMessage = "最後までやりきりました！くりかえし練習しよう！";
+
+    return (
+      <div className="h-screen bg-slate-50 flex flex-col">
+        <LessonHeader />
+        <SuccessOverlay show={true} message="" />
+        <div className="flex-1 flex items-center justify-center p-4 z-10">
+          <div className="bg-white rounded-3xl shadow-xl border-2 border-green-100 p-8 max-w-lg w-full text-center animate-in zoom-in-95 duration-500">
+            <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+              <Trophy className="w-12 h-12 text-white" />
             </div>
+            
+            <h2 className="text-3xl font-bold text-slate-800 mb-2">クリアおめでとう！</h2>
+            <p className="text-slate-600 mb-8 font-medium">{evaluationMessage}</p>
+
+            <div className="grid grid-cols-2 gap-4 mb-8">
+              <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                <div className="flex items-center justify-center gap-2 text-slate-500 mb-2 font-bold">
+                  <Target className="w-5 h-5 text-red-500" />
+                  ミスした回数
+                </div>
+                <div className="text-3xl font-black text-slate-800">
+                  {missCount} <span className="text-base font-bold text-slate-400">回</span>
+                </div>
+              </div>
+
+              <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
+                <div className="flex items-center justify-center gap-2 text-slate-500 mb-2 font-bold">
+                  <Clock className="w-5 h-5 text-blue-500" />
+                  かかった時間
+                </div>
+                <div className="text-3xl font-black text-slate-800">
+                  {elapsedTime} <span className="text-base font-bold text-slate-400">秒</span>
+                </div>
+              </div>
+            </div>
+
+            <Button onClick={handleRetry} size="lg" className="w-full h-14 text-xl rounded-xl gap-2 font-bold bg-green-600 hover:bg-green-700 shadow-md">
+              <RotateCcw className="w-6 h-6" />
+              もう一度あそぶ
+            </Button>
           </div>
-          
-          <div className="flex justify-between gap-1 px-4">
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="h-screen bg-slate-50 flex flex-col overflow-hidden">
+      <LessonHeader>
+        <div className="flex justify-between items-center w-full px-2">
+          <div className="bg-blue-600 text-white px-3 py-1 rounded-full font-bold text-[10px] shadow-sm tracking-wider mr-2 whitespace-nowrap">
+            STAGE {currentStage + 1}: {stages[currentStage].name}
+          </div>
+          <div className="flex justify-between gap-1 flex-1">
             {stages.map((stage, i) => (
               <button
                 key={stage.id}
-                onClick={() => { setCurrentStage(i); setWordIndex(0); setCharIndex(0); }}
+                onClick={() => { sounds?.playClick(); setCurrentStage(i); setWordIndex(0); setCharIndex(0); }}
                 className={cn(
                   "flex-1 h-1.5 rounded-full transition-all duration-300",
                   i < currentStage ? "bg-green-500" : 
@@ -148,48 +232,53 @@ export default function Lesson3() {
             ))}
           </div>
         </div>
+      </LessonHeader>
 
-        <div className="flex-1 flex flex-col justify-between py-1 overflow-hidden">
-          <div className="text-center shrink-0">
-            <Character message="ひらがなを見て、下（した）のアルファベットを打（う）とう！" mood="happy" />
-          </div>
+      <div className="flex-1 flex flex-col items-center p-2 relative text-slate-800 min-h-0">
+        <div className="w-full max-w-5xl flex flex-col h-full">
 
-          <div className="flex flex-col items-center justify-center py-5 shrink-0 bg-white/40 rounded-3xl mx-10 border border-white shadow-inner">
-            <div className="text-7xl font-bold mb-3 text-slate-800 tracking-tight drop-shadow-sm">{currentWord.h}</div>
-            <div className="flex gap-1.5">
-              {currentWord.r.split("").map((letter, i) => (
-                <div key={i} className={cn(
-                  "text-4xl font-mono font-black w-11 h-14 flex items-center justify-center border-b-8 transition-all duration-150",
-                  i < charIndex ? "text-green-500 border-green-500 opacity-40" : 
-                  i === charIndex ? "text-blue-600 border-blue-600 scale-110 shadow-sm" : "text-slate-200 border-slate-100"
-                )}>
-                  {letter.toUpperCase()}
-                </div>
-              ))}
+          <div className="flex-1 flex flex-col justify-between py-1 overflow-hidden">
+            <div className="text-center shrink-0">
+              <Character message="ひらがなを見て、下（した）のアルファベットを打（う）とう！" mood="happy" />
             </div>
-          </div>
 
-          <div className="bg-white p-4 rounded-[2.5rem] shadow-2xl border border-slate-100 flex flex-col items-center justify-center">
-            <div className="space-y-1 mb-3 w-full max-w-[650px]">
-              {rows.map((row, i) => (
-                <div key={i} className="flex justify-center gap-1">
-                  {row.map((key) => {
-                    const info = fingerMap[key];
-                    const color = fingerColors[info?.finger as keyof typeof fingerColors];
-                    const isActive = key === targetChar;
-                    return (
-                      <div key={key} className={cn(
-                        "w-10 h-10 rounded-lg border-2 flex items-center justify-center text-sm font-bold transition-all duration-150",
-                        isActive ? `${color.bg} text-white scale-115 shadow-xl z-20 border-white ring-2 ring-slate-100` : 
-                        `${color?.light || "bg-slate-50"} ${color?.border || "border-slate-100"} ${color?.text || "text-slate-200"} opacity-15`,
-                        (key === "f" || key === "j") && !isActive && "border-b-4 border-slate-300"
-                      )}>{key.toUpperCase()}</div>
-                    )
-                  })}
-                </div>
-              ))}
+            <div className="flex flex-col items-center justify-center py-5 shrink-0 bg-white/40 rounded-3xl mx-10 border border-white shadow-inner">
+              <div className="text-7xl font-bold mb-3 text-slate-800 tracking-tight drop-shadow-sm">{currentWord.h}</div>
+              <div className="flex gap-1.5">
+                {currentWord.r.split("").map((letter, i) => (
+                  <div key={i} className={cn(
+                    "text-4xl font-mono font-black w-11 h-14 flex items-center justify-center border-b-8 transition-all duration-150",
+                    i < charIndex ? "text-green-500 border-green-500 opacity-40" : 
+                    i === charIndex ? "text-blue-600 border-blue-600 scale-110 shadow-sm" : "text-slate-200 border-slate-100"
+                  )}>
+                    {letter.toUpperCase()}
+                  </div>
+                ))}
+              </div>
             </div>
-            <HandGuide activeHand={activeFingerInfo?.hand} activeFinger={activeFingerInfo?.finger} />
+
+            <div className="bg-white p-4 rounded-[2.5rem] shadow-2xl border border-slate-100 flex flex-col items-center justify-center">
+              <div className="space-y-1 mb-3 w-full max-w-[650px]">
+                {rows.map((row, i) => (
+                  <div key={i} className="flex justify-center gap-1">
+                    {row.map((key) => {
+                      const info = fingerMap[key];
+                      const color = fingerColors[info?.finger as keyof typeof fingerColors];
+                      const isActive = key === targetChar;
+                      return (
+                        <div key={key} className={cn(
+                          "w-10 h-10 rounded-lg border-2 flex items-center justify-center text-sm font-bold transition-all duration-150",
+                          isActive ? `${color.bg} text-white scale-115 shadow-xl z-20 border-white ring-2 ring-slate-100` : 
+                          `${color?.light || "bg-slate-50"} border-slate-100 ${color?.text || "text-slate-300"} opacity-20`,
+                          (key === "f" || key === "j") && !isActive && "border-b-4 border-slate-300"
+                        )}>{key.toUpperCase()}</div>
+                      )
+                    })}
+                  </div>
+                ))}
+              </div>
+              <HandGuide activeHand={activeFingerInfo?.hand} activeFinger={activeFingerInfo?.finger} />
+            </div>
           </div>
         </div>
       </div>

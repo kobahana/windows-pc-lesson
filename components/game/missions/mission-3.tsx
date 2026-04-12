@@ -6,6 +6,7 @@ import { Character, Ruby } from "../character"
 import { SuccessOverlay } from "../success-overlay"
 import { Button } from "@/components/ui/button"
 import { Check } from "lucide-react"
+import { sounds } from "@/lib/sounds"
 
 interface Mission3Props {
   onComplete: () => void
@@ -39,6 +40,7 @@ export function Mission3({ onComplete }: Mission3Props) {
   const currentChar = practiceCharacters[currentCharIndex]
 
   const triggerSuccess = useCallback((message: string, nextStep: Step) => {
+    sounds?.playSuccess()
     setSuccessMessage(message)
     setShowSuccess(true)
     setTimeout(() => {

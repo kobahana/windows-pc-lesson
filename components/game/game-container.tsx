@@ -1,20 +1,24 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { MissionHeader } from "./mission-header"
 import { Mission1 } from "./missions/mission-1"
 import { Mission2 } from "./missions/mission-2"
 import { Mission3 } from "./missions/mission-3"
 import { Mission4 } from "./missions/mission-4"
 import { Button } from "@/components/ui/button"
-import { RotateCcw, Trophy, ArrowLeft } from "lucide-react" // ArrowLeftを追加
+import { RotateCcw, Trophy } from "lucide-react"
 import { Ruby } from "./character"
-import Link from "next/link" // Linkを追加
+import { LessonHeader } from "@/components/layout/lesson-header"
+import { useSettings } from "../providers/settings-provider"
+import { sounds } from "@/lib/sounds"
+import Link from "next/link"
 
 export function GameContainer() {
   const [currentMission, setCurrentMission] = useState(1)
   const [completedMissions, setCompletedMissions] = useState<number[]>([])
   const [gameComplete, setGameComplete] = useState(false)
+  const { markLessonCompleted } = useSettings()
 
   const missions = [
     { id: 1, title: "タッチパッドと画面", titleFull: <>タッチパッドと<Ruby rt="がめん">画面</Ruby>の<Ruby rt="だいぼうけん">大冒険</Ruby></>, completed: completedMissions.includes(1), current: currentMission === 1 },
@@ -25,19 +29,24 @@ export function GameContainer() {
 
   const handleMissionComplete = (missionId: number) => {
     setCompletedMissions(prev => prev.includes(missionId) ? prev : [...prev, missionId])
+    sounds?.playSuccess()
     if (missionId < 4) {
       setCurrentMission(missionId + 1)
     } else {
+      sounds?.playClear()
       setGameComplete(true)
+      markLessonCompleted(1)
     }
   }
 
   const handleMissionSelect = (missionId: number) => {
+    sounds?.playClick()
     setCurrentMission(missionId)
     setGameComplete(false)
   }
 
   const handleRestart = () => {
+    sounds?.playClick()
     setCurrentMission(1)
     setCompletedMissions([])
     setGameComplete(false)
@@ -46,20 +55,13 @@ export function GameContainer() {
   if (gameComplete) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
-        {/* 完了画面にも「もどる」ボタンを配置 */}
-        <header className="flex items-center border-b bg-background px-4 h-14 shrink-0">
-          <Link href="/">
-            <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
-              <ArrowLeft className="w-4 h-4" /> もどる
-            </Button>
-          </Link>
-          <div className="flex-1">
+        <LessonHeader>
+          <div className="flex-1 w-full max-w-xl">
             <MissionHeader missions={missions} currentMission={currentMission} onMissionSelect={handleMissionSelect} />
           </div>
-        </header>
+        </LessonHeader>
         
         <div className="flex-1 flex items-center justify-center p-8">
-          {/* ...（完了メッセージの内容はそのまま）... */}
           <div className="max-w-lg text-center">
             <div className="w-32 h-32 mx-auto mb-8 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center shadow-xl animate-bounce-subtle">
               <Trophy className="w-16 h-16 text-white" />
@@ -105,17 +107,11 @@ export function GameContainer() {
 
   return (
     <div className="h-screen bg-background flex flex-col">
-      {/* --- ヘッダー部分に「もどる」ボタンを追加 --- */}
-      <header className="flex items-center border-b bg-background px-4 h-14 shrink-0">
-        <Link href="/">
-          <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
-            <ArrowLeft className="w-4 h-4" /> もどる
-          </Button>
-        </Link>
-        <div className="flex-1">
+      <LessonHeader>
+        <div className="flex-1 w-full max-w-xl">
           <MissionHeader missions={missions} currentMission={currentMission} onMissionSelect={handleMissionSelect} />
         </div>
-      </header>
+      </LessonHeader>
 
       <main className="flex-1 flex flex-col overflow-hidden min-h-0">
         {currentMission === 1 && (
