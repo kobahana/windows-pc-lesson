@@ -7,10 +7,22 @@ import { SuccessOverlay } from "../success-overlay"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { 
-  Wifi, WifiOff, Battery, Volume2, Save, Power, 
-  ChevronRight, ArrowLeft, Lock, SignalHigh, 
+  Wifi, Battery, Volume2, Save, Power, 
+  ChevronRight, ArrowLeft, Globe, 
   Bluetooth, Plane, Moon, Accessibility, Sun, Laptop, Search, Settings, User
 } from "lucide-react"
+
+// 未接続時の「地球儀🚫」アイコンを自作
+const DisconnectedGlobe = ({ className }: { className?: string }) => (
+  <div className={cn("relative inline-block", className)}>
+    <Globe className="w-full h-full opacity-40" />
+    <div className="absolute -bottom-1 -right-1 bg-slate-900 rounded-full p-0.5">
+      <div className="w-2.5 h-2.5 rounded-full border-2 border-white/40 relative">
+        <div className="absolute top-1/2 left-0 w-full h-[2px] bg-white/40 -rotate-45 -translate-y-1/2" />
+      </div>
+    </div>
+  </div>
+);
 
 interface Mission4Props {
   onComplete: () => void
@@ -48,7 +60,6 @@ export function Mission4({ onComplete }: Mission4Props) {
     }, 1500)
   }, [])
 
-  // Ctrl+S ブロック機能
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
@@ -97,8 +108,6 @@ export function Mission4({ onComplete }: Mission4Props) {
   return (
     <div className="flex flex-col h-full bg-slate-100">
       <SuccessOverlay show={showSuccess} message={successMessage} />
-      
-      {/* キャラクター指示エリア（大きく、見やすく） */}
       <div className="shrink-0 p-6 bg-white border-b shadow-sm">
         <Character message={getMessage()} mood={showSuccess ? "celebrating" : "encouraging"} />
         {step === "intro" && (
@@ -110,41 +119,33 @@ export function Mission4({ onComplete }: Mission4Props) {
 
       {(step !== "intro" && step !== "complete") && (
         <div className="flex-1 p-8 flex items-center justify-center overflow-hidden">
-          {/* シミュレーター本体：見切れ防止のため aspect-ratio を削除し w-full h-full で制御 */}
           <div className="w-full h-full max-w-6xl max-h-[700px] bg-slate-900 rounded-[2rem] shadow-[0_40px_100px_rgba(0,0,0,0.5)] overflow-hidden relative border-[12px] border-slate-800 flex flex-col">
-            
-            {/* シャットダウン画面 */}
             {shuttingDown && (
               <div className="absolute inset-0 bg-black z-[100] flex flex-col items-center justify-center animate-fade-in text-white">
                 <div className="w-16 h-16 border-4 border-blue-400 border-t-transparent rounded-full animate-spin mb-6" />
                 <p className="text-2xl font-light">シャットダウンしています</p>
               </div>
             )}
-
             <div className="flex-1 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-900 relative p-10">
-              
-              {/* メモ帳（保存ミッション） */}
               {step === "save" && !documentSaved && (
                 <div className="absolute top-10 left-10 w-[500px] bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-300 animate-in zoom-in-95">
-                  <div className="bg-slate-100 px-5 py-3 border-b flex justify-between items-center">
-                    <span className="text-sm font-bold text-slate-600">メモ帳 - 練習れんしゅう.txt</span>
+                  <div className="bg-slate-100 px-5 py-3 border-b flex justify-between items-center text-slate-600">
+                    <span className="text-sm font-bold">メモ帳 - 練習れんしゅう.txt</span>
                     <Save className="w-6 h-6 text-blue-600 cursor-pointer hover:scale-110 transition-transform" onClick={() => { setDocumentSaved(true); triggerSuccess("保存できたね！", "shutdown"); }}/>
                   </div>
-                  <div className="p-10 text-2xl font-mono text-slate-800 leading-relaxed">
-                    これは大事だいじなデータです。<br />
-                    保存ほぞんしないと消きえちゃいます！
-                  </div>
+                  <div className="p-10 text-2xl font-mono text-slate-800 leading-relaxed">これは大事だいじなデータです。<br />保存ほぞんしないと消きえちゃいます！</div>
                 </div>
               )}
 
-              {/* クイック設定パネル（Windows 11 風） */}
               {showQuickSettings && (
                 <div className="absolute bottom-4 right-4 w-[400px] bg-slate-900/90 backdrop-blur-3xl border border-white/20 rounded-[1.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.6)] z-50 overflow-hidden animate-in slide-in-from-bottom-4">
                   {wifiSubStep === "quick-settings" ? (
                     <div className="p-8">
                       <div className="grid grid-cols-3 gap-4 mb-8">
                         <div className="col-span-1 flex h-20 bg-blue-600 rounded-xl overflow-hidden shadow-lg border border-white/10">
-                          <div className="flex-1 flex items-center justify-center"><Wifi className="w-8 h-8 text-white" /></div>
+                          <div className="flex-1 flex items-center justify-center">
+                            {wifiConnected ? <Wifi className="w-8 h-8 text-white" /> : <DisconnectedGlobe className="w-8 h-8 text-white" />}
+                          </div>
                           <button onClick={() => setWifiSubStep("wifi-list")} className={cn("w-10 border-l border-white/20 flex items-center justify-center hover:bg-white/10", !selectedNetwork && "bg-yellow-400/30 animate-pulse")}>
                             <ChevronRight className="w-6 h-6 text-white" />
                           </button>
@@ -171,18 +172,14 @@ export function Mission4({ onComplete }: Mission4Props) {
                           </button>
                         ))}
                       </div>
-                      {selectedNetwork && wifiSubStep === "wifi-list" && <Button size="lg" className="mt-4 h-14 text-lg bg-blue-600 hover:bg-blue-500" onClick={() => setWifiSubStep("password")}>接続せつぞくする</Button>}
+                      {selectedNetwork && wifiSubStep === "wifi-list" && <Button size="lg" className="mt-4 h-14 text-lg bg-blue-600 hover:bg-blue-700" onClick={() => setWifiSubStep("password")}>接続せつぞくする</Button>}
                       {wifiSubStep === "password" && (
                         <div className="mt-4 space-y-4 animate-in slide-in-from-right-4">
                           <div className="p-4 bg-blue-900/40 rounded-xl border border-blue-400/30">
-                            <p className="text-white text-sm font-medium mb-3">パスワードを入力にゅうりょくしてください：</p>
                             <Input type="password" placeholder="ヒント：password123" className="h-12 text-base bg-slate-800 border-white/10 text-white shadow-inner" value={wifiPassword} onChange={e => setWifiPassword(e.target.value)} autoFocus />
                             <p className="text-xs text-blue-300 mt-3 font-bold">※練習用れんしゅうようパスワード：password123</p>
                           </div>
-                          <div className="flex gap-3">
-                            <Button variant="ghost" className="flex-1 text-white" onClick={() => setWifiSubStep("wifi-list")}>キャンセル</Button>
-                            <Button className="flex-1 bg-blue-600" onClick={handleWifiConnect}>次つぎへ</Button>
-                          </div>
+                          <div className="flex gap-3"><Button variant="ghost" className="flex-1 text-white" onClick={() => setWifiSubStep("wifi-list")}>キャンセル</Button><Button className="flex-1 bg-blue-600" onClick={handleWifiConnect}>次つぎへ</Button></div>
                         </div>
                       )}
                     </div>
@@ -190,13 +187,12 @@ export function Mission4({ onComplete }: Mission4Props) {
                 </div>
               )}
 
-              {/* スタートメニュー（中央配置） */}
               {showStartMenu && (
                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[550px] h-[600px] bg-slate-900/95 backdrop-blur-3xl border border-white/10 rounded-[2rem] shadow-[0_50px_100px_rgba(0,0,0,0.7)] z-50 p-10 flex flex-col animate-in slide-in-from-bottom-10">
                   <div className="flex-1">
                     <div className="grid grid-cols-4 gap-8">
                       {[Settings, User, Laptop, Search, Plane, Sun, Bluetooth, Accessibility].map((Icon, i) => (
-                        <div key={i} className="flex flex-col items-center gap-3 group cursor-pointer">
+                        <div key={i} className="flex flex-col items-center gap-3 group cursor-pointer text-white">
                           <div className="w-16 h-16 bg-white/5 rounded-2xl flex items-center justify-center border border-white/5 group-hover:bg-white/10 transition-all"><Icon className="w-8 h-8 text-white/70"/></div>
                           <div className="w-10 h-1.5 bg-white/10 rounded-full"/>
                         </div>
@@ -204,10 +200,7 @@ export function Mission4({ onComplete }: Mission4Props) {
                     </div>
                   </div>
                   <div className="pt-8 border-t border-white/10 flex justify-between items-center relative">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">U</div>
-                      <span className="text-lg text-white font-medium">ユーザー</span>
-                    </div>
+                    <div className="flex items-center gap-4"><div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">U</div><span className="text-lg text-white font-medium">ユーザー</span></div>
                     <button onClick={() => setShowPowerMenu(!showPowerMenu)} className={cn("p-4 rounded-xl hover:bg-white/10 transition-colors", step === "shutdown" && "ring-4 ring-yellow-400 animate-pulse")}><Power className="w-8 h-8 text-white" /></button>
                     {showPowerMenu && (
                       <div className="absolute right-0 bottom-full mb-4 w-56 bg-slate-800 rounded-xl border border-white/10 overflow-hidden shadow-2xl z-[70] animate-in zoom-in-95">
@@ -219,18 +212,11 @@ export function Mission4({ onComplete }: Mission4Props) {
               )}
             </div>
 
-            {/* タスクバー（高さアップ・中央スタートボタン） */}
             <div className="h-20 bg-slate-900/95 backdrop-blur-2xl border-t border-white/10 flex items-center px-6 justify-between shrink-0 relative z-[70]">
               <div className="w-1/3" />
               <div className="w-1/3 flex justify-center gap-2">
-                <button 
-                  onClick={() => { setShowStartMenu(!showStartMenu); setShowQuickSettings(false); }} 
-                  className={cn("p-3 hover:bg-white/10 rounded-xl transition-all", step === "shutdown" && !showStartMenu && "ring-4 ring-yellow-400 animate-pulse")}
-                >
-                  <div className="grid grid-cols-2 gap-1 w-7 h-7">
-                    <div className="bg-blue-500 rounded-sm"/><div className="bg-blue-500 rounded-sm"/>
-                    <div className="bg-blue-500 rounded-sm"/><div className="bg-blue-500 rounded-sm"/>
-                  </div>
+                <button onClick={() => { setShowStartMenu(!showStartMenu); setShowQuickSettings(false); }} className={cn("p-3 hover:bg-white/10 rounded-xl transition-all", step === "shutdown" && !showStartMenu && "ring-4 ring-yellow-400 animate-pulse")}>
+                  <div className="grid grid-cols-2 gap-1 w-7 h-7"><div className="bg-blue-500 rounded-sm"/><div className="bg-blue-500 rounded-sm"/><div className="bg-blue-500 rounded-sm"/><div className="bg-blue-500 rounded-sm"/></div>
                 </button>
                 <div className="w-12 h-12 flex items-center justify-center opacity-30"><Search className="w-7 h-7 text-white"/></div>
               </div>
@@ -239,7 +225,7 @@ export function Mission4({ onComplete }: Mission4Props) {
                   onClick={() => { setShowQuickSettings(!showQuickSettings); setShowStartMenu(false); setWifiSubStep("quick-settings"); }} 
                   className={cn("flex items-center gap-4 px-5 hover:bg-white/10 rounded-xl h-14 transition-all", step === "wifi" && !showQuickSettings && "ring-4 ring-yellow-400 animate-pulse")}
                 >
-                  {wifiConnected ? <Wifi className="w-6 h-6 text-white" /> : <WifiOff className="w-6 h-6 text-white/40" />}
+                  {wifiConnected ? <Wifi className="w-6 h-6 text-white" /> : <DisconnectedGlobe className="w-6 h-6" />}
                   <Volume2 className="w-6 h-6 text-white" />
                   <Battery className="w-6 h-6 text-white" />
                   <div className="text-sm text-white/80 font-mono pl-2">14:00</div>
