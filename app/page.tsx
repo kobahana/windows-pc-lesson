@@ -41,7 +41,7 @@ export default function Home() {
       description: "正しい漢字を選んで、文章を完成させよう！",
       icon: <PenTool className="w-10 h-10 text-slate-400" />,
       link: "/lessons/lesson4",
-      available: true,
+      available: false,
     },
   ]
 
