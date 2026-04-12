@@ -13,7 +13,7 @@ export default function Home() {
       ruby: "きほんそうさ",
       description: "マウス操作、Wi-Fi、保存、シャットダウンを覚えよう！",
       icon: <Monitor className="w-10 h-10 text-blue-500" />,
-      link: "/lessons/windows",
+      link: "/lessons/lesson1",
       available: true,
     },
     {
