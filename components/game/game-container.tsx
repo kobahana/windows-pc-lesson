@@ -7,8 +7,9 @@ import { Mission2 } from "./missions/mission-2"
 import { Mission3 } from "./missions/mission-3"
 import { Mission4 } from "./missions/mission-4"
 import { Button } from "@/components/ui/button"
-import { RotateCcw, Trophy } from "lucide-react"
+import { RotateCcw, Trophy, ArrowLeft } from "lucide-react" // ArrowLeftを追加
 import { Ruby } from "./character"
+import Link from "next/link" // Linkを追加
 
 export function GameContainer() {
   const [currentMission, setCurrentMission] = useState(1)
@@ -45,15 +46,25 @@ export function GameContainer() {
   if (gameComplete) {
     return (
       <div className="min-h-screen bg-background flex flex-col">
-        <MissionHeader missions={missions} currentMission={currentMission} onMissionSelect={handleMissionSelect} />
+        {/* 完了画面にも「もどる」ボタンを配置 */}
+        <header className="flex items-center border-b bg-background px-4 h-14 shrink-0">
+          <Link href="/">
+            <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
+              <ArrowLeft className="w-4 h-4" /> もどる
+            </Button>
+          </Link>
+          <div className="flex-1">
+            <MissionHeader missions={missions} currentMission={currentMission} onMissionSelect={handleMissionSelect} />
+          </div>
+        </header>
+        
         <div className="flex-1 flex items-center justify-center p-8">
+          {/* ...（完了メッセージの内容はそのまま）... */}
           <div className="max-w-lg text-center">
             <div className="w-32 h-32 mx-auto mb-8 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full flex items-center justify-center shadow-xl animate-bounce-subtle">
               <Trophy className="w-16 h-16 text-white" />
             </div>
-            <h1 className="text-4xl font-bold text-foreground mb-4">
-              おめでとう！
-            </h1>
+            <h1 className="text-4xl font-bold text-foreground mb-4">おめでとう！</h1>
             <p className="text-xl text-muted-foreground mb-8">
               <Ruby rt="ぜん">全</Ruby>てのミッションをクリアしました！
               <br />
@@ -94,7 +105,18 @@ export function GameContainer() {
 
   return (
     <div className="h-screen bg-background flex flex-col">
-      <MissionHeader missions={missions} currentMission={currentMission} onMissionSelect={handleMissionSelect} />
+      {/* --- ヘッダー部分に「もどる」ボタンを追加 --- */}
+      <header className="flex items-center border-b bg-background px-4 h-14 shrink-0">
+        <Link href="/">
+          <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
+            <ArrowLeft className="w-4 h-4" /> もどる
+          </Button>
+        </Link>
+        <div className="flex-1">
+          <MissionHeader missions={missions} currentMission={currentMission} onMissionSelect={handleMissionSelect} />
+        </div>
+      </header>
+
       <main className="flex-1 flex flex-col overflow-hidden min-h-0">
         {currentMission === 1 && (
           <Mission1 onComplete={() => handleMissionComplete(1)} />
