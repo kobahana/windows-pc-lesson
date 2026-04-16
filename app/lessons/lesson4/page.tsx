@@ -118,16 +118,16 @@ const stages: Stage[] = [
 export default function Lesson4Page() {
   const [currentStage, setCurrentStage] = useState(0)
   const [wordIndex, setWordIndex] = useState(0)
-  const [charIndex, setCharIndex] = useState(0)
+  const [userInput, setUserInput] = useState("")
   const [showSuccess, setShowSuccess] = useState(false)
   const [missCount, setMissCount] = useState(0)
   const [startTime, setStartTime] = useState<number | null>(null)
   const [elapsedTime, setElapsedTime] = useState(0)
+  const [showHint, setShowHint] = useState(false)
   const { markLessonCompleted } = useSettings()
 
   const currentWord = stages[currentStage].words[wordIndex]
-  const targetChar = currentWord.r[charIndex]
-  const activeFingerInfo = fingerMap[targetChar]
+  const isCorrect = userInput.toLowerCase() === currentWord.r.toLowerCase()
 
   useEffect(() => {
     if (!showSuccess && !startTime) setStartTime(Date.now())
@@ -135,34 +135,35 @@ export default function Lesson4Page() {
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (showSuccess) return
-    const pressedKey = e.key.toLowerCase()
-    if (e.metaKey || e.ctrlKey || e.altKey || pressedKey.length > 1) return
-
-    if (pressedKey === targetChar) {
-      sounds?.playClick()
-      if (charIndex + 1 < currentWord.r.length) {
-        setCharIndex((prev) => prev + 1)
-      } else if (wordIndex + 1 < stages[currentStage].words.length) {
+    
+    if (e.key === 'Enter') {
+      if (isCorrect) {
         sounds?.playSuccess()
-        setWordIndex((prev) => prev + 1)
-        setCharIndex(0)
-      } else if (currentStage + 1 < stages.length) {
-        sounds?.playSuccess()
-        setCurrentStage((prev) => prev + 1)
-        setWordIndex(0)
-        setCharIndex(0)
+        if (wordIndex + 1 < stages[currentStage].words.length) {
+          setWordIndex(prev => prev + 1)
+          setUserInput("")
+          setShowHint(false)
+        } else if (currentStage + 1 < stages.length) {
+          setCurrentStage(prev => prev + 1)
+          setWordIndex(0)
+          setUserInput("")
+          setShowHint(false)
+        } else {
+          const end = Date.now()
+          setElapsedTime(startTime ? Math.floor((end - startTime) / 1000) : 0)
+          sounds?.playClear()
+          setShowSuccess(true)
+          markLessonCompleted(4)
+        }
       } else {
-        const end = Date.now()
-        setElapsedTime(startTime ? Math.floor((end - startTime) / 1000) : 0)
-        sounds?.playClear()
-        setShowSuccess(true)
-        markLessonCompleted(4)
+        sounds?.playError()
+        setMissCount(prev => prev + 1)
       }
-    } else {
-      sounds?.playError()
-      setMissCount((prev) => prev + 1)
+    } else if (e.key === 'Escape') {
+      setUserInput("")
+      setShowHint(false)
     }
-  }, [targetChar, charIndex, currentWord.r.length, wordIndex, currentStage, showSuccess, startTime, markLessonCompleted])
+  }, [isCorrect, wordIndex, stages, currentStage, showSuccess, startTime, markLessonCompleted])
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown)
@@ -173,11 +174,12 @@ export default function Lesson4Page() {
     sounds?.playClick()
     setCurrentStage(0)
     setWordIndex(0)
-    setCharIndex(0)
+    setUserInput("")
     setMissCount(0)
     setStartTime(null)
     setElapsedTime(0)
     setShowSuccess(false)
+    setShowHint(false)
   }
 
   const rows = [
@@ -229,7 +231,7 @@ export default function Lesson4Page() {
             {stages.map((stage, i) => (
               <button
                 key={stage.id}
-                onClick={() => { sounds?.playClick(); setCurrentStage(i); setWordIndex(0); setCharIndex(0) }}
+                onClick={() => { sounds?.playClick(); setCurrentStage(i); setWordIndex(0); setUserInput(""); setShowHint(false) }}
                 className={cn(
                   "flex-1 h-1.5 rounded-full transition-all duration-300",
                   i < currentStage ? "bg-green-500" : i === currentStage ? "bg-blue-600 ring-2 ring-blue-100 scale-y-125 shadow-sm" : "bg-slate-200 hover:bg-slate-300"
@@ -244,42 +246,115 @@ export default function Lesson4Page() {
         <div className="w-full max-w-5xl flex flex-col h-full">
           <div className="flex-1 flex flex-col justify-between py-1 overflow-hidden">
             <div className="text-center shrink-0">
-              <Character message="文を見て、下のローマ字を順に打とう！" mood="happy" />
+              <Character message="文を見て、ローマ字で入力してEnterキーを押そう！" mood="happy" />
             </div>
 
             <div className="flex flex-col items-center justify-center py-5 shrink-0 bg-white/40 rounded-3xl mx-10 border border-white shadow-inner">
-              <div className="text-5xl font-bold mb-3 text-slate-800 tracking-tight text-center px-2">{currentWord.h}</div>
-              <div className="flex gap-1.5 flex-wrap justify-center px-2">
-                {currentWord.r.split("").map((letter, i) => (
-                  <div key={i} className={cn(
-                    "text-2xl font-mono font-black w-8 h-11 flex items-center justify-center border-b-4 transition-all duration-150",
-                    i < charIndex ? "text-green-500 border-green-500 opacity-40" : i === charIndex ? "text-blue-600 border-blue-600 scale-110 shadow-sm" : "text-slate-200 border-slate-100"
-                  )}>
-                    {letter === " " ? "_" : letter.toUpperCase()}
-                  </div>
-                ))}
+              <div className="text-5xl font-bold mb-4 text-slate-800 tracking-tight text-center px-2">{currentWord.h}</div>
+              
+              <div className="w-full max-w-2xl mb-4">
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={userInput}
+                    onChange={(e) => setUserInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        const syntheticEvent = new KeyboardEvent('keydown', {
+                          key: 'Enter',
+                          code: 'Enter',
+                          keyCode: 13,
+                          which: 13,
+                          bubbles: true
+                        })
+                        handleKeyDown(syntheticEvent)
+                      }
+                    }}
+                    placeholder="ここにローマ字を入力..."
+                    className={cn(
+                      "w-full px-4 py-3 text-2xl font-mono font-bold text-center border-4 rounded-xl transition-all duration-200",
+                      isCorrect && userInput.length > 0
+                        ? "border-green-500 bg-green-50 text-green-700"
+                        : userInput.length > 0
+                        ? "border-red-500 bg-red-50 text-red-700 animate-pulse"
+                        : "border-slate-300 bg-white text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                    )}
+                    autoFocus
+                  />
+                  {userInput.length > 0 && (
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                      {isCorrect ? (
+                        <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                          </svg>
+                        </div>
+                      ) : (
+                        <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
+                          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex gap-2 mb-3">
+                <button
+                  onClick={() => setShowHint(!showHint)}
+                  className="px-3 py-1 text-sm bg-amber-100 hover:bg-amber-200 text-amber-700 rounded-lg font-medium transition-colors"
+                >
+                  {showHint ? "ヒントを隠す" : "ヒントを見る"}
+                </button>
+                <button
+                  onClick={() => setUserInput("")}
+                  className="px-3 py-1 text-sm bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition-colors"
+                >
+                  クリア (Esc)
+                </button>
+              </div>
+
+              {showHint && (
+                <div className="bg-amber-50 border-2 border-amber-200 rounded-xl px-4 py-2 mb-3">
+                  <p className="text-sm font-mono font-bold text-amber-800">
+                    ヒント: {currentWord.r.toUpperCase()}
+                  </p>
+                </div>
+              )}
+
+              <div className="text-sm text-slate-600 text-center">
+                Enterで送信 • Escでクリア • {currentWord.r.length}文字
               </div>
             </div>
 
             <div className="bg-white p-4 rounded-[2.5rem] shadow-2xl border border-slate-100 flex flex-col items-center justify-center">
-              <div className="space-y-1 mb-3 w-full max-w-[650px]">
+              <div className="text-center mb-3">
+                <p className="text-sm font-medium text-slate-600 mb-2">ローマ字入力のヒント</p>
+                <div className="text-xs text-slate-500 space-y-1">
+                  <p>• 小指: 赤色 • 薬指: 黄色 • 中指: 緑色</p>
+                  <p>• 人差し指: 紫色 • 親指: グレー</p>
+                </div>
+              </div>
+              <div className="space-y-1 w-full max-w-[650px]">
                 {rows.map((row, i) => (
                   <div key={i} className="flex justify-center gap-1">
                     {row.map((key) => {
                       const info = fingerMap[key]
                       const color = info ? fingerColors[info.finger as keyof typeof fingerColors] : undefined
-                      const isActive = key === targetChar
                       return (
                         <div key={key} className={cn(
-                          "w-10 h-10 rounded-lg border-2 flex items-center justify-center text-sm font-bold transition-all duration-150",
-                          isActive && color ? `${color.bg} text-white scale-115 shadow-xl z-20 border-white ring-2 ring-slate-100` : `${color?.light || "bg-slate-50"} border-slate-100 ${color?.text || "text-slate-300"} opacity-20`
+                          "w-8 h-8 rounded-lg border-2 flex items-center justify-center text-xs font-bold transition-all duration-150",
+                          color?.light || "bg-slate-50", 
+                          color?.text || "text-slate-300", 
+                          "border-slate-100 opacity-30"
                         )}>{key.toUpperCase()}</div>
                       )
                     })}
                   </div>
                 ))}
               </div>
-              <HandGuide activeHand={activeFingerInfo?.hand} activeFinger={activeFingerInfo?.finger} />
             </div>
           </div>
         </div>
