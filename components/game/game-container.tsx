@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import { MissionHeader } from "./mission-header"
 import { Mission1 } from "./missions/mission-1"
 import { Mission2 } from "./missions/mission-2"
@@ -20,14 +20,14 @@ export function GameContainer() {
   const [gameComplete, setGameComplete] = useState(false)
   const { markLessonCompleted } = useSettings()
 
-  const missions = [
-    { id: 1, title: "タッチパッドと画面", titleFull: <>タッチパッドと<Ruby rt="がめん">画面</Ruby>の<Ruby rt="だいぼうけん">大冒険</Ruby></>, completed: completedMissions.includes(1), current: currentMission === 1 },
-    { id: 2, title: "タイピングと変換", titleFull: <>タイピングと<Ruby rt="まほう">魔法</Ruby>のキー</>, completed: completedMissions.includes(2), current: currentMission === 2 },
-    { id: 3, title: "キーボードの秘密", titleFull: <>キーボードの<Ruby rt="ひみつ">秘密</Ruby>を<Ruby rt="と">解</Ruby>き<Ruby rt="あか">明</Ruby>かせ</>, completed: completedMissions.includes(3), current: currentMission === 3 },
-    { id: 4, title: "必須スキル", titleFull: <>Windowsの<Ruby rt="ひっす">必須</Ruby>スキルをマスター</>, completed: completedMissions.includes(4), current: currentMission === 4 },
-  ]
+  const missions = useMemo(() => [
+    { id: 1, title: "タッチパッド", titleFull: <>タッチパッドと<Ruby rt="がめん">画面</Ruby>の<Ruby rt="だいぼうけん">大冒険</Ruby></>, completed: completedMissions.includes(1), current: currentMission === 1 },
+    { id: 2, title: "タイピング", titleFull: <>タイピングと<Ruby rt="まほう">魔法</Ruby>のキー</>, completed: completedMissions.includes(2), current: currentMission === 2 },
+    { id: 3, title: "記号", titleFull: <>キーボードの<Ruby rt="ひみつ">秘密</Ruby>を<Ruby rt="と">解</Ruby>き<Ruby rt="あか">明</Ruby>かせ</>, completed: completedMissions.includes(3), current: currentMission === 3 },
+    { id: 4, title: "Wi-Fi・保存", titleFull: <>Windowsの<Ruby rt="ひっす">必須</Ruby>スキルをマスター</>, completed: completedMissions.includes(4), current: currentMission === 4 },
+  ], [completedMissions, currentMission])
 
-  const handleMissionComplete = (missionId: number) => {
+  const handleMissionComplete = useCallback((missionId: number) => {
     setCompletedMissions(prev => prev.includes(missionId) ? prev : [...prev, missionId])
     sounds?.playSuccess()
     if (missionId < 4) {
@@ -37,20 +37,26 @@ export function GameContainer() {
       setGameComplete(true)
       markLessonCompleted(1)
     }
-  }
+  }, [markLessonCompleted])
 
-  const handleMissionSelect = (missionId: number) => {
+  const handleMissionSelect = useCallback((missionId: number) => {
     sounds?.playClick()
     setCurrentMission(missionId)
     setGameComplete(false)
-  }
+  }, [])
 
-  const handleRestart = () => {
+  const handleRestart = useCallback(() => {
     sounds?.playClick()
     setCurrentMission(1)
     setCompletedMissions([])
     setGameComplete(false)
-  }
+  }, [])
+
+  // Wrapped complete handlers to keep them stable for mission components
+  const onMission1Complete = useCallback(() => handleMissionComplete(1), [handleMissionComplete])
+  const onMission2Complete = useCallback(() => handleMissionComplete(2), [handleMissionComplete])
+  const onMission3Complete = useCallback(() => handleMissionComplete(3), [handleMissionComplete])
+  const onMission4Complete = useCallback(() => handleMissionComplete(4), [handleMissionComplete])
 
   if (gameComplete) {
     return (
@@ -115,16 +121,16 @@ export function GameContainer() {
 
       <main className="flex-1 flex flex-col overflow-hidden min-h-0">
         {currentMission === 1 && (
-          <Mission1 onComplete={() => handleMissionComplete(1)} />
+          <Mission1 onComplete={onMission1Complete} />
         )}
         {currentMission === 2 && (
-          <Mission2 onComplete={() => handleMissionComplete(2)} />
+          <Mission2 onComplete={onMission2Complete} />
         )}
         {currentMission === 3 && (
-          <Mission3 onComplete={() => handleMissionComplete(3)} />
+          <Mission3 onComplete={onMission3Complete} />
         )}
         {currentMission === 4 && (
-          <Mission4 onComplete={() => handleMissionComplete(4)} />
+          <Mission4 onComplete={onMission4Complete} />
         )}
       </main>
     </div>

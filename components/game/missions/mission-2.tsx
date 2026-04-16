@@ -21,7 +21,8 @@ type Step =
   | "hiragana-input"
   | "kanji-conversion" 
   | "katakana-conversion"
-  | "delete-undo" 
+  | "delete-practice"
+  | "undo-practice"
   | "copy-paste" 
   | "complete"
 
@@ -32,7 +33,9 @@ export function Mission2({ onComplete }: Mission2Props) {
   const [imeMode, setImeMode] = useState<"en" | "ja">("en")
   const [inputValue, setInputValue] = useState("")
   const [deleteStepText, setDeleteStepText] = useState("こんにちあ")
-  const [undoStack, setUndoStack] = useState<string[]>(["こんにちあ"])
+  // undo-practice 用：最初から消しすぎた状態を用意
+  const [undoText, setUndoText] = useState("こんに")
+  const [undoStack, setUndoStack] = useState<string[]>(["こんにちは", "こんにち", "こんに"])
   const [clipboard, setClipboard] = useState("")
   const [selectedAll, setSelectedAll] = useState(false)
   const [pasteAreaText, setPasteAreaText] = useState("")
@@ -42,6 +45,7 @@ export function Mission2({ onComplete }: Mission2Props) {
 
   const triggerSuccess = useCallback((message: string, nextStep: Step) => {
     sounds?.playSuccess()
+    console.log(`[Mission2] ✅ triggerSuccess: "${message}" → next step: "${nextStep}"`)
     setSuccessMessage(message)
     setShowSuccess(true)
     setTimeout(() => {
@@ -50,25 +54,23 @@ export function Mission2({ onComplete }: Mission2Props) {
     }, 1500)
   }, [])
 
-  // Global keyboard handler for copy/paste
+  // ステップ変化のログ
   useEffect(() => {
-    const handleGlobalKeyDown = (e: KeyboardEvent) => {
-      if (step === "copy-paste") {
-        if (e.ctrlKey && e.key === "a" && copySourceFocused) {
-          e.preventDefault()
-          setSelectedAll(true)
-        }
-        if (e.ctrlKey && e.key === "c" && selectedAll && copySourceFocused) {
-          e.preventDefault()
-          setClipboard(inputValue || "サンプルテキスト")
-        }
-        // Allow native paste - we'll detect completion via onChange
-      }
-    }
+    console.log(`[Mission2] 📍 step changed → "${step}"`)
+  }, [step])
 
-    window.addEventListener("keydown", handleGlobalKeyDown)
-    return () => window.removeEventListener("keydown", handleGlobalKeyDown)
-  }, [step, selectedAll, clipboard, inputValue, copySourceFocused])
+  // copy-paste ステップの状態変化ログ
+  useEffect(() => {
+    if (step === "copy-paste") {
+      console.log(`[Mission2] 📋 copy-paste state:`, {
+        copySourceFocused,
+        selectedAll,
+        clipboard,
+        pasteAreaText,
+        inputValue,
+      })
+    }
+  }, [step, copySourceFocused, selectedAll, clipboard, pasteAreaText, inputValue])
 
   // Check paste completion - when paste area has the correct text
   useEffect(() => {
@@ -84,21 +86,27 @@ export function Mission2({ onComplete }: Mission2Props) {
     }
   }, [step, pasteAreaText, inputValue, clipboard, triggerSuccess, onComplete])
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    // Delete/Undo step
-    if (step === "delete-undo") {
-      if (e.key === "Backspace" && deleteStepText.length > 0) {
-        const newText = deleteStepText.slice(0, -1)
-        setUndoStack([...undoStack, deleteStepText])
-        setDeleteStepText(newText)
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (step === "delete-practice") {
+      if (e.key === "Backspace") {
+        // e.preventDefault() はしない。ブラウザに消させて onChange で検知する（二重削除防止）
+        console.log(`[Mission2] ⌫ Backspace (delete-practice)`)
       }
+    }
+
+    if (step === "undo-practice") {
       if (e.ctrlKey && e.key === "z") {
         e.preventDefault()
-        if (undoStack.length > 1) {
+        if (undoStack.length > 0) {
           const prevText = undoStack[undoStack.length - 1]
-          setDeleteStepText(prevText)
-          setUndoStack(undoStack.slice(0, -1))
+          console.log(`[Mission2] ↩️ Ctrl+Z (undo-practice): restore to "${prevText}"`)
+          setUndoText(prevText)
+          setUndoStack(prev => prev.slice(0, -1))
         }
+      }
+      // undo-practice 中の誤入力を防ぐ
+      if (e.key !== "Control" && !e.ctrlKey) {
+        // e.preventDefault()
       }
     }
   }
@@ -137,7 +145,7 @@ export function Mission2({ onComplete }: Mission2Props) {
     if (step === "katakana-conversion") {
       if (value === "コンピュータ" || value === "コンピューター" || value === "こんぴゅーた") {
         if (value === "コンピュータ" || value === "コンピューター") {
-          triggerSuccess("カタカナに変換できた！完璧！", "delete-undo")
+          triggerSuccess("カタカナに変換できた！完璧！", "delete-practice")
           setInputValue("")
         }
       }
@@ -146,10 +154,20 @@ export function Mission2({ onComplete }: Mission2Props) {
 
   // Check for correct text in delete step
   useEffect(() => {
-    if (step === "delete-undo" && deleteStepText === "こんにちは") {
-      triggerSuccess("綺麗に直せたね！", "copy-paste")
+    if (step === "delete-practice" && deleteStepText === "こんにちは") {
+      triggerSuccess("綺麗に直せたね！", "undo-practice")
+      // undo-practice の準備
+      setUndoText("こんに")
+      setUndoStack(["こんにちは", "こんにち"])
     }
   }, [deleteStepText, step, triggerSuccess])
+
+  // Check for correct text in undo step
+  useEffect(() => {
+    if (step === "undo-practice" && undoText === "こんにちは") {
+      triggerSuccess("すごい！魔法みたいに戻ったね！", "copy-paste")
+    }
+  }, [undoText, step, triggerSuccess])
 
   const getMessage = (): React.ReactNode => {
     switch (step) {
@@ -265,12 +283,16 @@ export function Mission2({ onComplete }: Mission2Props) {
             <Ruby rt="さいご">最後</Ruby>はカタカナ！「<span className="font-bold">こんぴゅーた</span>」と<Ruby rt="にゅうりょく">入力</Ruby>して、スペースを<Ruby rt="なんかい">何回</Ruby>か<Ruby rt="お">押</Ruby>して「<span className="font-bold text-primary">コンピュータ</span>」に<Ruby rt="へんかん">変換</Ruby>してみよう！
           </>
         )
-      case "delete-undo":
+      case "delete-practice":
         return deleteStepText === "こんにちは" 
-          ? <><Ruby rt="かんぺき">完璧</Ruby>！<Ruby rt="つぎ">次</Ruby>に<Ruby rt="すす">進</Ruby>もう！</> 
-          : deleteStepText === "こんにち"
-            ? <><Ruby rt="け">消</Ruby>しすぎちゃったかも…「Ctrl+Z」で<Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>そう！</>
-            : <>この<Ruby rt="もじ">文字</Ruby>、<Ruby rt="まちが">間違</Ruby>ってる…。「Backspace（←）」で「あ」を<Ruby rt="け">消</Ruby>して「は」に<Ruby rt="なお">直</Ruby>そう！</>
+          ? <><Ruby rt="かんぺき">完璧</Ruby>！次は「元に戻す」練習だよ！</> 
+          : deleteStepText.includes("あ")
+            ? <>この文字、間違ってる…。「Backspace（←）」で「あ」を消して、「は」に直そう！</>
+            : <>よし、消せたね！次は「は」を入力して「こんにちは」にしよう！</>
+      case "undo-practice":
+        return undoText === "こんにちは"
+          ? <><Ruby rt="すば">素晴</Ruby>らしい！ショートカットをマスターしたね！</>
+          : <>あ！間違えて消しすぎちゃった！<span className="font-bold text-primary">「Ctrl + Z」</span>で元に戻そう！</>
       case "copy-paste":
         return selectedAll && clipboard 
           ? <><Ruby rt="うえ">上</Ruby>の<Ruby rt="はこ">箱</Ruby>でコピーできた！<Ruby rt="した">下</Ruby>の<Ruby rt="はこ">箱</Ruby>をクリックして<span className="font-bold text-primary">「Ctrl+V」</span>でペーストして！</>
@@ -467,40 +489,69 @@ export function Mission2({ onComplete }: Mission2Props) {
                 </div>
               )}
 
-              {/* Delete/Undo Step */}
-              {step === "delete-undo" && (
+               {/* Delete Practice Step */}
+              {step === "delete-practice" && (
                 <div className="flex-1 flex flex-col items-center justify-center gap-6">
                   <div className="w-full max-w-md">
+                    <div className="bg-success/10 border border-success/30 rounded-lg p-4 mb-4 text-center text-success font-medium">
+                      ステップ4: 文字を直そう
+                    </div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      この<Ruby rt="もじ">文字</Ruby>を<Ruby rt="なお">直</Ruby>そう（「あ」→「は」）：
+                       Backspace（←）で「あ」を消して、「は」に直してね：
                     </label>
                     <input
                       type="text"
                       value={deleteStepText}
-                      onChange={(e) => {
-                        const newVal = e.target.value
-                        setUndoStack([...undoStack, deleteStepText])
-                        setDeleteStepText(newVal)
-                      }}
+                      onChange={(e) => setDeleteStepText(e.target.value)}
                       onKeyDown={handleKeyDown}
                       className={cn(
                         "w-full px-4 py-3 text-xl border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary",
-                        deleteStepText === "こんにちあ" && "ring-4 ring-destructive"
+                        deleteStepText.includes("あ") && "ring-4 ring-destructive"
                       )}
                       autoFocus
                     />
-                    <div className="mt-4 flex gap-4 justify-center">
+                    <div className="mt-4 flex justify-center">
                       <div className="text-center">
-                        <div className="w-20 h-12 bg-gray-800 rounded flex items-center justify-center text-white text-xs">
+                        <div className="w-24 h-12 bg-gray-800 rounded flex items-center justify-center text-white text-sm">
                           ← Backspace
                         </div>
-                        <p className="text-xs text-gray-500 mt-1"><Ruby rt="け">消</Ruby>す</p>
+                        <p className="text-xs text-gray-500 mt-1">これで消すよ</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Undo Practice Step */}
+              {step === "undo-practice" && (
+                <div className="flex-1 flex flex-col items-center justify-center gap-6">
+                  <div className="w-full max-w-md">
+                    <div className="bg-warning/10 border border-warning/30 rounded-lg p-4 mb-4 text-center text-warning font-medium">
+                      ステップ5: 間違えて消しすぎちゃった！
+                    </div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                       Ctrl + Z で「こんにちは」に戻そう：
+                    </label>
+                    <input
+                      type="text"
+                      value={undoText}
+                      readOnly
+                      onKeyDown={handleKeyDown}
+                      className="w-full px-4 py-3 text-xl border-2 rounded-lg bg-gray-50 focus:outline-none ring-4 ring-warning"
+                      autoFocus
+                    />
+                    <div className="mt-4 flex gap-4 justify-center">
+                      <div className="text-center opacity-50">
+                        <div className="w-20 h-12 bg-gray-300 rounded flex items-center justify-center text-gray-600 text-xs">
+                          ← Backspace
+                        </div>
+                        <p className="text-xs text-gray-400 mt-1">消しすぎた！</p>
                       </div>
                       <div className="text-center">
-                        <div className="w-20 h-12 bg-gray-800 rounded flex items-center justify-center text-white text-xs">
+                        <div className="w-24 h-12 bg-gray-800 rounded flex items-center justify-center text-white text-sm">
                           Ctrl + Z
                         </div>
-                        <p className="text-xs text-gray-500 mt-1"><Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>す</p>
+                        <p className="text-xs text-gray-500 mt-1">元に戻すよ</p>
                       </div>
                     </div>
                   </div>
@@ -528,7 +579,20 @@ export function Mission2({ onComplete }: Mission2Props) {
                         type="text"
                         value={inputValue || "サンプルテキスト"}
                         onChange={(e) => setInputValue(e.target.value)}
-                        onFocus={() => setCopySourceFocused(true)}
+                        onFocus={() => {
+                          console.log('[Mission2] 🔵 source input focused')
+                          setCopySourceFocused(true)
+                        }}
+                        onSelect={(e) => {
+                          const el = e.currentTarget
+                          const isAll = el.selectionStart === 0 && el.selectionEnd === el.value.length
+                          console.log(`[Mission2] 🖱️ onSelect: start=${el.selectionStart} end=${el.selectionEnd} len=${el.value.length} isAll=${isAll}`)
+                          if (isAll && el.value.length > 0) setSelectedAll(true)
+                        }}
+                        onCopy={() => {
+                          console.log('[Mission2] 📋 onCopy fired — setting clipboard state')
+                          setClipboard(inputValue || "サンプルテキスト")
+                        }}
                         className={cn(
                           "w-full px-4 py-3 text-xl border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary",
                           selectedAll && "bg-blue-100",
@@ -538,7 +602,7 @@ export function Mission2({ onComplete }: Mission2Props) {
                       />
                       {selectedAll && (
                         <p className="text-sm text-success mt-1 text-center">
-                          {clipboard ? "コピーできた！" : "<Ruby rt=\"つぎ\">次</Ruby>は Ctrl+C！"}
+                          {clipboard ? "コピーできた！" : <><Ruby rt="つぎ">次</Ruby>は Ctrl+C！</>}
                         </p>
                       )}
                     </div>
@@ -554,13 +618,18 @@ export function Mission2({ onComplete }: Mission2Props) {
                         value={pasteAreaText}
                         onChange={(e) => setPasteAreaText(e.target.value)}
                         onPaste={(e) => {
-                          // Allow native paste and capture the pasted text
                           const pastedText = e.clipboardData.getData('text')
+                          console.log(`[Mission2] 📥 onPaste fired — pastedText: "${pastedText}"`)
                           if (pastedText) {
                             setPasteAreaText(pastedText)
+                          } else {
+                            console.warn('[Mission2] ⚠️ onPaste: clipboardData empty. Clipboard may be blocked.')
                           }
                         }}
-                        onFocus={() => setCopySourceFocused(false)}
+                        onFocus={() => {
+                          console.log('[Mission2] 🟣 paste target focused')
+                          setCopySourceFocused(false)
+                        }}
                         className={cn(
                           "w-full px-4 py-3 text-xl border-2 border-dashed rounded-lg focus:outline-none focus:ring-2 focus:ring-primary",
                           clipboard && !pasteAreaText && "ring-4 ring-warning animate-pulse"

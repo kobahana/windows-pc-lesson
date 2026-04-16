@@ -41,6 +41,7 @@ export function Mission3({ onComplete }: Mission3Props) {
 
   const triggerSuccess = useCallback((message: string, nextStep: Step) => {
     sounds?.playSuccess()
+    console.log(`[Mission3] ✅ triggerSuccess → next step: "${nextStep}"`)
     setSuccessMessage(message)
     setShowSuccess(true)
     setTimeout(() => {
@@ -48,6 +49,10 @@ export function Mission3({ onComplete }: Mission3Props) {
       setStep(nextStep)
     }, 1500)
   }, [])
+
+  useEffect(() => {
+    console.log(`[Mission3] 📍 step changed → "${step}"`)
+  }, [step])
 
   // Track shift key state
   useEffect(() => {
@@ -71,11 +76,10 @@ export function Mission3({ onComplete }: Mission3Props) {
     setInputValue(value)
 
     if (step === "practice" && currentChar) {
-      // Check if the correct character was typed (including half-width/full-width variants)
       const target = currentChar.char
       const lastChar = value.slice(-1)
+      console.log(`[Mission3] ⌨️ input: value="${value}" lastChar="${lastChar}" target="${target}"`)
       
-      // Match both full-width and half-width versions
       const matches = 
         lastChar === target ||
         (target === "・" && (lastChar === "・" || lastChar === "･")) ||
@@ -89,6 +93,8 @@ export function Mission3({ onComplete }: Mission3Props) {
         (target === "＋" && (lastChar === "＋" || lastChar === "+")) ||
         (target === "＝" && (lastChar === "＝" || lastChar === "="))
 
+      console.log(`[Mission3] match=${matches} (charIndex=${currentCharIndex}/${practiceCharacters.length - 1})`)
+
       if (matches) {
         const newCompleted = [...completedChars, currentCharIndex]
         setCompletedChars(newCompleted)
@@ -97,7 +103,6 @@ export function Mission3({ onComplete }: Mission3Props) {
         if (currentCharIndex < practiceCharacters.length - 1) {
           setCurrentCharIndex(currentCharIndex + 1)
         } else {
-          // All done!
           triggerSuccess("すごい！全部の記号をマスターしたね！", "complete")
           setTimeout(() => {
             onComplete()

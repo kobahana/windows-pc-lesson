@@ -47,8 +47,8 @@ export function MissionHeader({ missions, currentMission, onMissionSelect, class
                 <span className="text-sm font-medium hidden sm:inline">
                   {mission.titleFull || mission.title}
                 </span>
-                <span className="text-sm font-medium sm:hidden">
-                  M{mission.id}
+                <span className="text-xs font-medium sm:hidden">
+                  {mission.title}
                 </span>
               </button>
               {index < missions.length - 1 && (

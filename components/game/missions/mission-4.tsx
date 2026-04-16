@@ -54,6 +54,7 @@ export function Mission4({ onComplete }: Mission4Props) {
 
   const triggerSuccess = useCallback((message: string, nextStep: Step) => {
     sounds?.playSuccess()
+    console.log(`[Mission4] ✅ triggerSuccess → next step: "${nextStep}"`)
     setSuccessMessage(message)
     setShowSuccess(true)
     setTimeout(() => {
@@ -63,9 +64,14 @@ export function Mission4({ onComplete }: Mission4Props) {
   }, [])
 
   useEffect(() => {
+    console.log(`[Mission4] 📍 step changed → "${step}"`)
+  }, [step])
+
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
         e.preventDefault();
+        console.log(`[Mission4] 💾 Ctrl+S pressed: step="${step}" documentSaved=${documentSaved}`)
         if (step === "save" && !documentSaved) {
           setDocumentSaved(true);
           triggerSuccess("正しく保存ほぞんできたね！", "shutdown");
@@ -77,16 +83,19 @@ export function Mission4({ onComplete }: Mission4Props) {
   }, [step, documentSaved, triggerSuccess]);
 
   const handleWifiConnect = () => {
+    console.log(`[Mission4] 📶 handleWifiConnect: password="${wifiPassword}"`)
     if (wifiPassword === "password123") {
       setWifiConnected(true)
       setShowQuickSettings(false)
       triggerSuccess("インターネットにつながったね！", "save")
     } else {
+      console.warn(`[Mission4] ⚠️ Wrong Wi-Fi password: "${wifiPassword}"`)
       alert("パスワードが違ちがうみたい。「password123」と入力にゅうりょくしてね。")
     }
   }
 
   const handleShutdown = () => {
+    console.log(`[Mission4] 🔴 handleShutdown called`)
     setShuttingDown(true)
     setShowPowerMenu(false)
     setShowStartMenu(false)
@@ -110,7 +119,7 @@ export function Mission4({ onComplete }: Mission4Props) {
   return (
     <div className="flex flex-col h-full bg-slate-100 font-sans">
       <SuccessOverlay show={showSuccess} message={successMessage} />
-      <div className="shrink-0 p-6 bg-white border-b shadow-sm">
+      <div className="shrink-0 p-3 bg-white border-b shadow-sm">
         <Character message={getMessage()} mood={showSuccess ? "celebrating" : "encouraging"} />
         {step === "intro" && (
           <div className="mt-6 flex justify-center">
@@ -120,7 +129,7 @@ export function Mission4({ onComplete }: Mission4Props) {
       </div>
 
       {(step !== "intro" && step !== "complete") && (
-        <div className="flex-1 p-8 flex items-center justify-center overflow-hidden">
+        <div className="flex-1 p-3 flex items-center justify-center overflow-hidden">
           <div className="w-full h-full max-w-6xl max-h-[700px] bg-slate-900 rounded-[2.5rem] shadow-[0_40px_100px_rgba(0,0,0,0.5)] overflow-hidden relative border-[12px] border-slate-800 flex flex-col">
             {shuttingDown && (
               <div className="absolute inset-0 bg-black z-[100] flex flex-col items-center justify-center animate-fade-in text-white">
@@ -142,7 +151,7 @@ export function Mission4({ onComplete }: Mission4Props) {
 
               {/* クイック設定パネル */}
               {showQuickSettings && (
-                <div className="absolute bottom-4 right-4 w-[400px] bg-slate-900/90 backdrop-blur-3xl border border-white/20 rounded-[1.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.6)] z-50 overflow-hidden animate-in slide-in-from-bottom-4">
+                <div className="absolute bottom-4 right-4 w-[340px] bg-slate-900/90 backdrop-blur-3xl border border-white/20 rounded-[1.5rem] shadow-[0_30px_60px_rgba(0,0,0,0.6)] z-50 overflow-hidden animate-in slide-in-from-bottom-4">
                   {wifiSubStep === "quick-settings" ? (
                     <div className="p-8">
                       <div className="grid grid-cols-3 gap-y-8 gap-x-4 mb-8">
@@ -173,7 +182,7 @@ export function Mission4({ onComplete }: Mission4Props) {
                       </div>
                     </div>
                   ) : (
-                    <div className="p-6 h-[450px] flex flex-col">
+                    <div className="p-4 max-h-[280px] flex flex-col">
                       <button onClick={() => setWifiSubStep("quick-settings")} className="flex items-center gap-3 text-sm text-white/60 mb-6 hover:text-white"><ArrowLeft className="w-5 h-5" /> Wi-Fi 設定せってい</button>
                       <div className="flex-1 space-y-2 overflow-y-auto pr-2">
                         {wifiNetworks.map(n => (

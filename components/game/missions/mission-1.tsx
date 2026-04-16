@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect, useMemo } from "react"
 import { cn } from "@/lib/utils"
 import { Character, Ruby } from "../character"
 import { SuccessOverlay } from "../success-overlay"
@@ -32,7 +32,7 @@ type Step =
   | "tutorial-drag" 
   | "tutorial-selectall"
   | "click" 
-  | "doubleclick"
+  | "doubleclick" 
   | "rightclick" 
   | "scroll-drag" 
   | "window" 
@@ -41,7 +41,7 @@ type Step =
 export function Mission1({ onComplete }: Mission1Props) {
   const [step, setStep] = useState<Step>("intro")
   const [showSuccess, setShowSuccess] = useState(false)
-  const [successMessage, setSuccessMessage] = useState("")
+  const [successMessage, setSuccessMessage] = useState<React.ReactNode>("")
   const [contextMenuVisible, setContextMenuVisible] = useState(false)
   const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 })
   const [appleDragged, setAppleDragged] = useState(false)
@@ -52,7 +52,8 @@ export function Mission1({ onComplete }: Mission1Props) {
 
   const triggerSuccess = useCallback((message: React.ReactNode, nextStep: Step) => {
     sounds?.playSuccess()
-    setSuccessMessage(typeof message === 'string' ? message : '')
+    console.log(`[Mission1] ✅ triggerSuccess → next step: "${nextStep}"`)
+    setSuccessMessage(message)
     setShowSuccess(true)
     setTimeout(() => {
       setShowSuccess(false)
@@ -60,13 +61,19 @@ export function Mission1({ onComplete }: Mission1Props) {
     }, 1500)
   }, [])
 
-  const handleStartClick = () => {
+  useEffect(() => {
+    console.log(`[Mission1] 📍 step changed → "${step}"`)
+  }, [step])
+
+  const handleStartClick = useCallback(() => {
+    console.log(`[Mission1] 💡 handleStartClick: step="${step}"`)
     if (step === "click") {
       triggerSuccess("OK！バッチリだ！", "doubleclick")
     }
-  }
+  }, [step, triggerSuccess])
 
-  const handleDoubleClick = () => {
+  const handleDoubleClick = useCallback(() => {
+    console.log(`[Mission1] 💡 handleDoubleClick: step="${step}"`)
     if (step === "doubleclick") {
       setAppOpened(true)
       setTimeout(() => {
@@ -74,10 +81,11 @@ export function Mission1({ onComplete }: Mission1Props) {
         setAppOpened(false)
       }, 1000)
     }
-  }
+  }, [step, triggerSuccess])
 
-  const handleContextMenu = (e: React.MouseEvent) => {
+  const handleContextMenu = useCallback((e: React.MouseEvent) => {
     e.preventDefault()
+    console.log(`[Mission1] 💡 handleContextMenu: step="${step}"`)
     if (step === "rightclick") {
       setContextMenuPosition({ x: e.clientX, y: e.clientY })
       setContextMenuVisible(true)
@@ -86,33 +94,32 @@ export function Mission1({ onComplete }: Mission1Props) {
         triggerSuccess("すごい！メニューが出たね！", "scroll-drag")
       }, 1000)
     }
-  }
+  }, [step, triggerSuccess])
 
-  const handleDragEnd = (e: React.DragEvent) => {
+  const handleDragEnd = useCallback((e: React.DragEvent) => {
+    console.log(`[Mission1] 💡 handleDragEnd: step="${step}" x=${e.clientX} y=${e.clientY}`)
     const dropTarget = document.getElementById("basket")
     if (dropTarget) {
       const rect = dropTarget.getBoundingClientRect()
-      if (
-        e.clientX >= rect.left &&
-        e.clientX <= rect.right &&
-        e.clientY >= rect.top &&
-        e.clientY <= rect.bottom
-      ) {
+      const hit = e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom
+      console.log(`[Mission1] 🍎 dragEnd basket rect:`, rect, `hit=${hit}`)
+      if (hit) {
         setAppleDragged(true)
         triggerSuccess("やったー！りんごゲット！", "window")
       }
     }
-  }
+  }, [step, triggerSuccess])
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault()
-  }
+  }, [])
 
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault()
-  }
+  }, [])
 
-  const handleCloseWindow = () => {
+  const handleCloseWindow = useCallback(() => {
+    console.log(`[Mission1] 💡 handleCloseWindow: step="${step}" windowClosed=${windowClosed}`)
     if (step === "window" && !windowClosed) {
       setWindowClosed(true)
       setWindowState("closed")
@@ -121,16 +128,17 @@ export function Mission1({ onComplete }: Mission1Props) {
         onComplete()
       }, 2000)
     }
-  }
+  }, [step, windowClosed, triggerSuccess, onComplete])
 
-  const handleMaximizeWindow = () => {
+  const handleMaximizeWindow = useCallback(() => {
+    console.log(`[Mission1] 💡 handleMaximizeWindow: step="${step}" windowMaximized=${windowMaximized}`)
     if (step === "window" && !windowMaximized) {
       setWindowMaximized(true)
       setWindowState("maximized")
     }
-  }
+  }, [step, windowMaximized])
 
-  const getMessage = (): React.ReactNode => {
+  const message = useMemo(() => {
     switch (step) {
       case "intro":
         return (
@@ -261,13 +269,13 @@ export function Mission1({ onComplete }: Mission1Props) {
       default:
         return ""
     }
-  }
+  }, [step, windowClosed, windowMaximized])
 
-  const getMood = (): "happy" | "neutral" | "encouraging" | "celebrating" => {
+  const mood = useMemo((): "happy" | "neutral" | "encouraging" | "celebrating" => {
     if (showSuccess || step === "complete") return "celebrating"
     if (step === "intro" || step.startsWith("tutorial")) return "happy"
     return "encouraging"
-  }
+  }, [showSuccess, step])
 
   const isTutorialStep = step.startsWith("tutorial")
 
@@ -277,7 +285,7 @@ export function Mission1({ onComplete }: Mission1Props) {
       
       {/* Character Section */}
       <div className="p-4 md:p-6 bg-gradient-to-b from-secondary to-background">
-        <Character message={getMessage()} mood={getMood()} />
+        <Character message={message} mood={mood} />
         
         {/* Tutorial navigation buttons */}
         {step === "intro" && (
