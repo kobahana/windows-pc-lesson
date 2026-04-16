@@ -35,7 +35,7 @@ export function Mission3({ onComplete }: Mission3Props) {
   const [inputValue, setInputValue] = useState("")
   const [currentCharIndex, setCurrentCharIndex] = useState(0)
   const [completedChars, setCompletedChars] = useState<number[]>([])
-  const [shiftPressed, setShiftPressed] = useState(false)
+  const [isAdvancing, setIsAdvancing] = useState(false)
 
   const currentChar = practiceCharacters[currentCharIndex]
 
@@ -54,28 +54,14 @@ export function Mission3({ onComplete }: Mission3Props) {
     console.log(`[Mission3] 📍 step changed → "${step}"`)
   }, [step])
 
-  // Track shift key state
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Shift") setShiftPressed(true)
-    }
-    const handleKeyUp = (e: KeyboardEvent) => {
-      if (e.key === "Shift") setShiftPressed(false)
-    }
-    window.addEventListener("keydown", handleKeyDown)
-    window.addEventListener("keyup", handleKeyUp)
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown)
-      window.removeEventListener("keyup", handleKeyUp)
-    }
-  }, [])
-
   // Check input for correct character
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setInputValue(value)
 
     if (step === "practice" && currentChar) {
+      if (isAdvancing) return
+
       const target = currentChar.char
       const lastChar = value.slice(-1)
       console.log(`[Mission3] ⌨️ input: value="${value}" lastChar="${lastChar}" target="${target}"`)
@@ -99,9 +85,13 @@ export function Mission3({ onComplete }: Mission3Props) {
         const newCompleted = [...completedChars, currentCharIndex]
         setCompletedChars(newCompleted)
         setInputValue("")
+        setIsAdvancing(true)
         
         if (currentCharIndex < practiceCharacters.length - 1) {
-          setCurrentCharIndex(currentCharIndex + 1)
+          setTimeout(() => {
+            setCurrentCharIndex(currentCharIndex + 1)
+            setIsAdvancing(false)
+          }, 700)
         } else {
           triggerSuccess("すごい！全部の記号をマスターしたね！", "complete")
           setTimeout(() => {
@@ -253,17 +243,6 @@ export function Mission3({ onComplete }: Mission3Props) {
                   <p className="text-lg text-muted-foreground">{currentChar?.description}</p>
                 </div>
 
-                {/* Hint */}
-                <div className="bg-white rounded-xl p-4 shadow-md border border-border">
-                  <p className="text-sm text-muted-foreground text-center mb-2">ヒント：</p>
-                  <p className="text-lg font-medium text-center">{currentChar?.hint}</p>
-                  {shiftPressed && (
-                    <p className="text-sm text-success text-center mt-2 animate-pulse">
-                      Shiftが<Ruby rt="お">押</Ruby>されてる！
-                    </p>
-                  )}
-                </div>
-
                 {/* Input */}
                 <div className="w-full max-w-xs">
                   <input
@@ -272,7 +251,7 @@ export function Mission3({ onComplete }: Mission3Props) {
                     onChange={handleInputChange}
                     className={cn(
                       "w-full px-4 py-4 text-2xl text-center bg-white border-2 rounded-lg focus:outline-none focus:ring-4 focus:ring-primary",
-                      "ring-4 ring-warning"
+                      isAdvancing ? "ring-4 ring-success" : "ring-4 ring-warning"
                     )}
                     placeholder={`「${currentChar?.char}」を入力`}
                     autoFocus
@@ -335,4 +314,4 @@ export function Mission3({ onComplete }: Mission3Props) {
       )}
     </div>
   )
-}
+  }

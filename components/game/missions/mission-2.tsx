@@ -11,19 +11,19 @@ interface Mission2Props {
   onComplete: () => void
 }
 
-type Step = 
-  | "intro" 
-  | "tutorial-ime" 
+type Step =
+  | "intro"
+  | "tutorial-ime"
   | "tutorial-conversion"
   | "tutorial-backspace"
   | "tutorial-copypaste"
-  | "ime-switch" 
+  | "ime-switch"
   | "hiragana-input"
-  | "kanji-conversion" 
+  | "kanji-conversion"
   | "katakana-conversion"
   | "delete-practice"
   | "undo-practice"
-  | "copy-paste" 
+  | "copy-paste"
   | "complete"
 
 export function Mission2({ onComplete }: Mission2Props) {
@@ -122,7 +122,7 @@ export function Mission2({ onComplete }: Mission2Props) {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     setInputValue(value)
-    
+
     // Hiragana input check
     if (step === "hiragana-input") {
       if (value === "あした" || value === "明日") {
@@ -130,7 +130,7 @@ export function Mission2({ onComplete }: Mission2Props) {
         setInputValue("")
       }
     }
-    
+
     // Kanji conversion check
     if (step === "kanji-conversion") {
       if (value === "今日" || value === "きょう") {
@@ -140,7 +140,7 @@ export function Mission2({ onComplete }: Mission2Props) {
         }
       }
     }
-    
+
     // Katakana conversion check
     if (step === "katakana-conversion") {
       if (value === "コンピュータ" || value === "コンピューター" || value === "こんぴゅーた") {
@@ -168,6 +168,27 @@ export function Mission2({ onComplete }: Mission2Props) {
       triggerSuccess("すごい！魔法みたいに戻ったね！", "copy-paste")
     }
   }, [undoText, step, triggerSuccess])
+
+  // Undo practice should work even if input focus is lost.
+  useEffect(() => {
+    if (step !== "undo-practice") return
+
+    const handleUndoShortcut = (e: KeyboardEvent) => {
+      const isUndo = (e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "z"
+      if (!isUndo) return
+
+      e.preventDefault()
+      if (undoStack.length > 0) {
+        const prevText = undoStack[undoStack.length - 1]
+        console.log(`[Mission2] ↩️ Global undo shortcut: restore to "${prevText}"`)
+        setUndoText(prevText)
+        setUndoStack(prev => prev.slice(0, -1))
+      }
+    }
+
+    window.addEventListener("keydown", handleUndoShortcut)
+    return () => window.removeEventListener("keydown", handleUndoShortcut)
+  }, [step, undoStack])
 
   const getMessage = (): React.ReactNode => {
     switch (step) {
@@ -284,8 +305,8 @@ export function Mission2({ onComplete }: Mission2Props) {
           </>
         )
       case "delete-practice":
-        return deleteStepText === "こんにちは" 
-          ? <><Ruby rt="かんぺき">完璧</Ruby>！次は「元に戻す」練習だよ！</> 
+        return deleteStepText === "こんにちは"
+          ? <><Ruby rt="かんぺき">完璧</Ruby>！次は「元に戻す」練習だよ！</>
           : deleteStepText.includes("あ")
             ? <>この文字、間違ってる…。「Backspace（←）」で「あ」を消して、「は」に直そう！</>
             : <>よし、消せたね！次は「は」を入力して「こんにちは」にしよう！</>
@@ -294,9 +315,9 @@ export function Mission2({ onComplete }: Mission2Props) {
           ? <><Ruby rt="すば">素晴</Ruby>らしい！ショートカットをマスターしたね！</>
           : <>あ！間違えて消しすぎちゃった！<span className="font-bold text-primary">「Ctrl + Z」</span>で元に戻そう！</>
       case "copy-paste":
-        return selectedAll && clipboard 
+        return selectedAll && clipboard
           ? <><Ruby rt="うえ">上</Ruby>の<Ruby rt="はこ">箱</Ruby>でコピーできた！<Ruby rt="した">下</Ruby>の<Ruby rt="はこ">箱</Ruby>をクリックして<span className="font-bold text-primary">「Ctrl+V」</span>でペーストして！</>
-          : selectedAll 
+          : selectedAll
             ? <><Ruby rt="ぜんぶえら">全部選</Ruby>べたね！キーボードで<span className="font-bold text-primary">「Ctrl+C」</span>を<Ruby rt="お">押</Ruby>してコピーして！</>
             : <><Ruby rt="うえ">上</Ruby>の<Ruby rt="はこ">箱</Ruby>をクリックして、キーボードで<span className="font-bold text-primary">「Ctrl+A」</span>を<Ruby rt="お">押</Ruby>して<Ruby rt="ぜんぶえら">全部選</Ruby>んで！</>
       case "complete":
@@ -317,11 +338,11 @@ export function Mission2({ onComplete }: Mission2Props) {
   return (
     <div className="flex flex-col h-full">
       <SuccessOverlay show={showSuccess} message={successMessage} />
-      
+
       {/* Character Section */}
       <div className="p-4 md:p-6 bg-gradient-to-b from-secondary to-background">
         <Character message={getMessage()} mood={getMood()} />
-        
+
         {/* Tutorial navigation */}
         {step === "intro" && (
           <div className="mt-4 flex justify-center">
@@ -330,7 +351,7 @@ export function Mission2({ onComplete }: Mission2Props) {
             </Button>
           </div>
         )}
-        
+
         {step === "tutorial-ime" && (
           <div className="mt-4 flex justify-center">
             <Button onClick={() => setStep("tutorial-conversion")} size="lg" className="text-lg px-8">
@@ -338,7 +359,7 @@ export function Mission2({ onComplete }: Mission2Props) {
             </Button>
           </div>
         )}
-        
+
         {step === "tutorial-conversion" && (
           <div className="mt-4 flex justify-center">
             <Button onClick={() => setStep("tutorial-backspace")} size="lg" className="text-lg px-8">
@@ -346,7 +367,7 @@ export function Mission2({ onComplete }: Mission2Props) {
             </Button>
           </div>
         )}
-        
+
         {step === "tutorial-backspace" && (
           <div className="mt-4 flex justify-center">
             <Button onClick={() => setStep("tutorial-copypaste")} size="lg" className="text-lg px-8">
@@ -354,7 +375,7 @@ export function Mission2({ onComplete }: Mission2Props) {
             </Button>
           </div>
         )}
-        
+
         {step === "tutorial-copypaste" && (
           <div className="mt-4 flex justify-center">
             <Button onClick={() => setStep("ime-switch")} size="lg" className="text-lg px-8">
@@ -381,7 +402,7 @@ export function Mission2({ onComplete }: Mission2Props) {
                       {imeMode === "en" ? "英語モード" : "日本語モード"}
                     </p>
                   </div>
-                  <Button 
+                  <Button
                     onClick={toggleIme}
                     size="lg"
                     variant="outline"
@@ -489,7 +510,7 @@ export function Mission2({ onComplete }: Mission2Props) {
                 </div>
               )}
 
-               {/* Delete Practice Step */}
+              {/* Delete Practice Step */}
               {step === "delete-practice" && (
                 <div className="flex-1 flex flex-col items-center justify-center gap-6">
                   <div className="w-full max-w-md">
@@ -497,7 +518,7 @@ export function Mission2({ onComplete }: Mission2Props) {
                       ステップ4: 文字を直そう
                     </div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                       Backspace（←）で「あ」を消して、「は」に直してね：
+                      Backspace（←）で「あ」を消して、「は」に直してね：
                     </label>
                     <input
                       type="text"
@@ -530,7 +551,7 @@ export function Mission2({ onComplete }: Mission2Props) {
                       ステップ5: 間違えて消しすぎちゃった！
                     </div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                       Ctrl + Z で「こんにちは」に戻そう：
+                      Ctrl + Z で「こんにちは」に戻そう：
                     </label>
                     <input
                       type="text"
@@ -618,6 +639,7 @@ export function Mission2({ onComplete }: Mission2Props) {
                         value={pasteAreaText}
                         onChange={(e) => setPasteAreaText(e.target.value)}
                         onPaste={(e) => {
+                          e.preventDefault()
                           const pastedText = e.clipboardData.getData('text')
                           console.log(`[Mission2] 📥 onPaste fired — pastedText: "${pastedText}"`)
                           if (pastedText) {
