@@ -46,16 +46,16 @@ const HandGuide = ({ activeHand, activeFinger }: { activeHand?: 'left' | 'right'
           const config = fingerColors[f as keyof typeof fingerColors];
           const xBase = isLeft ? (f === 0 ? 120 : 160 - f * 28) : (f === 0 ? 80 : 40 + f * 28);
           const yBase = f === 0 ? 110 : 65 + Math.abs(2 - f) * 12;
-          
+
           return (
             <g key={f}>
-              <rect 
-                x={xBase - 12} 
-                y={yBase - (f === 0 ? 25 : 45)} 
-                width={f === 0 ? 35 : 24} 
-                height={f === 0 ? 25 : 55} 
-                rx="12" 
-                fill={isActive ? config.hex : "#f1f5f9"} 
+              <rect
+                x={xBase - 12}
+                y={yBase - (f === 0 ? 25 : 45)}
+                width={f === 0 ? 35 : 24}
+                height={f === 0 ? 25 : 55}
+                rx="12"
+                fill={isActive ? config.hex : "#f1f5f9"}
                 stroke={isActive ? config.hex : "#e2e8f0"}
                 strokeWidth="2"
                 className="transition-all duration-300 shadow-sm"
@@ -85,7 +85,7 @@ export default function Lesson2() {
   const [currentStage, setCurrentStage] = useState(0);
   const [progress, setProgress] = useState(0)
   const [showSuccess, setShowSuccess] = useState(false)
-  
+
   // Score state
   const [missCount, setMissCount] = useState(0);
   const [startTime, setStartTime] = useState<number | null>(null);
@@ -114,7 +114,7 @@ export default function Lesson2() {
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (subStep !== 'practice' || showSuccess) return;
     const pressedKey = e.key === " " ? " " : e.key.toLowerCase();
-    
+
     // ignore meta keys
     if (e.metaKey || e.ctrlKey || e.altKey || pressedKey.length > 1) return;
 
@@ -181,7 +181,7 @@ export default function Lesson2() {
             <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
               <Trophy className="w-12 h-12 text-white" />
             </div>
-            
+
             <h2 className="text-3xl font-bold text-slate-800 mb-2">クリアおめでとう！</h2>
             <p className="text-slate-600 mb-8 font-medium">{evaluationMessage}</p>
 
@@ -235,12 +235,12 @@ export default function Lesson2() {
           {subStep === 'intro' ? (
             <div className="flex-1 flex flex-col justify-start pt-6 space-y-4 animate-in fade-in zoom-in-95 duration-500 overflow-y-auto px-4 pb-4">
               <Character message="まずは、指（ゆび）をおく場所（ばしょ）をおぼえよう！基本（きほん）がとっても大切だよ。" mood="happy" />
-              
+
               <div className="bg-white rounded-[2rem] p-8 shadow-xl border border-slate-100 mt-4">
                 <h3 className="text-xl font-bold mb-8 text-center flex items-center justify-center gap-3">
                   <CheckCircle2 className="text-green-500 w-8 h-8" /> ホームポジションのじゅんび
                 </h3>
-                
+
                 <div className="grid grid-cols-2 gap-8 mb-10 text-center">
                   <div className="p-8 bg-blue-50 rounded-3xl border-2 border-blue-100 shadow-inner">
                     <div className="w-20 h-20 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-4xl font-bold mx-auto border-b-8 border-blue-800 mb-4 shadow-xl">F</div>
@@ -255,7 +255,7 @@ export default function Lesson2() {
                 </div>
 
                 <HandGuide activeHand={undefined} />
-                
+
                 <div className="mt-10 flex justify-center">
                   <Button size="lg" className="bg-blue-600 hover:bg-blue-700 px-24 h-16 text-xl rounded-full shadow-2xl font-bold" onClick={() => { sounds?.playClick(); setSubStep('practice'); }}>
                     わかった！練習（れんしゅう）する
@@ -276,8 +276,8 @@ export default function Lesson2() {
                   return (
                     <div key={index} className={cn(
                       "w-10 h-12 rounded-xl border-2 flex items-center justify-center text-xl font-bold transition-all shrink-0",
-                      index === progress ? `${color.bg} text-white scale-110 shadow-lg ring-2 ring-white z-10` : 
-                      index < progress ? "bg-slate-50 text-slate-200 border-transparent opacity-50" : "border-slate-200 text-slate-300 bg-white"
+                      index === progress ? `${color.bg} text-white scale-110 shadow-lg ring-2 ring-white z-10` :
+                        index < progress ? "bg-slate-50 text-slate-200 border-transparent opacity-50" : "border-slate-200 text-slate-300 bg-white"
                     )}>
                       {key === " " ? "SPC" : key.toUpperCase()}
                     </div>
@@ -296,8 +296,8 @@ export default function Lesson2() {
                         return (
                           <div key={key} className={cn(
                             "w-11 h-11 rounded-xl border flex items-center justify-center text-sm font-bold transition-all duration-200",
-                            isActive ? `${color.bg} text-white scale-115 shadow-xl z-20 border-white ring-2 ring-slate-100` : 
-                            `${color.light} ${color.border} ${color.text} opacity-30`,
+                            isActive ? `${color.bg} text-white scale-115 shadow-xl z-20 border-white ring-2 ring-slate-100` :
+                              `${color.light} ${color.border} ${color.text} opacity-30`,
                             (key === "f" || key === "j") && !isActive && "border-b-4"
                           )}>{key.toUpperCase()}</div>
                         )
