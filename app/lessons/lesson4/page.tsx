@@ -59,89 +59,89 @@ const HandGuide = ({ activeHand, activeFinger }: { activeHand?: "left" | "right"
   )
 }
 
-type Word = { h: string; k: string; r: string; chunks?: { k: string; r: string }[] }
+type Word = { h: string; k: string; r: string; chunks?: { h?: string; k: string; r: string }[] }
 type Stage = { id: number; name: string; words: Word[] }
 
 const stages: Stage[] = [
   { id: 1, name: "A1あいさつ", words: [
-    { h: "きょうははれです。", k: "今日は晴れです。", r: "kyouhaharedesu.", chunks: [{ k: "今日は", r: "kyouha" }, { k: "晴れです。", r: "haredesu." }] }, 
-    { h: "わたしはがくせいです。", k: "私は学生です。", r: "watasihagakuseidesu.", chunks: [{ k: "私は", r: "watasiha" }, { k: "学生です。", r: "gakuseidesu." }] },
-    { h: "せんせいはげんきです。", k: "先生は元気です。", r: "senseihagenkidesu.", chunks: [{ k: "先生は", r: "senseiha" }, { k: "元気です。", r: "genkidesu." }] }, 
-    { h: "きょうしつはしずかです。", k: "教室は静かです。", r: "kyousituhasizukadesu.", chunks: [{ k: "教室は", r: "kyousituha" }, { k: "静かです。", r: "sizukadesu." }] },
-    { h: "わたしはいえにかえります。", k: "私は家に帰ります。", r: "watasihaienikaerimasu.", chunks: [{ k: "私は", r: "watasiha" }, { k: "家に", r: "ieni" }, { k: "帰ります。", r: "kaerimasu." }] }, 
-    { h: "あしたはがっこうへいきます。", k: "明日は学校へ行きます。", r: "asitahagakkouheikimasu.", chunks: [{ k: "明日は", r: "asitaha" }, { k: "学校へ", r: "gakkouhe" }, { k: "行きます。", r: "ikimasu." }] },
+    { h: "きょうははれです。", k: "今日は晴れです。", r: "kyouhaharedesu.", chunks: [{ h: "きょうは", k: "今日は", r: "kyouha" }, { h: "はれです。", k: "晴れです。", r: "haredesu." }] }, 
+    { h: "わたしはがくせいです。", k: "私は学生です。", r: "watasihagakuseidesu.", chunks: [{ h: "わたしは", k: "私は", r: "watasiha" }, { h: "がくせいです。", k: "学生です。", r: "gakuseidesu." }] },
+    { h: "せんせいはげんきです。", k: "先生は元気です。", r: "senseihagenkidesu.", chunks: [{ h: "せんせいは", k: "先生は", r: "senseiha" }, { h: "げんきです。", k: "元気です。", r: "genkidesu." }] }, 
+    { h: "きょうしつはしずかです。", k: "教室は静かです。", r: "kyousituhasizukadesu.", chunks: [{ h: "きょうしつは", k: "教室は", r: "kyousituha" }, { h: "しずかです。", k: "静かです。", r: "sizukadesu." }] },
+    { h: "わたしはいえにかえります。", k: "私は家に帰ります。", r: "watasihaienikaerimasu.", chunks: [{ h: "わたしは", k: "私は", r: "watasiha" }, { h: "いえに", k: "家に", r: "ieni" }, { h: "かえります。", k: "帰ります。", r: "kaerimasu." }] }, 
+    { h: "あしたはがっこうへいきます。", k: "明日は学校へ行きます。", r: "asitahagakkouheikimasu.", chunks: [{ h: "あしたは", k: "明日は", r: "asitaha" }, { h: "がっこうへ", k: "学校へ", r: "gakkouhe" }, { h: "いきます。", k: "行きます。", r: "ikimasu." }] },
   ]},
   { id: 2, name: "A1学校", words: [
-    { h: "きょうはぱそこんのじゅぎょうです。", k: "今日はパソコンの授業です。", r: "kyouhapasokonnnojugyoudesu.", chunks: [{ k: "今日は", r: "kyouha" }, { k: "パソコンの", r: "pasokonnno" }, { k: "授業です。", r: "jugyoudesu." }] }, 
-    { h: "ともだちととしょかんへいきます。", k: "友達と図書館へ行きます。", r: "tomodatitotosyokannheikimasu.", chunks: [{ k: "友達と", r: "tomodatito" }, { k: "図書館へ", r: "tosyokannhe" }, { k: "行きます。", r: "ikimasu." }] },
-    { h: "じゅぎょうでにほんごをべんきょうします。", k: "授業で日本語を勉強します。", r: "jugyoudenihongowobenkyousimasu.", chunks: [{ k: "授業で", r: "jugyoude" }, { k: "日本語を", r: "nihongowo" }, { k: "勉強します。", r: "benkyousimasu." }] }, 
-    { h: "きょうはしゅくだいをだします。", k: "今日は宿題を出します。", r: "kyouhasyukudaiwodasimasu.", chunks: [{ k: "今日は", r: "kyouha" }, { k: "宿題を", r: "syukudaiwo" }, { k: "出します。", r: "dasimasu." }] },
-    { h: "せんせいにしつもんをします。", k: "先生に質問をします。", r: "senseinisitumonnwosimasu.", chunks: [{ k: "先生に", r: "senseini" }, { k: "質問を", r: "situmonnwo" }, { k: "します。", r: "simasu." }] }, 
-    { h: "ひるやすみにこうていであそびます。", k: "昼休みに校庭で遊びます。", r: "hiruyasuminikouteideasobimasu.", chunks: [{ k: "昼休みに", r: "hiruyasumini" }, { k: "校庭で", r: "kouteide" }, { k: "遊びます。", r: "asobimasu." }] },
+    { h: "きょうはぱそこんのじゅぎょうです。", k: "今日はパソコンの授業です。", r: "kyouhapasokonnnojugyoudesu.", chunks: [{ h: "きょうは", k: "今日は", r: "kyouha" }, { h: "ぱそこんの", k: "パソコンの", r: "pasokonnno" }, { h: "じゅぎょうです。", k: "授業です。", r: "jugyoudesu." }] }, 
+    { h: "ともだちととしょかんへいきます。", k: "友達と図書館へ行きます。", r: "tomodatitotosyokannheikimasu.", chunks: [{ h: "ともだちと", k: "友達と", r: "tomodatito" }, { h: "としょかんへ", k: "図書館へ", r: "tosyokannhe" }, { h: "いきます。", k: "行きます。", r: "ikimasu." }] },
+    { h: "じゅぎょうでにほんごをべんきょうします。", k: "授業で日本語を勉強します。", r: "jugyoudenihongowobenkyousimasu.", chunks: [{ h: "じゅぎょうで", k: "授業で", r: "jugyoude" }, { h: "にほんごを", k: "日本語を", r: "nihongowo" }, { h: "べんきょうします。", k: "勉強します。", r: "benkyousimasu." }] }, 
+    { h: "きょうはしゅくだいをだします。", k: "今日は宿題を出します。", r: "kyouhasyukudaiwodasimasu.", chunks: [{ h: "きょうは", k: "今日は", r: "kyouha" }, { h: "しゅくだいを", k: "宿題を", r: "syukudaiwo" }, { h: "だします。", k: "出します。", r: "dasimasu." }] },
+    { h: "せんせいにしつもんをします。", k: "先生に質問をします。", r: "senseinisitumonnwosimasu.", chunks: [{ h: "せんせいに", k: "先生に", r: "senseini" }, { h: "しつもんを", k: "質問を", r: "situmonnwo" }, { h: "します。", k: "します。", r: "simasu." }] }, 
+    { h: "ひるやすみにこうていであそびます。", k: "昼休みに校庭で遊びます。", r: "hiruyasuminikouteideasobimasu.", chunks: [{ h: "ひるやすみに", k: "昼休みに", r: "hiruyasumini" }, { h: "こうていで", k: "校庭で", r: "kouteide" }, { h: "あそびます。", k: "遊びます。", r: "asobimasu." }] },
   ]},
   { id: 3, name: "A1生活", words: [
-    { h: "まいあさしちじにおきます。", k: "毎朝七時に起きます。", r: "maiasasitiziniokimasu.", chunks: [{ k: "毎朝", r: "maiasa" }, { k: "七時に", r: "sitizini" }, { k: "起きます。", r: "okimasu." }] }, 
-    { h: "よるはかぞくでばんごはんをたべます。", k: "夜は家族で晩ご飯を食べます。", r: "yoruhakazokudebangohanwotabemasu.", chunks: [{ k: "夜は", r: "yoruha" }, { k: "家族で", r: "kazokude" }, { k: "晩ご飯を", r: "bangohanwo" }, { k: "食べます。", r: "tabemasu." }] },
-    { h: "にちようびにこうえんへいきます。", k: "日曜日に公園へ行きます。", r: "nitiyoubinikouenheikimasu.", chunks: [{ k: "日曜日に", r: "nitiyoubini" }, { k: "公園へ", r: "kouenhe" }, { k: "行きます。", r: "ikimasu." }] }, 
-    { h: "きのうでんしゃでえきへいきました。", k: "昨日電車で駅へ行きました。", r: "kinoudensyadeekiheikimasita.", chunks: [{ k: "昨日", r: "kinou" }, { k: "電車で", r: "densyade" }, { k: "駅へ", r: "ekihe" }, { k: "行きました。", r: "ikimasita." }] },
-    { h: "わたしはみずをにほんのみます。", k: "私は水を日本のみます。", r: "watasihamizuwonihonnnomimasu.", chunks: [{ k: "私は", r: "watasiha" }, { k: "水を", r: "mizuwo" }, { k: "日本の", r: "nihonnno" }, { k: "みます。", r: "mimasu." }] }, 
-    { h: "こんばんへやをそうじします。", k: "今晩部屋を掃除します。", r: "konbannheyawosouzisimasu.", chunks: [{ k: "今晩", r: "konbann" }, { k: "部屋を", r: "heyawo" }, { k: "掃除します。", r: "souzisimasu." }] },
+    { h: "まいあさしちじにおきます。", k: "毎朝七時に起きます。", r: "maiasasitiziniokimasu.", chunks: [{ h: "まいあさ", k: "毎朝", r: "maiasa" }, { h: "しちじに", k: "七時に", r: "sitizini" }, { h: "おきます。", k: "起きます。", r: "okimasu." }] }, 
+    { h: "よるはかぞくでばんごはんをたべます。", k: "夜は家族で晩ご飯を食べます。", r: "yoruhakazokudebangohanwotabemasu.", chunks: [{ h: "よるは", k: "夜は", r: "yoruha" }, { h: "かぞくで", k: "家族で", r: "kazokude" }, { h: "ばんごはんを", k: "晩ご飯を", r: "bangohanwo" }, { h: "たべます。", k: "食べます。", r: "tabemasu." }] },
+    { h: "にちようびにこうえんへいきます。", k: "日曜日に公園へ行きます。", r: "nitiyoubinikouenheikimasu.", chunks: [{ h: "にちようびに", k: "日曜日に", r: "nitiyoubini" }, { h: "こうえんへ", k: "公園へ", r: "kouenhe" }, { h: "いきます。", k: "行きます。", r: "ikimasu." }] }, 
+    { h: "きのうでんしゃでえきへいきました。", k: "昨日電車で駅へ行きました。", r: "kinoudensyadeekiheikimasita.", chunks: [{ h: "きのう", k: "昨日", r: "kinou" }, { h: "でんしゃで", k: "電車で", r: "densyade" }, { h: "えきへ", k: "駅へ", r: "ekihe" }, { h: "いきました。", k: "行きました。", r: "ikimasita." }] },
+    { h: "わたしはみずをにほんのみます。", k: "私は水を二本飲みます。", r: "watasihamizuwonihonnnomimasu.", chunks: [{ h: "わたしは", k: "私は", r: "watasiha" }, { h: "みずを", k: "水を", r: "mizuwo" }, { h: "にほん", k: "二本", r: "nihonn" }, { h: "のみます。", k: "飲みます。", r: "nomimasu." }] }, 
+    { h: "こんばんへやをそうじします。", k: "今晩部屋を掃除します。", r: "konbannheyawosouzisimasu.", chunks: [{ h: "こんばん", k: "今晩", r: "konbann" }, { h: "へやを", k: "部屋を", r: "heyawo" }, { h: "そうじします。", k: "掃除します。", r: "souzisimasu." }] },
   ]},
   { id: 4, name: "N5時間", words: [
-    { h: "けさはろくじにおきました。", k: "今朝は六時に起きました。", r: "kesaharokuziniokimasita.", chunks: [{ k: "今朝は", r: "kesaha" }, { k: "六時に", r: "rokuzini" }, { k: "起きました。", r: "okimasita." }] }, 
-    { h: "ごごにしゅくだいをします。", k: "午後に宿題をします。", r: "gogonisyukudaiwosimasu.", chunks: [{ k: "午後に", r: "gogoni" }, { k: "宿題を", r: "syukudaiwo" }, { k: "します。", r: "simasu." }] },
-    { h: "らいしゅうはてすとがあります。", k: "来週はテストがあります。", r: "raisyuuhatesutogaarimasu.", chunks: [{ k: "来週は", r: "raisyuuha" }, { k: "テストが", r: "tesutoga" }, { k: "あります。", r: "arimasu." }] }, 
-    { h: "まいにちくじまでべんきょうします。", k: "毎日九時まで勉強します。", r: "mainitikuzimadebenkyousimasu.", chunks: [{ k: "毎日", r: "mainiti" }, { k: "九時まで", r: "kuzimade" }, { k: "勉強します。", r: "benkyousimasu." }] },
-    { h: "きょうのよるははやくねます。", k: "今夜は早く寝ます。", r: "konnyahahayakunemasu.", chunks: [{ k: "今夜は", r: "konnyaha" }, { k: "早く", r: "hayaku" }, { k: "寝ます。", r: "nemasu." }] }, 
-    { h: "しけんはらいげつです。", k: "試験は来月です。", r: "sikennharaigetudesu.", chunks: [{ k: "試験は", r: "sikennha" }, { k: "来月です。", r: "raigetudesu." }] },
+    { h: "けさはろくじにおきました。", k: "今朝は六時に起きました。", r: "kesaharokuziniokimasita.", chunks: [{ h: "けさは", k: "今朝は", r: "kesaha" }, { h: "ろくじに", k: "六時に", r: "rokuzini" }, { h: "おきました。", k: "起きました。", r: "okimasita." }] }, 
+    { h: "ごごにしゅくだいをします。", k: "午後に宿題をします。", r: "gogonisyukudaiwosimasu.", chunks: [{ h: "ごごに", k: "午後に", r: "gogoni" }, { h: "しゅくだいを", k: "宿題を", r: "syukudaiwo" }, { h: "します。", k: "します。", r: "simasu." }] },
+    { h: "らいしゅうはてすとがあります。", k: "来週はテストがあります。", r: "raisyuuhatesutogaarimasu.", chunks: [{ h: "らいしゅうは", k: "来週は", r: "raisyuuha" }, { h: "てすとが", k: "テストが", r: "tesutoga" }, { h: "あります。", k: "あります。", r: "arimasu." }] }, 
+    { h: "まいにちくじまでべんきょうします。", k: "毎日九時まで勉強します。", r: "mainitikuzimadebenkyousimasu.", chunks: [{ h: "まいにち", k: "毎日", r: "mainiti" }, { h: "くじまで", k: "九時まで", r: "kuzimade" }, { h: "べんきょうします。", k: "勉強します。", r: "benkyousimasu." }] },
+    { h: "こんやははやくねます。", k: "今夜は早く寝ます。", r: "konnyahahayakunemasu.", chunks: [{ h: "こんやは", k: "今夜は", r: "konnyaha" }, { h: "はやく", k: "早く", r: "hayaku" }, { h: "ねます。", k: "寝ます。", r: "nemasu." }] }, 
+    { h: "しけんはらいげつです。", k: "試験は来月です。", r: "sikennharaigetudesu.", chunks: [{ h: "しけんは", k: "試験は", r: "sikennha" }, { h: "らいげつです。", k: "来月です。", r: "raigetudesu." }] },
   ]},
   { id: 5, name: "N5場所", words: [
-    { h: "ぎんこうのまえでまちます。", k: "銀行の前で待ちます。", r: "ginkounomaedematimasu.", chunks: [{ k: "銀行の", r: "ginkounno" }, { k: "前で", r: "maede" }, { k: "待ちます。", r: "matimasu." }] }, 
-    { h: "ゆうびんきょくでてがみをだします。", k: "郵便局で手紙を出します。", r: "yuubinkyokudetegamiwodasimasu.", chunks: [{ k: "郵便局で", r: "yuubinkyokude" }, { k: "手紙を", r: "tegamiwo" }, { k: "出します。", r: "dasimasu." }] },
-    { h: "うちのちかくにこうえんがあります。", k: "家の近くに公園があります。", r: "utinotikakunikouenngaarimasu.", chunks: [{ k: "家の", r: "utino" }, { k: "近くに", r: "tikakuni" }, { k: "公園が", r: "kouennga" }, { k: "あります。", r: "arimasu." }] }, 
-    { h: "えきのみぎにびょういんがあります。", k: "駅の右に病院があります。", r: "ekinomiginibyouinngaarimasu.", chunks: [{ k: "駅の", r: "ekino" }, { k: "右に", r: "migini" }, { k: "病院が", r: "byouinnga" }, { k: "あります。", r: "arimasu." }] },
-    { h: "みせでのーとをかいました。", k: "店でノートを買いました。", r: "misedeno-towokaimasita.", chunks: [{ k: "店で", r: "misede" }, { k: "ノートを", r: "no-towo" }, { k: "買いました。", r: "kaimasita." }] }, 
-    { h: "こうさてんでみちをわたります。", k: "交差点で道を渡ります。", r: "kousatendemitiwowatarimasu.", chunks: [{ k: "交差点で", r: "kousatende" }, { k: "道を", r: "mitiwo" }, { k: "渡ります。", r: "watarimasu." }] },
+    { h: "ぎんこうのまえでまちます。", k: "銀行の前で待ちます。", r: "ginkounomaedematimasu.", chunks: [{ h: "ぎんこうの", k: "銀行の", r: "ginkounno" }, { h: "まえで", k: "前で", r: "maede" }, { h: "まちます。", k: "待ちます。", r: "matimasu." }] }, 
+    { h: "ゆうびんきょくでてがみをだします。", k: "郵便局で手紙を出します。", r: "yuubinkyokudetegamiwodasimasu.", chunks: [{ h: "ゆうびんきょくで", k: "郵便局で", r: "yuubinkyokude" }, { h: "てがみを", k: "手紙を", r: "tegamiwo" }, { h: "だします。", k: "出します。", r: "dasimasu." }] },
+    { h: "うちのちかくにこうえんがあります。", k: "家の近くに公園があります。", r: "utinotikakunikouenngaarimasu.", chunks: [{ h: "うちの", k: "家の", r: "utino" }, { h: "ちかくに", k: "近くに", r: "tikakuni" }, { h: "こうえんが", k: "公園が", r: "kouennga" }, { h: "あります。", k: "あります。", r: "arimasu." }] }, 
+    { h: "えきのみぎにびょういんがあります。", k: "駅の右に病院があります。", r: "ekinomiginibyouinngaarimasu.", chunks: [{ h: "えきの", k: "駅の", r: "ekino" }, { h: "みぎに", k: "右に", r: "migini" }, { h: "びょういんが", k: "病院が", r: "byouinnga" }, { h: "あります。", k: "あります。", r: "arimasu." }] },
+    { h: "みせでのーとをかいました。", k: "店でノートを買いました。", r: "misedeno-towokaimasita.", chunks: [{ h: "みせで", k: "店で", r: "misede" }, { h: "のーとを", k: "ノートを", r: "no-towo" }, { h: "かいました。", k: "買いました。", r: "kaimasita." }] }, 
+    { h: "こうさてんでみちをわたります。", k: "交差点で道を渡ります。", r: "kousatendemitiwowatarimasu.", chunks: [{ h: "こうさてんで", k: "交差点で", r: "kousatende" }, { h: "みちを", k: "道を", r: "mitiwo" }, { h: "わたります。", k: "渡ります。", r: "watarimasu." }] },
   ]},
   { id: 6, name: "促音（っ）", words: [
-    { h: "がっこうできってをかいます。", k: "学校で切手を買います。", r: "gakkoudekittewokaimasu.", chunks: [{ k: "学校で", r: "gakkoude" }, { k: "切手を", r: "kittewo" }, { k: "買います。", r: "kaimasu." }] }, 
-    { h: "きっぷをもってえきへいきます。", k: "切符を持って駅へ行きます。", r: "kippuwomotteekiheikimasu.", chunks: [{ k: "切符を", r: "kippuwo" }, { k: "持って", r: "motte" }, { k: "駅へ", r: "ekihe" }, { k: "行きます。", r: "ikimasu." }] },
-    { h: "ざっしをかってよみます。", k: "雑誌を買って読みます。", r: "zassiwokatteyomimasu.", chunks: [{ k: "雑誌を", r: "zassiwo" }, { k: "買って", r: "katte" }, { k: "読みます。", r: "yomimasu." }] }, 
-    { h: "きっさてんでけーきをたべました。", k: "喫茶店でケーキを食べました。", r: "kissatendeke-kiwotabemasita.", chunks: [{ k: "喫茶店で", r: "kissatende" }, { k: "ケーキを", r: "ke-kiwo" }, { k: "食べました。", r: "tabemasita." }] },
-    { h: "まっすぐみちをすすみます。", k: "まっすぐ道を進みます。", r: "massugumitiwosusumimasu.", chunks: [{ k: "まっすぐ", r: "massugu" }, { k: "道を", r: "mitiwo" }, { k: "進みます。", r: "susumimasu." }] }, 
-    { h: "やっとしゅくだいがおわりました。", k: "やっと宿題が終わりました。", r: "yattosyukudaigaowarimasita.", chunks: [{ k: "やっと", r: "yatto" }, { k: "宿題が", r: "syukudaiga" }, { k: "終わりました。", r: "owarimasita." }] },
+    { h: "がっこうできってをかいます。", k: "学校で切手を買います。", r: "gakkoudekittewokaimasu.", chunks: [{ h: "がっこうで", k: "学校で", r: "gakkoude" }, { h: "きってを", k: "切手を", r: "kittewo" }, { h: "かいます。", k: "買います。", r: "kaimasu." }] }, 
+    { h: "きっぷをもってえきへいきます。", k: "切符を持って駅へ行きます。", r: "kippuwomotteekiheikimasu.", chunks: [{ h: "きっぷを", k: "切符を", r: "kippuwo" }, { h: "もって", k: "持って", r: "motte" }, { h: "えきへ", k: "駅へ", r: "ekihe" }, { h: "いきます。", k: "行きます。", r: "ikimasu." }] },
+    { h: "ざっしをかってよみます。", k: "雑誌を買って読みます。", r: "zassiwokatteyomimasu.", chunks: [{ h: "ざっしを", k: "雑誌を", r: "zassiwo" }, { h: "かって", k: "買って", r: "katte" }, { h: "よみます。", k: "読みます。", r: "yomimasu." }] }, 
+    { h: "きっさてんでけーきをたべました。", k: "喫茶店でケーキを食べました。", r: "kissatendeke-kiwotabemasita.", chunks: [{ h: "きっさてんで", k: "喫茶店で", r: "kissatende" }, { h: "けーきを", k: "ケーキを", r: "ke-kiwo" }, { h: "たべました。", k: "食べました。", r: "tabemasita." }] },
+    { h: "まっすぐみちをすすみます。", k: "まっすぐ道を進みます。", r: "massugumitiwosusumimasu.", chunks: [{ h: "まっすぐ", k: "まっすぐ", r: "massugu" }, { h: "みちを", k: "道を", r: "mitiwo" }, { h: "すすみます。", k: "進みます。", r: "susumimasu." }] }, 
+    { h: "やっとしゅくだいがおわりました。", k: "やっと宿題が終わりました。", r: "yattosyukudaigaowarimasita.", chunks: [{ h: "やっと", k: "やっと", r: "yatto" }, { h: "しゅくだいが", k: "宿題が", r: "syukudaiga" }, { h: "おわりました。", k: "終わりました。", r: "owarimasita." }] },
   ]},
   { id: 7, name: "撥音（ん）", words: [
-    { h: "しんぶんをよんでねます。", k: "新聞を読んで寝ます。", r: "sinbunnwoyondenemasu.", chunks: [{ k: "新聞を", r: "sinbunnwo" }, { k: "読んで", r: "yonde" }, { k: "寝ます。", r: "nemasu." }] }, 
-    { h: "ほんをさんさつかいました。", k: "本を三冊買いました。", r: "honnwosansatukaimasita.", chunks: [{ k: "本を", r: "honnwo" }, { k: "三冊", r: "sansatu" }, { k: "買いました。", r: "kaimasita." }] },
-    { h: "えんぴつをにほんつかいます。", k: "鉛筆を二本使います。", r: "ennpituwonihonntsukaimasu.", chunks: [{ k: "鉛筆を", r: "ennpituwo" }, { k: "二本", r: "nihonn" }, { k: "使います。", r: "tukaimasu." }] }, 
-    { h: "しんかんせんでとうきょうへいきます。", k: "新幹線で東京へ行きます。", r: "sinkannsenndetoukyouheikimasu.", chunks: [{ k: "新幹線で", r: "sinkannsennde" }, { k: "東京へ", r: "toukyouhe" }, { k: "行きます。", r: "ikimasu." }] },
-    { h: "てんきがいいのでさんぽします。", k: "天気がいいので散歩します。", r: "tennkigaiinodesannposimasu.", chunks: [{ k: "天気が", r: "tennkiga" }, { k: "いいので", r: "iinode" }, { k: "散歩します。", r: "sannposimasu." }] }, 
-    { h: "にんじんをいっぽんかいます。", k: "人参を一本買います。", r: "ninnzinnwoipponnkaimasu.", chunks: [{ k: "人参を", r: "ninnzinnwo" }, { k: "一本", r: "ipponn" }, { k: "買います。", r: "kaimasu." }] },
+    { h: "しんぶんをよんでねます。", k: "新聞を読んで寝ます。", r: "sinbunnwoyondenemasu.", chunks: [{ h: "しんぶんを", k: "新聞を", r: "sinbunnwo" }, { h: "よんで", k: "読んで", r: "yonde" }, { h: "ねます。", k: "寝ます。", r: "nemasu." }] }, 
+    { h: "ほんをさんさつかいました。", k: "本を三冊買いました。", r: "honnwosansatukaimasita.", chunks: [{ h: "ほんを", k: "本を", r: "honnwo" }, { h: "さんさつ", k: "三冊", r: "sansatu" }, { h: "かいました。", k: "買いました。", r: "kaimasita." }] },
+    { h: "えんぴつをにほんつかいます。", k: "鉛筆を二本使います。", r: "ennpituwonihonntsukaimasu.", chunks: [{ h: "えんぴつを", k: "鉛筆を", r: "ennpituwo" }, { h: "にほん", k: "二本", r: "nihonn" }, { h: "つかいます。", k: "使います。", r: "tukaimasu." }] }, 
+    { h: "しんかんせんでとうきょうへいきます。", k: "新幹線で東京へ行きます。", r: "sinkannsenndetoukyouheikimasu.", chunks: [{ h: "しんかんせんで", k: "新幹線で", r: "sinkannsennde" }, { h: "とうきょうへ", k: "東京へ", r: "toukyouhe" }, { h: "いきます。", k: "行きます。", r: "ikimasu." }] },
+    { h: "てんきがいいのでさんぽします。", k: "天気がいいので散歩します。", r: "tennkigaiinodesannposimasu.", chunks: [{ h: "てんきが", k: "天気が", r: "tennkiga" }, { h: "いいので", k: "いいので", r: "iinode" }, { h: "さんぽします。", k: "散歩します。", r: "sannposimasu." }] }, 
+    { h: "にんじんをいっぽんかいます。", k: "人参を一本買います。", r: "ninnzinnwoipponnkaimasu.", chunks: [{ h: "にんじんを", k: "人参を", r: "ninnzinnwo" }, { h: "いっぽん", k: "一本", r: "ipponn" }, { h: "かいます。", k: "買います。", r: "kaimasu." }] },
   ]},
   { id: 8, name: "長音（ー）", words: [
-    { h: "こうえんでこーひーをのみます。", k: "公園でコーヒーを飲みます。", r: "kouenndeko-hi-wonomimasu.", chunks: [{ k: "公園で", r: "kouennde" }, { k: "コーヒーを", r: "ko-hi-wo" }, { k: "飲みます。", r: "nomimasu." }] }, 
-    { h: "すーぱーでちーずをかいます。", k: "スーパーでチーズを買います。", r: "su-pa-deti-zuwokaimasu.", chunks: [{ k: "スーパーで", r: "su-pa-de" }, { k: "チーズを", r: "ti-zuwo" }, { k: "買います。", r: "kaimasu." }] },
-    { h: "げーむをいちじかんします。", k: "ゲームを一時間します。", r: "ge-muwoitizikannsimasu.", chunks: [{ k: "ゲームを", r: "ge-muwo" }, { k: "一時間", r: "itizikann" }, { k: "します。", r: "simasu." }] }, 
-    { h: "せんせいにめーるをおくります。", k: "先生にメールを送ります。", r: "senseinime-ruwookurimasu.", chunks: [{ k: "先生に", r: "senseini" }, { k: "メールを", r: "me-ruwo" }, { k: "送ります。", r: "okurimasu." }] },
-    { h: "こーとをきてがっこうへいきます。", k: "コートを着て学校へ行きます。", r: "ko-towokitegakkouheikimasu.", chunks: [{ k: "コートを", r: "ko-towo" }, { k: "着て", r: "kite" }, { k: "学校へ", r: "gakkouhe" }, { k: "行きます。", r: "ikimasu." }] }, 
-    { h: "ろーまじでにゅうりょくします。", k: "ローマ字で入力します。", r: "ro-mazidenyuuryokusimasu.", chunks: [{ k: "ローマ字で", r: "ro-mazide" }, { k: "入力します。", r: "nyuuryokusimasu." }] },
+    { h: "こうえんでこーひーをのみます。", k: "公園でコーヒーを飲みます。", r: "kouenndeko-hi-wonomimasu.", chunks: [{ h: "こうえんで", k: "公園で", r: "kouennde" }, { h: "こーひーを", k: "コーヒーを", r: "ko-hi-wo" }, { h: "のみます。", k: "飲みます。", r: "nomimasu." }] }, 
+    { h: "すーぱーでちーずをかいます。", k: "スーパーでチーズを買います。", r: "su-pa-deti-zuwokaimasu.", chunks: [{ h: "すーぱーで", k: "スーパーで", r: "su-pa-de" }, { h: "ちーずを", k: "チーズを", r: "ti-zuwo" }, { h: "かいます。", k: "買います。", r: "kaimasu." }] },
+    { h: "げーむをいちじかんします。", k: "ゲームを一時間します。", r: "ge-muwoitizikannsimasu.", chunks: [{ h: "げーむを", k: "ゲームを", r: "ge-muwo" }, { h: "いちじかん", k: "一時間", r: "itizikann" }, { h: "します。", k: "します。", r: "simasu." }] }, 
+    { h: "せんせいにめーるをおくります。", k: "先生にメールを送ります。", r: "senseinime-ruwookurimasu.", chunks: [{ h: "せんせいに", k: "先生に", r: "senseini" }, { h: "めーるを", k: "メールを", r: "me-ruwo" }, { h: "おくります。", k: "送ります。", r: "okurimasu." }] },
+    { h: "こーとをきてがっこうへいきます。", k: "コートを着て学校へ行きます。", r: "ko-towokitegakkouheikimasu.", chunks: [{ h: "こーとを", k: "コートを", r: "ko-towo" }, { h: "きて", k: "着て", r: "kite" }, { h: "がっこうへ", k: "学校へ", r: "gakkouhe" }, { h: "いきます。", k: "行きます。", r: "ikimasu." }] }, 
+    { h: "ろーまじでにゅうりょくします。", k: "ローマ字で入力します。", r: "ro-mazidenyuuryokusimasu.", chunks: [{ h: "ろーまじで", k: "ローマ字で", r: "ro-mazide" }, { h: "にゅうりょくします。", k: "入力します。", r: "nyuuryokusimasu." }] },
   ]},
   { id: 9, name: "N5実用文", words: [
-    { h: "あしたはとしょかんでべんきょうします。", k: "明日は図書館で勉強します。", r: "asitahatosyokanndebenkyousimasu.", chunks: [{ k: "明日は", r: "asitaha" }, { k: "図書館で", r: "tosyokannde" }, { k: "勉強します。", r: "benkyousimasu." }] }, 
-    { h: "きょうのしゅくだいはかんたんです。", k: "今日の宿題は簡単です。", r: "kyounosyukudaihakanntanndesu.", chunks: [{ k: "今日の", r: "kyouno" }, { k: "宿題は", r: "syukudaiha" }, { k: "簡単です。", r: "kanntanndesu." }] },
-    { h: "せんしゅうにほんごのてすとがありました。", k: "先週日本語のテストがありました。", r: "sensyuunihongonotesutogaarimasita.", chunks: [{ k: "先週", r: "sensyuu" }, { k: "日本語の", r: "nihongono" }, { k: "テストが", r: "tesutoga" }, { k: "ありました。", r: "arimasita." }] }, 
-    { h: "まいにちかんじをれんしゅうします。", k: "毎日漢字を練習します。", r: "mainitikanziworensyuusimasu.", chunks: [{ k: "毎日", r: "mainiti" }, { k: "漢字を", r: "kanziwo" }, { k: "練習します。", r: "rensyuusimasu." }] },
-    { h: "でんわばんごうをかくにんします。", k: "電話番号を確認します。", r: "dennwabangouwokakuninnsimasu.", chunks: [{ k: "電話番号を", r: "dennwabangouwo" }, { k: "確認します。", r: "kakuninnsimasu." }] }, 
-    { h: "わたしはきょうだいとすんでいます。", k: "私は兄弟と住んでいます。", r: "watasihakyoudaitosunndeimasu.", chunks: [{ k: "私は", r: "watasiha" }, { k: "兄弟と", r: "kyoudaito" }, { k: "住んでいます。", r: "sunndeimasu." }] },
+    { h: "あしたはとしょかんでべんきょうします。", k: "明日は図書館で勉強します。", r: "asitahatosyokanndebenkyousimasu.", chunks: [{ h: "あしたは", k: "明日は", r: "asitaha" }, { h: "としょかんで", k: "図書館で", r: "tosyokannde" }, { h: "べんきょうします。", k: "勉強します。", r: "benkyousimasu." }] }, 
+    { h: "きょうのしゅくだいはかんたんです。", k: "今日の宿題は簡単です。", r: "kyounosyukudaihakanntanndesu.", chunks: [{ h: "きょうの", k: "今日の", r: "kyouno" }, { h: "しゅくだいは", k: "宿題は", r: "syukudaiha" }, { h: "かんたんです。", k: "簡単です。", r: "kanntanndesu." }] },
+    { h: "せんしゅうにほんごのてすとがありました。", k: "先週日本語のテストがありました。", r: "sensyuunihongonotesutogaarimasita.", chunks: [{ h: "せんしゅう", k: "先週", r: "sensyuu" }, { h: "にほんごの", k: "日本語の", r: "nihongono" }, { h: "てすとが", k: "テストが", r: "tesutoga" }, { h: "ありました。", k: "ありました。", r: "arimasita." }] }, 
+    { h: "まいにちかんじをれんしゅうします。", k: "毎日漢字を練習します。", r: "mainitikanziworensyuusimasu.", chunks: [{ h: "まいにち", k: "毎日", r: "mainiti" }, { h: "かんじを", k: "漢字を", r: "kanziwo" }, { h: "れんしゅうします。", k: "練習します。", r: "rensyuusimasu." }] },
+    { h: "でんわばんごうをかくにんします。", k: "電話番号を確認します。", r: "dennwabangouwokakuninnsimasu.", chunks: [{ h: "でんわばんごうを", k: "電話番号を", r: "dennwabangouwo" }, { h: "かくにんします。", k: "確認します。", r: "kakuninnsimasu." }] }, 
+    { h: "わたしはきょうだいとすんでいます。", k: "私は兄弟と住んでいます。", r: "watasihakyoudaitosunndeimasu.", chunks: [{ h: "わたしは", k: "私は", r: "watasiha" }, { h: "きょうだいと", k: "兄弟と", r: "kyoudaito" }, { h: "すんでいます。", k: "住んでいます。", r: "sunndeimasu." }] },
   ]},
   { id: 10, name: "まとめ", words: [
-    { h: "きょうはぱそこんでさくぶんをかきます。", k: "今日はパソコンで作文を書きます。", r: "kyouhapasokonndesakubunnwokakimasu.", chunks: [{ k: "今日は", r: "kyouha" }, { k: "パソコンで", r: "pasokonnde" }, { k: "作文を", r: "sakubunnwo" }, { k: "書きます。", r: "kakimasu." }] }, 
-    { h: "しゅうまつにかぞくでえいがをみました。", k: "週末に家族で映画を見ました。", r: "syuumatunikazokudeeigawomimasita.", chunks: [{ k: "週末に", r: "syuumatuni" }, { k: "家族で", r: "kazokude" }, { k: "映画を", r: "eigawo" }, { k: "見ました。", r: "mimasita." }] },
-    { h: "がっこうのまえでともだちをまちます。", k: "学校の前で友達を待ちます。", r: "gakkounomaedetomodatiwomatimasu.", chunks: [{ k: "学校の", r: "gakkounno" }, { k: "前で", r: "maede" }, { k: "友達を", r: "tomodatiwo" }, { k: "待ちます。", r: "matimasu." }] }, 
-    { h: "こうえんでぼーるをつかってあそびます。", k: "公園でボールを使って遊びます。", r: "kouenndebo-ruwotukatteasobimasu.", chunks: [{ k: "公園で", r: "kouennde" }, { k: "ボールを", r: "bo-ruwo" }, { k: "使って", r: "tukatte" }, { k: "遊びます。", r: "asobimasu." }] },
-    { h: "しんぶんをよんでじゅぎょうのじゅんびをします。", k: "新聞を読んで授業の準備をします。", r: "sinbunnwoyondejugyounojunbiwosimasu.", chunks: [{ k: "新聞を", r: "sinbunnwo" }, { k: "読んで", r: "yonde" }, { k: "授業の", r: "jugyouno" }, { k: "準備を", r: "junbiwo" }, { k: "します。", r: "simasu." }] }, 
-    { h: "らいしゅうのしけんにむけてれんしゅうします。", k: "来週の試験に向けて練習します。", r: "raisyuunosikennnimuketerensyuusimasu.", chunks: [{ k: "来週の", r: "raisyuuno" }, { k: "試験に", r: "sikennni" }, { k: "向けて", r: "mukete" }, { k: "練習します。", r: "rensyuusimasu." }] },
+    { h: "きょうはぱそこんでさくぶんをかきます。", k: "今日はパソコンで作文を書きます。", r: "kyouhapasokonndesakubunnwokakimasu.", chunks: [{ h: "きょうは", k: "今日は", r: "kyouha" }, { h: "ぱそこんで", k: "パソコンで", r: "pasokonnde" }, { h: "さくぶんを", k: "作文を", r: "sakubunnwo" }, { h: "かきます。", k: "書きます。", r: "kakimasu." }] }, 
+    { h: "しゅうまつにかぞくでえいがをみました。", k: "週末に家族で映画を見ました。", r: "syuumatunikazokudeeigawomimasita.", chunks: [{ h: "しゅうまつに", k: "週末に", r: "syuumatuni" }, { h: "かぞくで", k: "家族で", r: "kazokude" }, { h: "えいがを", k: "映画を", r: "eigawo" }, { h: "みました。", k: "見ました。", r: "mimasita." }] },
+    { h: "がっこうのまえでともだちをまちます。", k: "学校の前で友達を待ちます。", r: "gakkounomaedetomodatiwomatimasu.", chunks: [{ h: "がっこうの", k: "学校の", r: "gakkounno" }, { h: "まえで", k: "前で", r: "maede" }, { h: "ともだちを", k: "友達を", r: "tomodatiwo" }, { h: "まちます。", k: "待ちます。", r: "matimasu." }] }, 
+    { h: "こうえんでぼーるをつかってあそびます。", k: "公園でボールを使って遊びます。", r: "kouenndebo-ruwotukatteasobimasu.", chunks: [{ h: "こうえんで", k: "公園で", r: "kouennde" }, { h: "ぼーるを", k: "ボールを", r: "bo-ruwo" }, { h: "つかって", k: "使って", r: "tukatte" }, { h: "あそびます。", k: "遊びます。", r: "asobimasu." }] },
+    { h: "しんぶんをよんでじゅぎょうのじゅんびをします。", k: "新聞を読んで授業の準備をします。", r: "sinbunnwoyondejugyounojunbiwosimasu.", chunks: [{ h: "しんぶんを", k: "新聞を", r: "sinbunnwo" }, { h: "よんで", k: "読んで", r: "yonde" }, { h: "じゅぎょうの", k: "授業の", r: "jugyouno" }, { h: "じゅんびを", k: "準備を", r: "junbiwo" }, { h: "します。", k: "します。", r: "simasu." }] }, 
+    { h: "らいしゅうのしけんにむけてれんしゅうします。", k: "来週の試験に向けて練習します。", r: "raisyuunosikennnimuketerensyuusimasu.", chunks: [{ h: "らいしゅうの", k: "来週の", r: "raisyuuno" }, { h: "しけんに", k: "試験に", r: "sikennni" }, { h: "むけて", k: "向けて", r: "mukete" }, { h: "れんしゅうします。", k: "練習します。", r: "rensyuusimasu." }] },
   ]},
 ]
 
@@ -159,9 +159,9 @@ export default function Lesson4Page() {
   const currentWord = stages[currentStage].words[wordIndex]
   const isCorrect = userInput.trim() === currentWord.k.trim()
 
-const splitIntoChunks = (text: string, romanji: string) => {
+const splitIntoChunks = (text: string, romanji: string): { h?: string; k: string; r: string }[] => {
   const particles = ['の', 'で', 'を', 'に', 'へ', 'と', 'が', 'は', 'も', 'から', 'まで', 'より']
-  const chunks: { k: string; r: string }[] = []
+  const chunks: { h?: string; k: string; r: string }[] = []
   
   let currentIndex = 0
   let lastParticleIndex = -1
@@ -319,8 +319,17 @@ const chunks = currentWord.chunks || splitIntoChunks(currentWord.k, currentWord.
             </div>
 
             <div className="flex-1 flex items-start justify-center pt-8">
-              <div className="flex flex-col items-center justify-center py-3 shrink-0 bg-white/40 rounded-3xl mx-10 border border-white shadow-inner">
-              <div className="text-6xl font-bold mb-5 text-slate-800 tracking-tight text-center px-2">{currentWord.h}</div>
+              <div className="flex flex-col items-center justify-center py-5 shrink-0 bg-white/40 rounded-3xl mx-4 md:mx-10 border border-white shadow-inner w-full max-w-4xl px-4 md:px-8 overflow-hidden">
+              <div className={cn(
+                "font-bold mb-5 text-slate-800 tracking-tight text-center w-full flex flex-wrap justify-center gap-y-2",
+                currentWord.h.length > 14 ? "text-4xl md:text-5xl leading-snug" : "text-5xl md:text-6xl"
+              )}>
+                {chunks.map((chunk, i) => (
+                  <span key={i} className="inline-block whitespace-nowrap">
+                    {chunk.h || chunk.k}
+                  </span>
+                ))}
+              </div>
               
               <div className="w-full max-w-2xl mb-4">
                 <div className="relative">
