@@ -6,7 +6,7 @@ import { Sparkles } from "lucide-react"
 
 interface SuccessOverlayProps {
   show: boolean
-  message?: string
+  message?: React.ReactNode
 }
 
 export function SuccessOverlay({ show, message = "すごい！" }: SuccessOverlayProps) {
