@@ -233,7 +233,7 @@ export default function Lesson2() {
       <div className="flex-1 flex flex-col items-center p-2 relative text-slate-800 min-h-0">
         <div className="w-full max-w-4xl flex flex-col h-full">
           {subStep === 'intro' ? (
-            <div className="flex-1 flex flex-col justify-center space-y-4 animate-in fade-in zoom-in-95 duration-500 overflow-y-auto px-4 pb-4">
+            <div className="flex-1 flex flex-col justify-start pt-6 space-y-4 animate-in fade-in zoom-in-95 duration-500 overflow-y-auto px-4 pb-4">
               <Character message="まずは、指（ゆび）をおく場所（ばしょ）をおぼえよう！基本（きほん）がとっても大切だよ。" mood="happy" />
               
               <div className="bg-white rounded-[2rem] p-8 shadow-xl border border-slate-100 mt-4">
