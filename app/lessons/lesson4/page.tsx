@@ -331,106 +331,108 @@ const chunks = currentWord.chunks || splitIntoChunks(currentWord.k, currentWord.
                 ))}
               </div>
               
-              <div className="w-full max-w-2xl mb-4">
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={userInput}
-                    onChange={(e) => setUserInput(e.target.value)}
-                   onKeyDown={(e) => {
-                 if (e.key === 'Enter') {
-      e.preventDefault()
-        if (isCorrect) {
-          sounds?.playSuccess()
-        if (wordIndex + 1 < stages[currentStage].words.length) {
-        setWordIndex(prev => prev + 1)
-      } else if (currentStage + 1 < stages.length) {
-        setCurrentStage(prev => prev + 1)
-        setWordIndex(0)
+              <div className="flex flex-col md:flex-row w-full max-w-4xl gap-6 items-start justify-center">
+                <div className="flex-1 w-full max-w-2xl flex flex-col items-center">
+                  <div className="relative w-full mb-4">
+                    <input
+                      type="text"
+                      value={userInput}
+                      onChange={(e) => setUserInput(e.target.value)}
+                     onKeyDown={(e) => {
+                   if (e.key === 'Enter') {
+        e.preventDefault()
+          if (isCorrect) {
+            sounds?.playSuccess()
+          if (wordIndex + 1 < stages[currentStage].words.length) {
+          setWordIndex(prev => prev + 1)
+        } else if (currentStage + 1 < stages.length) {
+          setCurrentStage(prev => prev + 1)
+          setWordIndex(0)
+        } else {
+          const end = Date.now()
+          setElapsedTime(startTime ? Math.floor((end - startTime) / 1000) : 0)
+          sounds?.playClear()
+          setShowSuccess(true)
+          markLessonCompleted(4)
+        }
       } else {
-        const end = Date.now()
-        setElapsedTime(startTime ? Math.floor((end - startTime) / 1000) : 0)
-        sounds?.playClear()
-        setShowSuccess(true)
-        markLessonCompleted(4)
+        sounds?.playError()
+        setMissCount(prev => prev + 1)
       }
-    } else {
-      sounds?.playError()
-      setMissCount(prev => prev + 1)
+    } else if (e.key === 'Escape') {
+      setUserInput("")
+      setShowHint(false)
     }
-  } else if (e.key === 'Escape') {
-    setUserInput("")
-    setShowHint(false)
-  }
-  }}
-                    placeholder="ここに漢字を入力..."
-                    className={cn(
-                      "w-full px-5 py-4 text-3xl font-bold text-center border-4 rounded-xl transition-all duration-200",
-                      isCorrect && userInput.length > 0
-                        ? "border-green-500 bg-green-50 text-green-700"
-                        : userInput.length > 0
-                        ? "border-red-500 bg-red-50 text-red-700 animate-pulse"
-                        : "border-slate-300 bg-white text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
-                    )}
-                    autoFocus
-                  />
-                  {userInput.length > 0 && (
-                    <div className="absolute right-2 top-1/2 -translate-y-1/2">
-                      {isCorrect ? (
-                        <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                          </svg>
-                        </div>
-                      ) : (
-                        <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
-                          <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
-                          </svg>
-                        </div>
+    }}
+                      placeholder="ここに漢字を入力..."
+                      className={cn(
+                        "w-full px-5 py-4 text-3xl font-bold text-center border-4 rounded-xl transition-all duration-200",
+                        isCorrect && userInput.length > 0
+                          ? "border-green-500 bg-green-50 text-green-700"
+                          : userInput.length > 0
+                          ? "border-red-500 bg-red-50 text-red-700 animate-pulse"
+                          : "border-slate-300 bg-white text-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
                       )}
-                    </div>
-                  )}
+                      autoFocus
+                    />
+                    {userInput.length > 0 && (
+                      <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                        {isCorrect ? (
+                          <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                            </svg>
+                          </div>
+                        ) : (
+                          <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
+                            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex gap-2 mb-3">
+                    <button
+                      onClick={() => {
+                        sounds?.playClick()
+                        setShowHint(!showHint)
+                      }}
+                      className="px-5 py-2 text-lg bg-amber-100 hover:bg-amber-200 text-amber-700 rounded-lg font-medium transition-colors"
+                    >
+                      {showHint ? "ヒントを隠す" : "ヒントを見る"}
+                    </button>
+                    <button
+                      onClick={() => {
+                        sounds?.playClick()
+                        setUserInput("")
+                      }}
+                      className="px-5 py-2 text-lg bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition-colors"
+                    >
+                      クリア (Esc)
+                    </button>
+                  </div>
+
+                  <div className="text-lg text-slate-600 text-center">
+                    Enterで送信 • Escでクリア • {currentWord.k.length}文字
+                  </div>
                 </div>
+
+                {showHint && (
+                  <div className="w-full md:w-64 shrink-0 bg-amber-50 border-2 border-amber-200 rounded-xl px-4 py-3 shadow-sm text-left">
+                    <p className="text-base font-bold text-amber-800 mb-2">ヒント（かたまりで変換）:</p>
+                    <div className="space-y-1">
+                      {chunks.map((chunk, i) => (
+                        <p key={i} className="text-sm font-medium text-amber-700">
+                          {chunk.k} ({chunk.r.toUpperCase()})
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-
-              <div className="flex gap-2 mb-3">
-                <button
-                  onClick={() => {
-                    sounds?.playClick()
-                    setShowHint(!showHint)
-                  }}
-                  className="px-5 py-2 text-lg bg-amber-100 hover:bg-amber-200 text-amber-700 rounded-lg font-medium transition-colors"
-                >
-                  {showHint ? "ヒントを隠す" : "ヒントを見る"}
-                </button>
-                <button
-                  onClick={() => {
-                    sounds?.playClick()
-                    setUserInput("")
-                  }}
-                  className="px-5 py-2 text-lg bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition-colors"
-                >
-                  クリア (Esc)
-                </button>
-              </div>
-
-            {showHint && (
-                <div className="bg-amber-50 border-2 border-amber-200 rounded-xl px-4 py-3 mb-3">
-    <p className="text-lg font-bold text-amber-800 mb-2">ヒント（かたまりで変換）:</p>
-    <div className="space-y-1">
-      {chunks.map((chunk, i) => (
-        <p key={i} className="text-base text-amber-700">
-          {chunk.k} ({chunk.r.toUpperCase()})
-        </p>
-      ))}
-    </div>
-  </div>
-)}
-
-            <div className="text-lg text-slate-600 text-center">
-              Enterで送信 • Escでクリア • {currentWord.k.length}文字
-            </div>
           </div>
             </div>
           </div>
