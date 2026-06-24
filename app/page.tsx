@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { Character, Ruby } from "@/components/game/character"
 import { Button } from "@/components/ui/button"
-import { Monitor, Keyboard, Languages, PenTool } from "lucide-react"
+import { Monitor, Keyboard, Languages, PenTool, Briefcase } from "lucide-react"
 
 import { useSettings } from "@/components/providers/settings-provider"
 import { SettingsDropdown } from "@/components/layout/settings-dropdown"
@@ -47,6 +47,15 @@ export default function Home() {
       description: "正しい漢字を選んで、文章を完成させよう！",
       icon: <PenTool className="w-10 h-10 text-slate-400" />,
       link: "/lessons/lesson4",
+      available: true,
+    },
+    {
+      id: 5,
+      title: "ビジネス日本語をマスターしよう",
+      ruby: "ビジネスにほんごをマスターしよう",
+      description: "よく使うビジネス用語をタイピングして覚えよう！",
+      icon: <Briefcase className="w-10 h-10 text-slate-400" />,
+      link: "/lessons/lesson5",
       available: true,
     },
   ]
