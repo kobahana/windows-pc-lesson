@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { Character, Ruby } from "@/components/game/character"
 import { SuccessOverlay } from "@/components/game/success-overlay"
 import { Button } from "@/components/ui/button"
@@ -73,7 +73,16 @@ export default function Lesson3() {
   const [startTime, setStartTime] = useState<number | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
 
-  const { markLessonCompleted } = useSettings();
+  const { markLessonCompleted, recordEvent } = useSettings();
+  const startRecordedRef = useRef(false);
+
+  // レッスン開始を1回だけ記録
+  useEffect(() => {
+    if (!startRecordedRef.current) {
+      startRecordedRef.current = true;
+      recordEvent(3, "start");
+    }
+  }, [recordEvent]);
 
   const stages = [
     { id: 1, name: "あいうえお", words: [{ h: "あいうえお", r: "aiueo" }] },
@@ -117,16 +126,19 @@ export default function Lesson3() {
         } else {
           if (currentStage + 1 < stages.length) {
             sounds?.playSuccess();
+            recordEvent(3, "stage_clear", stages[currentStage].name);
             setCurrentStage(prev => prev + 1);
             setWordIndex(0);
             setCharIndex(0);
           } else {
             // Finished all
             const end = Date.now();
-            setElapsedTime(startTime ? Math.floor((end - startTime) / 1000) : 0);
+            const secs = startTime ? Math.floor((end - startTime) / 1000) : 0;
+            setElapsedTime(secs);
             sounds?.playClear();
             setShowSuccess(true);
             markLessonCompleted(3);
+            recordEvent(3, "lesson_clear", undefined, { timeSec: secs, missCount });
           }
         }
       }
@@ -134,7 +146,7 @@ export default function Lesson3() {
       sounds?.playError();
       setMissCount(prev => prev + 1);
     }
-  }, [targetChar, charIndex, currentWord.r.length, wordIndex, stages, currentStage, showSuccess, startTime, markLessonCompleted]);
+  }, [targetChar, charIndex, currentWord.r.length, wordIndex, stages, currentStage, showSuccess, startTime, markLessonCompleted, recordEvent, missCount]);
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
@@ -239,7 +251,15 @@ export default function Lesson3() {
 
           <div className="flex-1 flex flex-col justify-between py-1 overflow-hidden">
             <div className="text-center shrink-0">
-              <Character message="ひらがなを見て、下（した）のアルファベットを打（う）とう！" mood="happy" />
+              <Character
+                message={
+                  <>
+                    ひらがなを見て、下（した）のアルファベットを打（う）とう！
+                    <span className="block text-xs text-slate-400 mt-1">Look at the hiragana and type the letters below!</span>
+                  </>
+                }
+                mood="happy"
+              />
             </div>
 
             <div className="flex flex-col items-center justify-center py-5 shrink-0 bg-white/40 rounded-3xl mx-10 border border-white shadow-inner">

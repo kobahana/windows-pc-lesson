@@ -1,7 +1,8 @@
 "use client"
 
 import React from "react"
-import { Settings, Volume2, VolumeX, Type } from "lucide-react"
+import Link from "next/link"
+import { Settings, Volume2, VolumeX, Type, GraduationCap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -46,10 +47,20 @@ export function SettingsDropdown() {
             )}
             <span>効果音（SE）</span>
           </div>
-          <Switch 
-            checked={soundEnabled} 
+          <Switch
+            checked={soundEnabled}
             onCheckedChange={setSoundEnabled}
           />
+        </div>
+
+        <div className="mt-1 pt-1 border-t border-slate-100">
+          <Link
+            href="/teacher"
+            className="flex items-center gap-2 p-2 text-sm text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-lg transition-colors"
+          >
+            <GraduationCap className="w-4 h-4" />
+            <span>先生用ページ（学習記録）</span>
+          </Link>
         </div>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { Character, Ruby } from "@/components/game/character"
 import { SuccessOverlay } from "@/components/game/success-overlay"
 import { Button } from "@/components/ui/button"
@@ -122,7 +122,16 @@ export default function Lesson5Page() {
   const [startTime, setStartTime] = useState<number | null>(null)
   const [elapsedTime, setElapsedTime] = useState(0)
   const [showHint, setShowHint] = useState(false)
-  const { markLessonCompleted } = useSettings()
+  const { markLessonCompleted, recordEvent } = useSettings()
+  const startRecordedRef = useRef(false)
+
+  // レッスン開始を1回だけ記録
+  useEffect(() => {
+    if (!startRecordedRef.current) {
+      startRecordedRef.current = true
+      recordEvent(5, "start")
+    }
+  }, [recordEvent])
 
   const currentWord = stages[currentStage].words[wordIndex]
   const isCorrect = userInput.trim() === currentWord.k.trim()
@@ -283,7 +292,15 @@ const chunks = currentWord.chunks || splitIntoChunks(currentWord.k, currentWord.
         <div className="w-full max-w-5xl flex flex-col h-full">
           <div className="flex-1 flex flex-col overflow-hidden">
             <div className="text-center shrink-0 mb-2">
-              <Character message="ビジネスで使う日本語をタイピングしよう！" mood="happy" />
+              <Character
+                message={
+                  <>
+                    ビジネスで使う日本語をタイピングしよう！
+                    <span className="block text-xs text-slate-400 mt-1">Type business Japanese, convert to kanji (Space), then press Enter!</span>
+                  </>
+                }
+                mood="happy"
+              />
             </div>
 
             <div className="flex-1 flex items-start justify-center pt-8">
@@ -314,14 +331,17 @@ const chunks = currentWord.chunks || splitIntoChunks(currentWord.k, currentWord.
           if (wordIndex + 1 < stages[currentStage].words.length) {
           setWordIndex(prev => prev + 1)
         } else if (currentStage + 1 < stages.length) {
+          recordEvent(5, "stage_clear", stages[currentStage].name)
           setCurrentStage(prev => prev + 1)
           setWordIndex(0)
         } else {
           const end = Date.now()
-          setElapsedTime(startTime ? Math.floor((end - startTime) / 1000) : 0)
+          const secs = startTime ? Math.floor((end - startTime) / 1000) : 0
+          setElapsedTime(secs)
           sounds?.playClear()
           setShowSuccess(true)
           markLessonCompleted(5)
+          recordEvent(5, "lesson_clear", undefined, { timeSec: secs, missCount })
         }
       } else {
         sounds?.playError()

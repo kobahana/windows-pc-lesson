@@ -1,11 +1,12 @@
 "use client"
 
-import { useState, useCallback, useEffect, useMemo } from "react"
+import { useState, useCallback, useEffect, useMemo, useRef } from "react"
 import { cn } from "@/lib/utils"
 import { Character, Ruby } from "../character"
 import { SuccessOverlay } from "../success-overlay"
 import { Button } from "@/components/ui/button"
 import { sounds } from "@/lib/sounds"
+import { usePlatform } from "@/lib/platform"
 import { 
   Monitor, 
   FolderOpen, 
@@ -49,6 +50,21 @@ export function Mission1({ onComplete }: Mission1Props) {
   const [windowClosed, setWindowClosed] = useState(false)
   const [windowMaximized, setWindowMaximized] = useState(false)
   const [appOpened, setAppOpened] = useState(false)
+  // ポインター操作でのドラッグ状態（HTML5 DnDはSafari/タッチで動かないため使わない）
+  const [dragPos, setDragPos] = useState<{ x: number; y: number } | null>(null)
+  const [overBasket, setOverBasket] = useState(false)
+  const draggingRef = useRef(false)
+  // 長い間操作がないときに出す「ここだよ！」ヒント
+  const [showHintPointer, setShowHintPointer] = useState(false)
+  const { modKey } = usePlatform()
+
+  useEffect(() => {
+    setShowHintPointer(false)
+    if (["click", "doubleclick", "rightclick", "window"].includes(step)) {
+      const timer = setTimeout(() => setShowHintPointer(true), 10000)
+      return () => clearTimeout(timer)
+    }
+  }, [step])
 
   const triggerSuccess = useCallback((message: React.ReactNode, nextStep: Step) => {
     sounds?.playSuccess()
@@ -96,27 +112,40 @@ export function Mission1({ onComplete }: Mission1Props) {
     }
   }, [step, triggerSuccess])
 
-  const handleDragEnd = useCallback((e: React.DragEvent) => {
-    console.log(`[Mission1] 💡 handleDragEnd: step="${step}" x=${e.clientX} y=${e.clientY}`)
-    const dropTarget = document.getElementById("basket")
-    if (dropTarget) {
-      const rect = dropTarget.getBoundingClientRect()
-      const hit = e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom
-      console.log(`[Mission1] 🍎 dragEnd basket rect:`, rect, `hit=${hit}`)
-      if (hit) {
-        setAppleDragged(true)
-        triggerSuccess("やったー！りんごゲット！", "window")
-      }
+  // りんごのドラッグ（Pointer Events 版：マウス・トラックパッド・タッチすべて対応）
+  const hitTestBasket = (x: number, y: number) => {
+    const basket = document.getElementById("basket")
+    if (!basket) return false
+    const rect = basket.getBoundingClientRect()
+    const margin = 12
+    return x >= rect.left - margin && x <= rect.right + margin && y >= rect.top - margin && y <= rect.bottom + margin
+  }
+
+  const handleApplePointerDown = useCallback((e: React.PointerEvent) => {
+    if (step !== "scroll-drag") return
+    e.preventDefault()
+    e.currentTarget.setPointerCapture(e.pointerId)
+    draggingRef.current = true
+    setDragPos({ x: e.clientX, y: e.clientY })
+  }, [step])
+
+  const handleApplePointerMove = useCallback((e: React.PointerEvent) => {
+    if (!draggingRef.current) return
+    setDragPos({ x: e.clientX, y: e.clientY })
+    setOverBasket(hitTestBasket(e.clientX, e.clientY))
+  }, [])
+
+  const handleApplePointerUp = useCallback((e: React.PointerEvent) => {
+    if (!draggingRef.current) return
+    draggingRef.current = false
+    setDragPos(null)
+    setOverBasket(false)
+    console.log(`[Mission1] 🍎 pointerup x=${e.clientX} y=${e.clientY}`)
+    if (hitTestBasket(e.clientX, e.clientY)) {
+      setAppleDragged(true)
+      triggerSuccess("やったー！りんごゲット！", "window")
     }
-  }, [step, triggerSuccess])
-
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-  }, [])
-
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-  }, [])
+  }, [triggerSuccess])
 
   const handleCloseWindow = useCallback(() => {
     console.log(`[Mission1] 💡 handleCloseWindow: step="${step}" windowClosed=${windowClosed}`)
@@ -149,8 +178,9 @@ export function Mission1({ onComplete }: Mission1Props) {
       case "tutorial-click":
         return (
           <div className="space-y-2">
-            <p className="font-bold text-primary">【クリックの<Ruby rt="やりかた">やり方</Ruby>】</p>
+            <p className="font-bold text-primary">【クリックの<Ruby rt="やりかた">やり方</Ruby> / Click】</p>
             <p>タッチパッドを<span className="font-bold text-primary">1<Ruby rt="ぼん">本</Ruby>の<Ruby rt="ゆび">指</Ruby>で1<Ruby rt="かい">回</Ruby>タップ</span>するよ！</p>
+            <p className="text-xs text-muted-foreground">Tap the touchpad once with 1 finger.</p>
             <div className="mt-4 flex justify-center">
               <div className="bg-gray-200 rounded-xl p-4 w-32 h-20 flex items-center justify-center relative">
                 <div className="absolute w-4 h-4 bg-primary rounded-full animate-ping" />
@@ -162,8 +192,9 @@ export function Mission1({ onComplete }: Mission1Props) {
       case "tutorial-doubleclick":
         return (
           <div className="space-y-2">
-            <p className="font-bold text-primary">【ダブルクリックの<Ruby rt="やりかた">やり方</Ruby>】</p>
+            <p className="font-bold text-primary">【ダブルクリックの<Ruby rt="やりかた">やり方</Ruby> / Double click】</p>
             <p>タッチパッドを<span className="font-bold text-primary">すばやく2<Ruby rt="かい">回</Ruby>タップ</span>するとアプリが<Ruby rt="ひら">開</Ruby>くよ！</p>
+            <p className="text-xs text-muted-foreground">Tap twice, quickly! It opens an app.</p>
             <div className="mt-4 flex justify-center">
               <div className="bg-gray-200 rounded-xl p-4 w-32 h-20 flex items-center justify-center relative">
                 <div className="flex gap-4">
@@ -178,9 +209,10 @@ export function Mission1({ onComplete }: Mission1Props) {
       case "tutorial-rightclick":
         return (
           <div className="space-y-2">
-            <p className="font-bold text-primary">【<Ruby rt="みぎ">右</Ruby>クリックの<Ruby rt="やりかた">やり方</Ruby>】</p>
+            <p className="font-bold text-primary">【<Ruby rt="みぎ">右</Ruby>クリックの<Ruby rt="やりかた">やり方</Ruby> / Right click】</p>
             <p>タッチパッドを<span className="font-bold text-primary">2<Ruby rt="ほん">本</Ruby>の<Ruby rt="ゆび">指</Ruby>で1<Ruby rt="かい">回</Ruby>タップ</span>するよ！</p>
             <p className="text-sm text-muted-foreground">（または、<Ruby rt="みぎした">右下</Ruby>のコーナーを<Ruby rt="お">押</Ruby>す）</p>
+            <p className="text-xs text-muted-foreground">Tap with 2 fingers.</p>
             <div className="mt-4 flex justify-center">
               <div className="bg-gray-200 rounded-xl p-4 w-32 h-20 flex items-center justify-center relative gap-2">
                 <div className="w-4 h-4 bg-primary rounded-full animate-ping" />
@@ -192,8 +224,9 @@ export function Mission1({ onComplete }: Mission1Props) {
       case "tutorial-scroll":
         return (
           <div className="space-y-2">
-            <p className="font-bold text-primary">【スクロールの<Ruby rt="やりかた">やり方</Ruby>】</p>
+            <p className="font-bold text-primary">【スクロールの<Ruby rt="やりかた">やり方</Ruby> / Scroll】</p>
             <p>タッチパッドを<span className="font-bold text-primary">2<Ruby rt="ほん">本</Ruby>の<Ruby rt="ゆび">指</Ruby>で<Ruby rt="うえ">上</Ruby>か<Ruby rt="した">下</Ruby>にスライド</span>するよ！</p>
+            <p className="text-xs text-muted-foreground">Slide 2 fingers up or down.</p>
             <div className="mt-4 flex justify-center">
               <div className="bg-gray-200 rounded-xl p-4 w-32 h-20 flex items-center justify-center relative">
                 <div className="flex gap-2 animate-bounce">
@@ -209,9 +242,10 @@ export function Mission1({ onComplete }: Mission1Props) {
       case "tutorial-drag":
         return (
           <div className="space-y-2">
-            <p className="font-bold text-primary">【ドラッグの<Ruby rt="やりかた">やり方</Ruby>】</p>
+            <p className="font-bold text-primary">【ドラッグの<Ruby rt="やりかた">やり方</Ruby> / Drag】</p>
             <p><span className="font-bold text-primary">クリックしたまま<Ruby rt="ゆび">指</Ruby>を<Ruby rt="うご">動</Ruby>かす</span>と、ものを<Ruby rt="うご">動</Ruby>かせるよ！</p>
             <p className="text-sm text-muted-foreground">（タッチパッドを<Ruby rt="お">押</Ruby>しながらスライド）</p>
+            <p className="text-xs text-muted-foreground">Press and hold, then move your finger.</p>
             <div className="mt-4 flex justify-center items-center gap-4">
               <div className="bg-gray-200 rounded-xl p-4 w-32 h-20 flex items-center justify-center relative">
                 <div className="w-4 h-4 bg-primary rounded-full" />
@@ -225,10 +259,11 @@ export function Mission1({ onComplete }: Mission1Props) {
       case "tutorial-selectall":
         return (
           <div className="space-y-2">
-            <p className="font-bold text-primary">【<Ruby rt="ぜんぶ">全部</Ruby><Ruby rt="えら">選</Ruby>ぶ<Ruby rt="やりかた">やり方</Ruby>】</p>
-            <p>キーボードの<span className="font-bold text-primary">「Ctrl」キーと「A」キーを<Ruby rt="どうじ">同時</Ruby>に<Ruby rt="お">押</Ruby>す</span>と、<Ruby rt="ぜんぶ">全部</Ruby><Ruby rt="えら">選</Ruby>べるよ！</p>
+            <p className="font-bold text-primary">【<Ruby rt="ぜんぶ">全部</Ruby><Ruby rt="えら">選</Ruby>ぶ<Ruby rt="やりかた">やり方</Ruby> / Select all】</p>
+            <p>キーボードの<span className="font-bold text-primary">「{modKey}」キーと「A」キーを<Ruby rt="どうじ">同時</Ruby>に<Ruby rt="お">押</Ruby>す</span>と、<Ruby rt="ぜんぶ">全部</Ruby><Ruby rt="えら">選</Ruby>べるよ！</p>
+            <p className="text-xs text-muted-foreground">Press {modKey} and A together to select everything.</p>
             <div className="mt-4 flex justify-center items-center gap-2">
-              <div className="bg-gray-800 text-white px-3 py-2 rounded text-sm font-mono">Ctrl</div>
+              <div className="bg-gray-800 text-white px-3 py-2 rounded text-sm font-mono">{modKey}</div>
               <span className="text-lg">+</span>
               <div className="bg-gray-800 text-white px-3 py-2 rounded text-sm font-mono">A</div>
             </div>
@@ -238,24 +273,28 @@ export function Mission1({ onComplete }: Mission1Props) {
         return (
           <>
             <Ruby rt="やじるし">矢印</Ruby>（カーソル）を<Ruby rt="うご">動</Ruby>かして、この「スタート」ボタンを1<Ruby rt="かい">回</Ruby>タップ（クリック）して！
+            <span className="block text-xs text-muted-foreground mt-1">Click the START button!</span>
           </>
         )
       case "doubleclick":
         return (
           <>
             <Ruby rt="つぎ">次</Ruby>はダブルクリック！「メール」アイコンを<span className="font-bold text-primary">すばやく2<Ruby rt="かい">回</Ruby>タップ</span>して、アプリを<Ruby rt="ひら">開</Ruby>いてみよう！
+            <span className="block text-xs text-muted-foreground mt-1">Double-click the Mail icon!</span>
           </>
         )
       case "rightclick":
         return (
           <>
             このフォルダを2<Ruby rt="ほん">本</Ruby><Ruby rt="ゆび">指</Ruby>でタップ（または<Ruby rt="みぎした">右下</Ruby>を<Ruby rt="お">押</Ruby>す）して、メニューを<Ruby rt="だ">出</Ruby>してみよう！
+            <span className="block text-xs text-muted-foreground mt-1">Right-click (2-finger tap) the folder!</span>
           </>
         )
       case "scroll-drag":
         return (
           <>
             2<Ruby rt="ほん">本</Ruby><Ruby rt="ゆび">指</Ruby>で<Ruby rt="がめん">画面</Ruby>を<Ruby rt="した">下</Ruby>に<Ruby rt="うご">動</Ruby>かして（スクロール）、<Ruby rt="み">見</Ruby>つけた「りんご」を「カゴ」まで<Ruby rt="はこ">運</Ruby>んで（ドラッグ）！
+            <span className="block text-xs text-muted-foreground mt-1">Scroll down, find the apple, and drag it to the basket!</span>
           </>
         )
       case "window":
@@ -269,7 +308,7 @@ export function Mission1({ onComplete }: Mission1Props) {
       default:
         return ""
     }
-  }, [step, windowClosed, windowMaximized])
+  }, [step, windowClosed, windowMaximized, modKey])
 
   const mood = useMemo((): "happy" | "neutral" | "encouraging" | "celebrating" => {
     if (showSuccess || step === "complete") return "celebrating"
@@ -359,13 +398,16 @@ export function Mission1({ onComplete }: Mission1Props) {
               <div className="flex flex-col gap-4">
                 {/* Mail App Icon for double-click */}
                 {step === "doubleclick" && (
-                  <div 
+                  <div
                     className={cn(
-                      "w-16 text-center cursor-pointer transition-transform hover:scale-105",
+                      "relative w-16 text-center cursor-pointer transition-transform hover:scale-105",
                       "ring-4 ring-warning ring-offset-2 ring-offset-blue-900 rounded-lg animate-pulse"
                     )}
                     onDoubleClick={handleDoubleClick}
                   >
+                    {showHintPointer && (
+                      <span className="absolute -top-12 left-1/2 -translate-x-1/2 text-4xl animate-bounce z-30 drop-shadow-lg">👇</span>
+                    )}
                     <div className="w-12 h-12 mx-auto bg-blue-500 rounded-lg flex items-center justify-center">
                       <Mail className="w-8 h-8 text-white" />
                     </div>
@@ -374,13 +416,16 @@ export function Mission1({ onComplete }: Mission1Props) {
                 )}
 
                 {/* Folder for right-click */}
-                <div 
+                <div
                   className={cn(
-                    "w-16 text-center cursor-pointer transition-transform hover:scale-105",
+                    "relative w-16 text-center cursor-pointer transition-transform hover:scale-105",
                     step === "rightclick" && "ring-4 ring-warning ring-offset-2 ring-offset-blue-900 rounded-lg animate-pulse"
                   )}
                   onContextMenu={handleContextMenu}
                 >
+                  {showHintPointer && step === "rightclick" && (
+                    <span className="absolute -top-12 left-1/2 -translate-x-1/2 text-4xl animate-bounce z-30 drop-shadow-lg">👇</span>
+                  )}
                   <div className="w-12 h-12 mx-auto bg-yellow-400 rounded-lg flex items-center justify-center">
                     <FolderOpen className="w-8 h-8 text-yellow-800" />
                   </div>
@@ -436,26 +481,44 @@ export function Mission1({ onComplete }: Mission1Props) {
                       <div className="h-32" />
                       <div className="h-32" />
                       <div className="flex justify-center">
-                        <div 
-                          draggable
-                          onDragEnd={handleDragEnd}
-                          className="w-20 h-20 bg-red-500 rounded-full flex items-center justify-center cursor-grab active:cursor-grabbing shadow-lg hover:scale-110 transition-transform ring-4 ring-warning animate-pulse"
+                        <div
+                          onPointerDown={handleApplePointerDown}
+                          onPointerMove={handleApplePointerMove}
+                          onPointerUp={handleApplePointerUp}
+                          style={{ touchAction: "none" }}
+                          className={cn(
+                            "w-20 h-20 bg-red-500 rounded-full flex items-center justify-center cursor-grab active:cursor-grabbing shadow-lg hover:scale-110 transition-transform ring-4 ring-warning select-none",
+                            dragPos ? "opacity-30" : "animate-pulse"
+                          )}
                         >
-                          <Apple className="w-12 h-12 text-white" />
+                          <Apple className="w-12 h-12 text-white pointer-events-none" />
                         </div>
                       </div>
-                      <p className="text-white text-center mt-4">↑ りんごをカゴにドラッグ！</p>
+                      <p className="text-white text-center mt-4">
+                        ↑ りんごをカゴにドラッグ！
+                        <span className="block text-xs text-white/70">Drag the apple to the basket!</span>
+                      </p>
                     </div>
                   </div>
+                  {/* ドラッグ中はりんごが指について動く */}
+                  {dragPos && (
+                    <div
+                      className="fixed z-[100] w-20 h-20 bg-red-500 rounded-full flex items-center justify-center shadow-2xl pointer-events-none -translate-x-1/2 -translate-y-1/2 scale-110"
+                      style={{ left: dragPos.x, top: dragPos.y }}
+                    >
+                      <Apple className="w-12 h-12 text-white" />
+                    </div>
+                  )}
                   {/* Basket */}
-                  <div 
+                  <div
                     id="basket"
-                    onDrop={handleDrop}
-                    onDragOver={handleDragOver}
-                    className="absolute bottom-4 right-4 w-24 h-24 bg-amber-700 rounded-xl flex items-center justify-center border-4 border-amber-600"
+                    className={cn(
+                      "absolute bottom-4 right-4 w-24 h-24 bg-amber-700 rounded-xl flex items-center justify-center border-4 transition-all",
+                      overBasket ? "border-yellow-300 scale-110 ring-4 ring-yellow-300/60" : "border-amber-600"
+                    )}
                   >
                     <span className="text-white text-2xl">🧺</span>
-                    <span className="absolute -bottom-6 text-white text-xs">カゴ</span>
+                    <span className="absolute -bottom-6 text-white text-xs">カゴ / Basket</span>
                   </div>
                 </div>
               )}
@@ -483,13 +546,16 @@ export function Mission1({ onComplete }: Mission1Props) {
                       >
                         <Maximize2 className="w-3 h-3 text-white" />
                       </button>
-                      <button 
+                      <button
                         onClick={handleCloseWindow}
                         className={cn(
-                          "w-6 h-6 bg-red-500 rounded flex items-center justify-center hover:bg-red-400",
+                          "relative w-6 h-6 bg-red-500 rounded flex items-center justify-center hover:bg-red-400",
                           windowMaximized && "ring-2 ring-warning animate-pulse"
                         )}
                       >
+                        {showHintPointer && (
+                          <span className="absolute -top-10 left-1/2 -translate-x-1/2 text-3xl animate-bounce z-30 drop-shadow-lg">👇</span>
+                        )}
                         <X className="w-3 h-3 text-white" />
                       </button>
                     </div>
@@ -502,13 +568,16 @@ export function Mission1({ onComplete }: Mission1Props) {
 
               {/* Taskbar */}
               <div className="absolute bottom-0 left-0 right-0 h-12 bg-gray-900/95 backdrop-blur flex items-center px-2">
-                <button 
+                <button
                   onClick={handleStartClick}
                   className={cn(
-                    "h-10 px-4 bg-blue-600 hover:bg-blue-500 text-white rounded flex items-center gap-2 transition-all",
+                    "relative h-10 px-4 bg-blue-600 hover:bg-blue-500 text-white rounded flex items-center gap-2 transition-all",
                     step === "click" && "ring-4 ring-warning ring-offset-2 ring-offset-gray-900 animate-pulse"
                   )}
                 >
+                  {showHintPointer && step === "click" && (
+                    <span className="absolute -top-12 left-1/2 -translate-x-1/2 text-4xl animate-bounce z-30 drop-shadow-lg">👇</span>
+                  )}
                   <Monitor className="w-5 h-5" />
                   <span className="text-sm font-medium">スタート</span>
                 </button>

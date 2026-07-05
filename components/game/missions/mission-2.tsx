@@ -6,6 +6,7 @@ import { Character, Ruby } from "../character"
 import { SuccessOverlay } from "../success-overlay"
 import { Button } from "@/components/ui/button"
 import { sounds } from "@/lib/sounds"
+import { usePlatform } from "@/lib/platform"
 
 interface Mission2Props {
   onComplete: () => void
@@ -42,6 +43,7 @@ export function Mission2({ onComplete }: Mission2Props) {
   const [copySourceFocused, setCopySourceFocused] = useState(true)
   const inputRef = useRef<HTMLInputElement>(null)
   const pasteInputRef = useRef<HTMLInputElement>(null)
+  const { isMac, modKey, imeKey } = usePlatform()
 
   const triggerSuccess = useCallback((message: string, nextStep: Step) => {
     sounds?.playSuccess()
@@ -93,22 +95,8 @@ export function Mission2({ onComplete }: Mission2Props) {
         console.log(`[Mission2] ⌫ Backspace (delete-practice)`)
       }
     }
-
-    if (step === "undo-practice") {
-      if (e.ctrlKey && e.key === "z") {
-        e.preventDefault()
-        if (undoStack.length > 0) {
-          const prevText = undoStack[undoStack.length - 1]
-          console.log(`[Mission2] ↩️ Ctrl+Z (undo-practice): restore to "${prevText}"`)
-          setUndoText(prevText)
-          setUndoStack(prev => prev.slice(0, -1))
-        }
-      }
-      // undo-practice 中の誤入力を防ぐ
-      if (e.key !== "Control" && !e.ctrlKey) {
-        // e.preventDefault()
-      }
-    }
+    // undo-practice の Ctrl/⌘+Z は window のグローバルリスナーだけで処理する
+    // （ここでも処理すると1回の押下で2回 undo され、スタックが尽きてクリア不能になる）
   }
 
   const toggleIme = () => {
@@ -201,10 +189,11 @@ export function Mission2({ onComplete }: Mission2Props) {
       case "tutorial-ime":
         return (
           <div className="space-y-2">
-            <p className="font-bold text-primary">【IMEの<Ruby rt="きりかえ">切替</Ruby>】</p>
-            <p>「<span className="font-bold text-primary"><Ruby rt="はんかく">半角</Ruby>/<Ruby rt="ぜんかく">全角</Ruby></span>」キーを<Ruby rt="お">押</Ruby>すと、<Ruby rt="にほんご">日本語</Ruby>と<Ruby rt="えいご">英語</Ruby>を<Ruby rt="き">切</Ruby>り<Ruby rt="か">替</Ruby>えられるよ！</p>
+            <p className="font-bold text-primary">【IMEの<Ruby rt="きりかえ">切替</Ruby> / Japanese ⇔ English】</p>
+            <p>「<span className="font-bold text-primary">{isMac ? "かな / 英数" : <><Ruby rt="はんかく">半角</Ruby>/<Ruby rt="ぜんかく">全角</Ruby></>}</span>」キーを<Ruby rt="お">押</Ruby>すと、<Ruby rt="にほんご">日本語</Ruby>と<Ruby rt="えいご">英語</Ruby>を<Ruby rt="き">切</Ruby>り<Ruby rt="か">替</Ruby>えられるよ！</p>
+            <p className="text-xs text-muted-foreground">Press the <span className="font-mono">{imeKey}</span> key to switch Japanese ⇔ English.</p>
             <div className="mt-4 flex justify-center items-center gap-4">
-              <div className="bg-gray-800 text-white px-4 py-2 rounded font-mono text-sm"><Ruby rt="はんかく">半角</Ruby>/<Ruby rt="ぜんかく">全角</Ruby></div>
+              <div className="bg-gray-800 text-white px-4 py-2 rounded font-mono text-sm">{isMac ? "かな / 英数" : <><Ruby rt="はんかく">半角</Ruby>/<Ruby rt="ぜんかく">全角</Ruby></>}</div>
               <span className="text-lg">→</span>
               <div className="flex gap-2">
                 <span className="bg-primary text-primary-foreground px-3 py-1 rounded">A</span>
@@ -217,7 +206,8 @@ export function Mission2({ onComplete }: Mission2Props) {
       case "tutorial-conversion":
         return (
           <div className="space-y-2">
-            <p className="font-bold text-primary">【<Ruby rt="へんかん">変換</Ruby>の<Ruby rt="やりかた">やり方</Ruby>】</p>
+            <p className="font-bold text-primary">【<Ruby rt="へんかん">変換</Ruby>の<Ruby rt="やりかた">やり方</Ruby> / Convert】</p>
+            <p className="text-xs text-muted-foreground">Type hiragana → press <span className="font-mono">Space</span> to convert → <span className="font-mono">Enter</span> to confirm.</p>
             <p><Ruby rt="にほんご">日本語</Ruby>を<Ruby rt="にゅうりょく">入力</Ruby>したあと、<span className="font-bold text-primary">スペースキー</span>を<Ruby rt="お">押</Ruby>すと<Ruby rt="かんじ">漢字</Ruby>やカタカナに<Ruby rt="へんかん">変換</Ruby>できるよ！</p>
             <div className="mt-4 flex justify-center items-center gap-2">
               <span className="bg-gray-100 px-3 py-1 rounded">きょう</span>
@@ -232,20 +222,21 @@ export function Mission2({ onComplete }: Mission2Props) {
       case "tutorial-backspace":
         return (
           <div className="space-y-2">
-            <p className="font-bold text-primary">【Backspaceと<Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>す】</p>
+            <p className="font-bold text-primary">【Backspaceと<Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>す / Delete & Undo】</p>
             <p><span className="font-bold text-primary">Backspace（←）</span>で1<Ruby rt="もじ">文字</Ruby><Ruby rt="け">消</Ruby>せるよ！</p>
-            <p><span className="font-bold text-primary">Ctrl + Z</span>で<Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>せるよ！</p>
+            <p><span className="font-bold text-primary">{modKey} + Z</span>で<Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>せるよ！</p>
+            <p className="text-xs text-muted-foreground">Backspace = delete one letter. {modKey}+Z = undo.</p>
             <div className="mt-4 flex justify-center gap-4">
               <div className="text-center">
                 <div className="bg-gray-800 text-white px-4 py-2 rounded font-mono text-sm">← Backspace</div>
-                <p className="text-xs text-muted-foreground mt-1"><Ruby rt="け">消</Ruby>す</p>
+                <p className="text-xs text-muted-foreground mt-1"><Ruby rt="け">消</Ruby>す / Delete</p>
               </div>
               <div className="text-center">
                 <div className="flex gap-1">
-                  <div className="bg-gray-800 text-white px-3 py-2 rounded font-mono text-sm">Ctrl</div>
+                  <div className="bg-gray-800 text-white px-3 py-2 rounded font-mono text-sm">{modKey}</div>
                   <div className="bg-gray-800 text-white px-3 py-2 rounded font-mono text-sm">Z</div>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1"><Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>す</p>
+                <p className="text-xs text-muted-foreground mt-1"><Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>す / Undo</p>
               </div>
             </div>
           </div>
@@ -253,29 +244,29 @@ export function Mission2({ onComplete }: Mission2Props) {
       case "tutorial-copypaste":
         return (
           <div className="space-y-2">
-            <p className="font-bold text-primary">【コピー＆ペースト】</p>
+            <p className="font-bold text-primary">【コピー＆ペースト / Copy & Paste】</p>
             <p><Ruby rt="じぶん">自分</Ruby>のキーボードで<Ruby rt="れんしゅう">練習</Ruby>するよ！</p>
             <div className="grid grid-cols-3 gap-4 mt-4">
               <div className="text-center">
                 <div className="flex gap-1 justify-center">
-                  <div className="bg-gray-800 text-white px-2 py-1 rounded font-mono text-xs">Ctrl</div>
+                  <div className="bg-gray-800 text-white px-2 py-1 rounded font-mono text-xs">{modKey}</div>
                   <div className="bg-gray-800 text-white px-2 py-1 rounded font-mono text-xs">A</div>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1"><Ruby rt="ぜんぶえら">全部選</Ruby>ぶ</p>
+                <p className="text-xs text-muted-foreground mt-1"><Ruby rt="ぜんぶえら">全部選</Ruby>ぶ / Select all</p>
               </div>
               <div className="text-center">
                 <div className="flex gap-1 justify-center">
-                  <div className="bg-gray-800 text-white px-2 py-1 rounded font-mono text-xs">Ctrl</div>
+                  <div className="bg-gray-800 text-white px-2 py-1 rounded font-mono text-xs">{modKey}</div>
                   <div className="bg-gray-800 text-white px-2 py-1 rounded font-mono text-xs">C</div>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">コピー</p>
+                <p className="text-xs text-muted-foreground mt-1">コピー / Copy</p>
               </div>
               <div className="text-center">
                 <div className="flex gap-1 justify-center">
-                  <div className="bg-gray-800 text-white px-2 py-1 rounded font-mono text-xs">Ctrl</div>
+                  <div className="bg-gray-800 text-white px-2 py-1 rounded font-mono text-xs">{modKey}</div>
                   <div className="bg-gray-800 text-white px-2 py-1 rounded font-mono text-xs">V</div>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">ペースト</p>
+                <p className="text-xs text-muted-foreground mt-1">ペースト / Paste</p>
               </div>
             </div>
           </div>
@@ -283,13 +274,15 @@ export function Mission2({ onComplete }: Mission2Props) {
       case "ime-switch":
         return (
           <>
-            「<Ruby rt="はんかく">半角</Ruby>/<Ruby rt="ぜんかく">全角</Ruby>」または「A/あ」キーを<Ruby rt="お">押</Ruby>して、<Ruby rt="にほんご">日本語</Ruby>が<Ruby rt="か">書</Ruby>けるようにしてみて！<Ruby rt="した">下</Ruby>の「あ/A」ボタンをクリックしてもOK！
+            「{isMac ? "かな" : <><Ruby rt="はんかく">半角</Ruby>/<Ruby rt="ぜんかく">全角</Ruby></>}」または「A/あ」キーを<Ruby rt="お">押</Ruby>して、<Ruby rt="にほんご">日本語</Ruby>が<Ruby rt="か">書</Ruby>けるようにしてみて！<Ruby rt="した">下</Ruby>の「あ/A」ボタンをクリックしてもOK！
+            <span className="block text-xs text-muted-foreground mt-1">Switch to Japanese mode（あ）!</span>
           </>
         )
       case "hiragana-input":
         return (
           <>
             まずはひらがなで「<span className="font-bold text-primary">あした</span>」と<Ruby rt="にゅうりょく">入力</Ruby>してみよう！そのままEnterで<Ruby rt="かくてい">確定</Ruby>してね。
+            <span className="block text-xs text-muted-foreground mt-1">Type "あした" (a-s-i-t-a) and press Enter.</span>
           </>
         )
       case "kanji-conversion":
@@ -313,13 +306,13 @@ export function Mission2({ onComplete }: Mission2Props) {
       case "undo-practice":
         return undoText === "こんにちは"
           ? <><Ruby rt="すば">素晴</Ruby>らしい！ショートカットをマスターしたね！</>
-          : <>あ！間違えて消しすぎちゃった！<span className="font-bold text-primary">「Ctrl + Z」</span>で元に戻そう！</>
+          : <>あ！間違えて消しすぎちゃった！<span className="font-bold text-primary">「{modKey} + Z」</span>で元に戻そう！<span className="block text-xs text-muted-foreground mt-1">Press {modKey}+Z to undo!</span></>
       case "copy-paste":
         return selectedAll && clipboard
-          ? <><Ruby rt="うえ">上</Ruby>の<Ruby rt="はこ">箱</Ruby>でコピーできた！<Ruby rt="した">下</Ruby>の<Ruby rt="はこ">箱</Ruby>をクリックして<span className="font-bold text-primary">「Ctrl+V」</span>でペーストして！</>
+          ? <><Ruby rt="うえ">上</Ruby>の<Ruby rt="はこ">箱</Ruby>でコピーできた！<Ruby rt="した">下</Ruby>の<Ruby rt="はこ">箱</Ruby>をクリックして<span className="font-bold text-primary">「{modKey}+V」</span>でペーストして！<span className="block text-xs text-muted-foreground mt-1">Click the bottom box, then {modKey}+V!</span></>
           : selectedAll
-            ? <><Ruby rt="ぜんぶえら">全部選</Ruby>べたね！キーボードで<span className="font-bold text-primary">「Ctrl+C」</span>を<Ruby rt="お">押</Ruby>してコピーして！</>
-            : <><Ruby rt="うえ">上</Ruby>の<Ruby rt="はこ">箱</Ruby>をクリックして、キーボードで<span className="font-bold text-primary">「Ctrl+A」</span>を<Ruby rt="お">押</Ruby>して<Ruby rt="ぜんぶえら">全部選</Ruby>んで！</>
+            ? <><Ruby rt="ぜんぶえら">全部選</Ruby>べたね！キーボードで<span className="font-bold text-primary">「{modKey}+C」</span>を<Ruby rt="お">押</Ruby>してコピーして！<span className="block text-xs text-muted-foreground mt-1">Press {modKey}+C to copy!</span></>
+            : <><Ruby rt="うえ">上</Ruby>の<Ruby rt="はこ">箱</Ruby>をクリックして、キーボードで<span className="font-bold text-primary">「{modKey}+A」</span>を<Ruby rt="お">押</Ruby>して<Ruby rt="ぜんぶえら">全部選</Ruby>んで！<span className="block text-xs text-muted-foreground mt-1">Click the top box, then press {modKey}+A!</span></>
       case "complete":
         return <>ミッション2クリア！タイピングマスターだね！</>
       default:
@@ -414,7 +407,7 @@ export function Mission2({ onComplete }: Mission2Props) {
                     あ/A <Ruby rt="きりかえ">切替</Ruby>
                   </Button>
                   <p className="text-sm text-gray-500">
-                    キーボードの「<Ruby rt="はんかく">半角</Ruby>/<Ruby rt="ぜんかく">全角</Ruby>」キーでも<Ruby rt="きりか">切替</Ruby>えられるよ！
+                    キーボードの「{isMac ? "かな / 英数" : <><Ruby rt="はんかく">半角</Ruby>/<Ruby rt="ぜんかく">全角</Ruby></>}」キーでも<Ruby rt="きりか">切替</Ruby>えられるよ！
                   </p>
                 </div>
               )}
@@ -551,7 +544,7 @@ export function Mission2({ onComplete }: Mission2Props) {
                       ステップ5: 間違えて消しすぎちゃった！
                     </div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Ctrl + Z で「こんにちは」に戻そう：
+                      {modKey} + Z で「こんにちは」に戻そう：
                     </label>
                     <input
                       type="text"
@@ -570,9 +563,9 @@ export function Mission2({ onComplete }: Mission2Props) {
                       </div>
                       <div className="text-center">
                         <div className="w-24 h-12 bg-gray-800 rounded flex items-center justify-center text-white text-sm">
-                          Ctrl + Z
+                          {modKey} + Z
                         </div>
-                        <p className="text-xs text-gray-500 mt-1">元に戻すよ</p>
+                        <p className="text-xs text-gray-500 mt-1">元に戻すよ / Undo</p>
                       </div>
                     </div>
                   </div>
@@ -593,7 +586,7 @@ export function Mission2({ onComplete }: Mission2Props) {
                     {/* Source input */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        コピー<Ruby rt="もと">元</Ruby>（ここをクリック → Ctrl+A → Ctrl+C）：
+                        コピー<Ruby rt="もと">元</Ruby>（ここをクリック → {modKey}+A → {modKey}+C）：
                       </label>
                       <input
                         ref={inputRef}
@@ -623,7 +616,7 @@ export function Mission2({ onComplete }: Mission2Props) {
                       />
                       {selectedAll && (
                         <p className="text-sm text-success mt-1 text-center">
-                          {clipboard ? "コピーできた！" : <><Ruby rt="つぎ">次</Ruby>は Ctrl+C！</>}
+                          {clipboard ? "コピーできた！" : <><Ruby rt="つぎ">次</Ruby>は {modKey}+C！</>}
                         </p>
                       )}
                     </div>
@@ -631,7 +624,7 @@ export function Mission2({ onComplete }: Mission2Props) {
                     {/* Target input */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        ペースト<Ruby rt="さき">先</Ruby>（ここをクリック → Ctrl+V）：
+                        ペースト<Ruby rt="さき">先</Ruby>（ここをクリック → {modKey}+V）：
                       </label>
                       <input
                         ref={pasteInputRef}
@@ -672,7 +665,7 @@ export function Mission2({ onComplete }: Mission2Props) {
                         !selectedAll ? "bg-warning/20 border-warning" : "bg-success/20 border-success"
                       )}>
                         <div className="flex gap-1 justify-center">
-                          <span className="bg-gray-800 text-white px-2 py-1 rounded text-xs">Ctrl</span>
+                          <span className="bg-gray-800 text-white px-2 py-1 rounded text-xs">{modKey}</span>
                           <span className="bg-gray-800 text-white px-2 py-1 rounded text-xs">A</span>
                         </div>
                         <p className="text-xs mt-1">{selectedAll ? "✓" : "1"}</p>
@@ -682,7 +675,7 @@ export function Mission2({ onComplete }: Mission2Props) {
                         selectedAll && !clipboard ? "bg-warning/20 border-warning" : clipboard ? "bg-success/20 border-success" : "bg-gray-100 border-gray-200"
                       )}>
                         <div className="flex gap-1 justify-center">
-                          <span className="bg-gray-800 text-white px-2 py-1 rounded text-xs">Ctrl</span>
+                          <span className="bg-gray-800 text-white px-2 py-1 rounded text-xs">{modKey}</span>
                           <span className="bg-gray-800 text-white px-2 py-1 rounded text-xs">C</span>
                         </div>
                         <p className="text-xs mt-1">{clipboard ? "✓" : "2"}</p>
@@ -692,7 +685,7 @@ export function Mission2({ onComplete }: Mission2Props) {
                         clipboard && !pasteAreaText ? "bg-warning/20 border-warning" : pasteAreaText ? "bg-success/20 border-success" : "bg-gray-100 border-gray-200"
                       )}>
                         <div className="flex gap-1 justify-center">
-                          <span className="bg-gray-800 text-white px-2 py-1 rounded text-xs">Ctrl</span>
+                          <span className="bg-gray-800 text-white px-2 py-1 rounded text-xs">{modKey}</span>
                           <span className="bg-gray-800 text-white px-2 py-1 rounded text-xs">V</span>
                         </div>
                         <p className="text-xs mt-1">{pasteAreaText ? "✓" : "3"}</p>

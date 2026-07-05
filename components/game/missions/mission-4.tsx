@@ -12,6 +12,7 @@ import {
   Bluetooth, Plane, Moon, Accessibility, Sun, Laptop, Search, Settings, User
 } from "lucide-react"
 import { sounds } from "@/lib/sounds"
+import { usePlatform } from "@/lib/platform"
 
 // 未接続時の「地球儀🚫」アイコン（白くはっきり見えるように修正）
 const DisconnectedGlobe = ({ className }: { className?: string }) => (
@@ -51,6 +52,8 @@ export function Mission4({ onComplete }: Mission4Props) {
   const [showStartMenu, setShowStartMenu] = useState(false)
   const [showPowerMenu, setShowPowerMenu] = useState(false)
   const [shuttingDown, setShuttingDown] = useState(false)
+  const [wifiError, setWifiError] = useState(false)
+  const { modKey } = usePlatform()
 
   const triggerSuccess = useCallback((message: string, nextStep: Step) => {
     sounds?.playSuccess()
@@ -85,12 +88,14 @@ export function Mission4({ onComplete }: Mission4Props) {
   const handleWifiConnect = () => {
     console.log(`[Mission4] 📶 handleWifiConnect: password="${wifiPassword}"`)
     if (wifiPassword === "password123") {
+      setWifiError(false)
       setWifiConnected(true)
       setShowQuickSettings(false)
       triggerSuccess("インターネットにつながったね！", "save")
     } else {
       console.warn(`[Mission4] ⚠️ Wrong Wi-Fi password: "${wifiPassword}"`)
-      alert("パスワードが違ちがうみたい。「password123」と入力にゅうりょくしてね。")
+      sounds?.playError()
+      setWifiError(true)
     }
   }
 
@@ -108,9 +113,9 @@ export function Mission4({ onComplete }: Mission4Props) {
   const getMessage = (): React.ReactNode => {
     switch (step) {
       case "intro": return <><Ruby rt="さいご">最後</Ruby>のミッション！これができれば<Ruby rt="かんぺき">完璧</Ruby>だよ！</>
-      case "wifi": return <><Ruby rt="みぎした">右下</Ruby>のアイコンを<Ruby rt="お">押</Ruby>して、「<span className="text-primary font-bold">Campus_WiFi</span>」につないでみよう！</>
-      case "save": return <>大事だいじなデータだから「<span className="text-primary font-bold">Ctrl + S</span>」で<Ruby rt="ほぞん">保存</Ruby>してね！</>
-      case "shutdown": return <>Windowsマークをクリックして、<Ruby rt="でんげん">電源</Ruby>を<Ruby rt="き">切</Ruby>ってみよう！</>
+      case "wifi": return <><Ruby rt="みぎした">右下</Ruby>のアイコンを<Ruby rt="お">押</Ruby>して、「<span className="text-primary font-bold">Campus_WiFi</span>」につないでみよう！<span className="block text-xs text-muted-foreground mt-1">Click the icons at the bottom-right and connect to Campus_WiFi!</span></>
+      case "save": return <>大事だいじなデータだから「<span className="text-primary font-bold">{modKey} + S</span>」で<Ruby rt="ほぞん">保存</Ruby>してね！<span className="block text-xs text-muted-foreground mt-1">Press {modKey}+S to save!</span></>
+      case "shutdown": return <>Windowsマークをクリックして、<Ruby rt="でんげん">電源</Ruby>を<Ruby rt="き">切</Ruby>ってみよう！<span className="block text-xs text-muted-foreground mt-1">Click the Windows mark, then the power button to shut down!</span></>
       case "complete": return <>おめでとう！パソコンマスターだね！</>
       default: return ""
     }
@@ -198,8 +203,14 @@ export function Mission4({ onComplete }: Mission4Props) {
                       {wifiSubStep === "password" && (
                         <div className="mt-4 space-y-4 animate-in slide-in-from-right-4">
                           <div className="p-4 bg-blue-900/40 rounded-xl border border-blue-400/30">
-                            <Input type="password" placeholder="ヒント：password123" className="h-12 text-base bg-slate-800 border-white/10 text-white shadow-inner" value={wifiPassword} onChange={e => setWifiPassword(e.target.value)} autoFocus />
+                            <Input type="password" placeholder="ヒント：password123" className="h-12 text-base bg-slate-800 border-white/10 text-white shadow-inner" value={wifiPassword} onChange={e => { setWifiPassword(e.target.value); setWifiError(false) }} onKeyDown={e => { if (e.key === "Enter") handleWifiConnect() }} autoFocus />
                             <p className="text-xs text-blue-300 mt-3 font-bold">※練習用れんしゅうようパスワード：password123</p>
+                            {wifiError && (
+                              <p className="text-sm text-red-300 mt-2 font-bold animate-in fade-in">
+                                ✕ パスワードがちがうよ。「password123」と入力してね。
+                                <span className="block text-xs font-normal">Wrong password. Type "password123".</span>
+                              </p>
+                            )}
                           </div>
                           <div className="flex gap-3"><Button variant="ghost" className="flex-1 text-white" onClick={() => setWifiSubStep("wifi-list")}>キャンセル</Button><Button className="flex-1 bg-blue-600" onClick={handleWifiConnect}>次つぎへ</Button></div>
                         </div>

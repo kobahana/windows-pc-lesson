@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback, useMemo } from "react"
+import { useState, useEffect, useCallback, useMemo, useRef } from "react"
 import { MissionHeader } from "./mission-header"
 import { Mission1 } from "./missions/mission-1"
 import { Mission2 } from "./missions/mission-2"
@@ -18,7 +18,16 @@ export function GameContainer() {
   const [currentMission, setCurrentMission] = useState(1)
   const [completedMissions, setCompletedMissions] = useState<number[]>([])
   const [gameComplete, setGameComplete] = useState(false)
-  const { markLessonCompleted } = useSettings()
+  const { markLessonCompleted, recordEvent } = useSettings()
+  const startRecordedRef = useRef(false)
+
+  // レッスン開始を1回だけ記録
+  useEffect(() => {
+    if (!startRecordedRef.current) {
+      startRecordedRef.current = true
+      recordEvent(1, "start")
+    }
+  }, [recordEvent])
 
   const missions = useMemo(() => [
     { id: 1, title: "タッチパッド", titleFull: <>タッチパッドと<Ruby rt="がめん">画面</Ruby>の<Ruby rt="だいぼうけん">大冒険</Ruby></>, completed: completedMissions.includes(1), current: currentMission === 1 },
@@ -30,14 +39,16 @@ export function GameContainer() {
   const handleMissionComplete = useCallback((missionId: number) => {
     setCompletedMissions(prev => prev.includes(missionId) ? prev : [...prev, missionId])
     sounds?.playSuccess()
+    recordEvent(1, "stage_clear", `ミッション${missionId}`)
     if (missionId < 4) {
       setCurrentMission(missionId + 1)
     } else {
       sounds?.playClear()
       setGameComplete(true)
       markLessonCompleted(1)
+      recordEvent(1, "lesson_clear")
     }
-  }, [markLessonCompleted])
+  }, [markLessonCompleted, recordEvent])
 
   const handleMissionSelect = useCallback((missionId: number) => {
     sounds?.playClick()

@@ -13,6 +13,10 @@ class SoundSystem {
     if (!this.ctx) {
       this.ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
     }
+    // Safari はユーザー操作前に作られた AudioContext が suspended のままになるため再開する
+    if (this.ctx.state === "suspended") {
+      this.ctx.resume().catch(() => {});
+    }
   }
 
   public setEnabled(enabled: boolean) {

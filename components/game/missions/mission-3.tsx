@@ -164,6 +164,7 @@ export function Mission3({ onComplete }: Mission3Props) {
         return (
           <>
             <Ruby rt="じっさい">実際</Ruby>に<Ruby rt="にゅうりょく">入力</Ruby>してみよう！「<span className="font-bold text-primary text-xl">{currentChar?.char}</span>」（{currentChar?.description}）を<Ruby rt="う">打</Ruby>ってみて！
+            <span className="block text-xs text-muted-foreground mt-1">Type this symbol: {currentChar?.char}</span>
           </>
         )
       case "complete":
@@ -241,6 +242,11 @@ export function Mission3({ onComplete }: Mission3Props) {
                     {currentChar?.char}
                   </div>
                   <p className="text-lg text-muted-foreground">{currentChar?.description}</p>
+                  {/* 打ち方ヒント（日本語キーボード配列） */}
+                  <div className="mt-3 inline-flex items-center gap-2 bg-slate-800 text-white px-4 py-2 rounded-lg font-mono text-sm shadow">
+                    <span>⌨️</span>
+                    <span>{currentChar?.hint}</span>
+                  </div>
                 </div>
 
                 {/* Input */}

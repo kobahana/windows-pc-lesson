@@ -1,0 +1,257 @@
+"use client"
+
+import { Fragment, useEffect, useMemo, useState } from "react"
+import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import {
+  ArrowLeft, Download, Trash2, ChevronDown, ChevronUp,
+  CalendarDays, Users, CheckCircle2, Circle, GraduationCap,
+} from "lucide-react"
+import {
+  ACTIVITY_LABELS,
+  LESSON_TITLES,
+  activityToCsv,
+  deleteStudent,
+  loadStudents,
+  localDateKey,
+  todayKey,
+  type ActivityEvent,
+  type StudentRecord,
+} from "@/lib/student-store"
+
+const LESSON_IDS = [1, 2, 3, 4, 5]
+
+function formatTime(iso: string) {
+  return new Date(iso).toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })
+}
+
+function formatDateTime(iso: string) {
+  return new Date(iso).toLocaleString("ja-JP", { month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit" })
+}
+
+function eventLabel(ev: ActivityEvent) {
+  const lesson = LESSON_TITLES[ev.lessonId] ?? `Lesson ${ev.lessonId}`
+  let text = `L${ev.lessonId} ${lesson}：${ACTIVITY_LABELS[ev.type]}`
+  if (ev.detail) text += `（${ev.detail}）`
+  const extras: string[] = []
+  if (ev.timeSec != null) extras.push(`${ev.timeSec}秒`)
+  if (ev.missCount != null) extras.push(`ミス${ev.missCount}回`)
+  if (extras.length) text += ` — ${extras.join(" / ")}`
+  return text
+}
+
+export default function TeacherPage() {
+  const [students, setStudents] = useState<Record<string, StudentRecord>>({})
+  const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    setStudents(loadStudents())
+    setLoaded(true)
+  }, [])
+
+  const studentList = useMemo(() => {
+    const list = Object.values(students)
+    list.sort((a, b) => b.lastActiveAt.localeCompare(a.lastActiveAt))
+    return list
+  }, [students])
+
+  const today = todayKey()
+
+  const todayActivity = useMemo(() => {
+    return studentList
+      .map((s) => ({
+        student: s,
+        events: s.activity.filter((ev) => localDateKey(ev.at) === today),
+      }))
+      .filter((entry) => entry.events.length > 0)
+  }, [studentList, today])
+
+  const handleExportCsv = () => {
+    const csv = activityToCsv(students)
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `学習記録_${today}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
+  const handleDelete = (id: string) => {
+    if (!window.confirm(`学籍番号「${id}」の記録をすべて削除します。よろしいですか？`)) return
+    deleteStudent(id)
+    setStudents(loadStudents())
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-100">
+      <header className="bg-white border-b border-slate-200 shadow-sm">
+        <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Link href="/">
+              <Button variant="ghost" size="sm" className="gap-1 text-slate-500">
+                <ArrowLeft className="w-4 h-4" /> ホームへ
+              </Button>
+            </Link>
+            <div className="flex items-center gap-2 text-slate-800">
+              <GraduationCap className="w-6 h-6 text-blue-600" />
+              <h1 className="text-lg font-bold">先生用ページ — 学習記録</h1>
+            </div>
+          </div>
+          <Button onClick={handleExportCsv} disabled={studentList.length === 0} className="gap-2 bg-blue-600 hover:bg-blue-700">
+            <Download className="w-4 h-4" /> CSVダウンロード
+          </Button>
+        </div>
+      </header>
+
+      <main className="max-w-5xl mx-auto p-4 md:p-8 space-y-8">
+        <p className="text-sm text-slate-500 bg-white rounded-xl border border-slate-200 p-4">
+          ※ 記録は<strong>このパソコンの中</strong>に保存されています。別のパソコンで学習した記録は、そのパソコンの
+          「先生用ページ」で確認するか、CSVでダウンロードして集めてください。
+        </p>
+
+        {/* 今日の活動 */}
+        <section className="space-y-3">
+          <h2 className="flex items-center gap-2 text-xl font-bold text-slate-800">
+            <CalendarDays className="w-6 h-6 text-blue-600" />
+            今日の活動（{new Date().toLocaleDateString("ja-JP", { month: "long", day: "numeric", weekday: "short" })}）
+          </h2>
+          {!loaded ? null : todayActivity.length === 0 ? (
+            <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center text-slate-400">
+              今日の学習記録はまだありません
+            </div>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2">
+              {todayActivity.map(({ student, events }) => (
+                <div key={student.id} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-bold text-slate-800">
+                      {student.id}{student.name ? `（${student.name}）` : ""}
+                    </span>
+                    <span className="text-xs text-slate-400">{events.length}件</span>
+                  </div>
+                  <ul className="space-y-1.5">
+                    {events.map((ev, i) => (
+                      <li key={i} className="text-sm text-slate-600 flex gap-2">
+                        <span className="text-slate-400 font-mono shrink-0">{formatTime(ev.at)}</span>
+                        <span className={ev.type === "lesson_clear" ? "font-bold text-green-600" : ""}>
+                          {eventLabel(ev)}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* 生徒一覧 */}
+        <section className="space-y-3">
+          <h2 className="flex items-center gap-2 text-xl font-bold text-slate-800">
+            <Users className="w-6 h-6 text-blue-600" />
+            生徒一覧（{studentList.length}人）
+          </h2>
+          {!loaded ? null : studentList.length === 0 ? (
+            <div className="bg-white rounded-2xl border border-slate-200 p-8 text-center text-slate-400">
+              まだ誰もログインしていません。生徒がホーム画面で学籍番号を入力すると、ここに表示されます。
+            </div>
+          ) : (
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-slate-50 text-slate-500 text-left">
+                    <th className="px-4 py-3 font-bold">学籍番号</th>
+                    <th className="px-4 py-3 font-bold">名前</th>
+                    <th className="px-4 py-3 font-bold text-center">クリア状況（L1〜L5）</th>
+                    <th className="px-4 py-3 font-bold">最終利用</th>
+                    <th className="px-4 py-3" />
+                  </tr>
+                </thead>
+                <tbody>
+                  {studentList.map((s) => {
+                    const expanded = expandedId === s.id
+                    // 日付ごとにまとめる（新しい順）
+                    const byDate = new Map<string, ActivityEvent[]>()
+                    for (const ev of s.activity) {
+                      const key = localDateKey(ev.at)
+                      if (!byDate.has(key)) byDate.set(key, [])
+                      byDate.get(key)!.push(ev)
+                    }
+                    const dates = [...byDate.keys()].sort().reverse()
+
+                    return (
+                      <Fragment key={s.id}>
+                        <tr
+                          className="border-t border-slate-100 hover:bg-slate-50 cursor-pointer"
+                          onClick={() => setExpandedId(expanded ? null : s.id)}
+                        >
+                          <td className="px-4 py-3 font-bold text-slate-800">{s.id}</td>
+                          <td className="px-4 py-3 text-slate-600">{s.name ?? "—"}</td>
+                          <td className="px-4 py-3">
+                            <div className="flex justify-center gap-1.5">
+                              {LESSON_IDS.map((id) =>
+                                s.completedLessons.includes(id) ? (
+                                  <CheckCircle2 key={id} className="w-5 h-5 text-green-500" aria-label={`L${id} クリア`} />
+                                ) : (
+                                  <Circle key={id} className="w-5 h-5 text-slate-200" aria-label={`L${id} 未クリア`} />
+                                )
+                              )}
+                            </div>
+                          </td>
+                          <td className="px-4 py-3 text-slate-500">{formatDateTime(s.lastActiveAt)}</td>
+                          <td className="px-4 py-3 text-right">
+                            <div className="flex items-center justify-end gap-1">
+                              <button
+                                onClick={(e) => { e.stopPropagation(); handleDelete(s.id) }}
+                                className="p-1.5 rounded hover:bg-red-50 text-slate-300 hover:text-red-500 transition-colors"
+                                title="この生徒の記録を削除"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                              {expanded ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
+                            </div>
+                          </td>
+                        </tr>
+                        {expanded && (
+                          <tr className="border-t border-slate-100 bg-slate-50/60">
+                            <td colSpan={5} className="px-6 py-4">
+                              {dates.length === 0 ? (
+                                <p className="text-slate-400">活動記録はありません</p>
+                              ) : (
+                                <div className="space-y-4 max-h-80 overflow-y-auto pr-2">
+                                  {dates.map((date) => (
+                                    <div key={date}>
+                                      <p className="font-bold text-slate-600 mb-1.5">
+                                        {date}{date === today && <span className="ml-2 text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full">今日</span>}
+                                      </p>
+                                      <ul className="space-y-1 pl-1">
+                                        {byDate.get(date)!.map((ev, i) => (
+                                          <li key={i} className="text-sm text-slate-600 flex gap-2">
+                                            <span className="text-slate-400 font-mono shrink-0">{formatTime(ev.at)}</span>
+                                            <span className={ev.type === "lesson_clear" ? "font-bold text-green-600" : ""}>
+                                              {eventLabel(ev)}
+                                            </span>
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </td>
+                          </tr>
+                        )}
+                      </Fragment>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      </main>
+    </div>
+  )
+}

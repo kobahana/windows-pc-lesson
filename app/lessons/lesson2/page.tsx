@@ -91,14 +91,14 @@ export default function Lesson2() {
   const [startTime, setStartTime] = useState<number | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
 
-  const { markLessonCompleted } = useSettings();
+  const { markLessonCompleted, recordEvent } = useSettings();
 
   const stages = [
     { name: "ホームのきほん", keys: ["f", "f", "j", "j", "f", "j", "f", "j", "d", "d", "k", "k", "d", "k", "d", "k"] },
     { name: "ホームポジションぜんぶ", keys: ["s", "l", "a", ";", "g", "h", "a", "s", "d", "f", "j", "k", "l", ";"] },
     { name: "上の段 (だん)", keys: ["r", "u", "e", "i", "w", "o", "q", "p", "t", "y"] },
     { name: "下の段 (だん)", keys: ["v", "n", "c", "m", "x", ",", "z", ".", "b", "/"] },
-    { name: "数字 (すすじ) とスペース", keys: ["1", "2", "3", "4", "5", " ", "6", "7", "8", "9", "0", " "] },
+    { name: "数字 (すうじ) とスペース", keys: ["1", "2", "3", "4", "5", " ", "6", "7", "8", "9", "0", " "] },
   ];
 
   const practiceSequence = stages[currentStage].keys;
@@ -126,22 +126,25 @@ export default function Lesson2() {
       } else {
         sounds?.playSuccess();
         if (currentStage < stages.length - 1) {
+          recordEvent(2, "stage_clear", stages[currentStage].name);
           setCurrentStage(prev => prev + 1);
           setProgress(0);
         } else {
           // Finished all stages
           const end = Date.now();
-          setElapsedTime(startTime ? Math.floor((end - startTime) / 1000) : 0);
+          const secs = startTime ? Math.floor((end - startTime) / 1000) : 0;
+          setElapsedTime(secs);
           sounds?.playClear();
           setShowSuccess(true);
           markLessonCompleted(2);
+          recordEvent(2, "lesson_clear", undefined, { timeSec: secs, missCount });
         }
       }
     } else {
       sounds?.playError();
       setMissCount(prev => prev + 1);
     }
-  }, [targetKey, progress, subStep, showSuccess, currentStage, practiceSequence.length, stages.length, startTime, markLessonCompleted]);
+  }, [targetKey, progress, subStep, showSuccess, currentStage, practiceSequence.length, stages.length, startTime, markLessonCompleted, recordEvent, missCount]);
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown)
@@ -234,7 +237,15 @@ export default function Lesson2() {
         <div className="w-full max-w-4xl flex flex-col h-full">
           {subStep === 'intro' ? (
             <div className="flex-1 flex flex-col justify-start pt-6 space-y-4 animate-in fade-in zoom-in-95 duration-500 overflow-y-auto px-4 pb-4">
-              <Character message="まずは、指（ゆび）をおく場所（ばしょ）をおぼえよう！基本（きほん）がとっても大切だよ。" mood="happy" />
+              <Character
+                message={
+                  <>
+                    まずは、指（ゆび）をおく場所（ばしょ）をおぼえよう！基本（きほん）がとっても大切だよ。
+                    <span className="block text-xs text-slate-400 mt-1">Learn where to place your fingers — the home position!</span>
+                  </>
+                }
+                mood="happy"
+              />
 
               <div className="bg-white rounded-[2rem] p-8 shadow-xl border border-slate-100 mt-4">
                 <h3 className="text-xl font-bold mb-8 text-center flex items-center justify-center gap-3">
@@ -257,7 +268,7 @@ export default function Lesson2() {
                 <HandGuide activeHand={undefined} />
 
                 <div className="mt-10 flex justify-center">
-                  <Button size="lg" className="bg-blue-600 hover:bg-blue-700 px-24 h-16 text-xl rounded-full shadow-2xl font-bold" onClick={() => { sounds?.playClick(); setSubStep('practice'); }}>
+                  <Button size="lg" className="bg-blue-600 hover:bg-blue-700 px-24 h-16 text-xl rounded-full shadow-2xl font-bold" onClick={() => { sounds?.playClick(); recordEvent(2, "start"); setSubStep('practice'); }}>
                     わかった！練習（れんしゅう）する
                   </Button>
                 </div>
@@ -266,7 +277,15 @@ export default function Lesson2() {
           ) : (
             <div className="flex-1 flex flex-col justify-between py-1 animate-in slide-in-from-right-10 duration-500 overflow-hidden relative">
               <div className="text-center shrink-0">
-                <Character message="光（ひか）っているキーを、同じ色（いろ）の指（ゆび）でおそう！" mood="happy" />
+                <Character
+                  message={
+                    <>
+                      光（ひか）っているキーを、同じ色（いろ）の指（ゆび）でおそう！
+                      <span className="block text-xs text-slate-400 mt-1">Press the glowing key with the same-color finger!</span>
+                    </>
+                  }
+                  mood="happy"
+                />
               </div>
 
               <div className="flex justify-center gap-1 py-2 shrink-0 overflow-x-auto">
