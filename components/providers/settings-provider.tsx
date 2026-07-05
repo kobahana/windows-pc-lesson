@@ -11,6 +11,7 @@ import {
   setCurrentStudentId,
   upsertStudent,
 } from "@/lib/student-store"
+import { buildSheetRow, flushSheetQueue, queueSheetRow } from "@/lib/sheet-sync"
 
 interface StudentInfo {
   id: string
@@ -39,6 +40,11 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [completedLessons, setCompletedLessons] = useState<number[]>([])
   const [student, setStudent] = useState<StudentInfo | null>(null)
   const [isMounted, setIsMounted] = useState(false)
+
+  // 前回送信できなかった学習記録があれば再送する
+  useEffect(() => {
+    void flushSheetQueue()
+  }, [])
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -129,7 +135,10 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
 
   const recordEvent = useCallback((lessonId: number, type: ActivityType, detail?: string, extra?: { timeSec?: number; missCount?: number }) => {
     if (!student) return
-    appendActivity(student.id, { lessonId, type, detail, ...extra })
+    const event = { lessonId, type, detail, ...extra, at: new Date().toISOString() }
+    appendActivity(student.id, event)
+    // 先生のスプレッドシートにも送信（未設定なら何もしない）
+    queueSheetRow(buildSheetRow(student.id, student.name, event))
   }, [student])
 
   return (

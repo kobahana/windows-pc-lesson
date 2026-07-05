@@ -73,16 +73,15 @@ export default function Lesson3() {
   const [startTime, setStartTime] = useState<number | null>(null);
   const [elapsedTime, setElapsedTime] = useState(0);
 
-  const { markLessonCompleted, recordEvent } = useSettings();
+  const { markLessonCompleted, recordEvent, ready } = useSettings();
   const startRecordedRef = useRef(false);
 
-  // レッスン開始を1回だけ記録
+  // レッスン開始を1回だけ記録（ログイン情報の読み込み完了を待つ）
   useEffect(() => {
-    if (!startRecordedRef.current) {
-      startRecordedRef.current = true;
-      recordEvent(3, "start");
-    }
-  }, [recordEvent]);
+    if (!ready || startRecordedRef.current) return;
+    startRecordedRef.current = true;
+    recordEvent(3, "start");
+  }, [ready, recordEvent]);
 
   const stages = [
     { id: 1, name: "あいうえお", words: [{ h: "あいうえお", r: "aiueo" }] },

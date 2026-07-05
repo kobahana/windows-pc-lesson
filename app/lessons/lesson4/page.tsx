@@ -154,16 +154,15 @@ export default function Lesson4Page() {
   const [startTime, setStartTime] = useState<number | null>(null)
   const [elapsedTime, setElapsedTime] = useState(0)
   const [showHint, setShowHint] = useState(false)
-  const { markLessonCompleted, recordEvent } = useSettings()
+  const { markLessonCompleted, recordEvent, ready } = useSettings()
   const startRecordedRef = useRef(false)
 
-  // レッスン開始を1回だけ記録
+  // レッスン開始を1回だけ記録（ログイン情報の読み込み完了を待つ）
   useEffect(() => {
-    if (!startRecordedRef.current) {
-      startRecordedRef.current = true
-      recordEvent(4, "start")
-    }
-  }, [recordEvent])
+    if (!ready || startRecordedRef.current) return
+    startRecordedRef.current = true
+    recordEvent(4, "start")
+  }, [ready, recordEvent])
 
   const currentWord = stages[currentStage].words[wordIndex]
   const isCorrect = userInput.trim() === currentWord.k.trim()

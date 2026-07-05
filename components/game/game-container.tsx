@@ -18,16 +18,15 @@ export function GameContainer() {
   const [currentMission, setCurrentMission] = useState(1)
   const [completedMissions, setCompletedMissions] = useState<number[]>([])
   const [gameComplete, setGameComplete] = useState(false)
-  const { markLessonCompleted, recordEvent } = useSettings()
+  const { markLessonCompleted, recordEvent, ready } = useSettings()
   const startRecordedRef = useRef(false)
 
-  // レッスン開始を1回だけ記録
+  // レッスン開始を1回だけ記録（ログイン情報の読み込み完了を待つ）
   useEffect(() => {
-    if (!startRecordedRef.current) {
-      startRecordedRef.current = true
-      recordEvent(1, "start")
-    }
-  }, [recordEvent])
+    if (!ready || startRecordedRef.current) return
+    startRecordedRef.current = true
+    recordEvent(1, "start")
+  }, [ready, recordEvent])
 
   const missions = useMemo(() => [
     { id: 1, title: "タッチパッド", titleFull: <>タッチパッドと<Ruby rt="がめん">画面</Ruby>の<Ruby rt="だいぼうけん">大冒険</Ruby></>, completed: completedMissions.includes(1), current: currentMission === 1 },

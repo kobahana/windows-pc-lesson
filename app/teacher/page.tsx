@@ -18,6 +18,7 @@ import {
   type ActivityEvent,
   type StudentRecord,
 } from "@/lib/student-store"
+import { isSheetSyncEnabled } from "@/lib/sheet-sync"
 
 const LESSON_IDS = [1, 2, 3, 4, 5]
 
@@ -106,10 +107,21 @@ export default function TeacherPage() {
       </header>
 
       <main className="max-w-5xl mx-auto p-4 md:p-8 space-y-8">
-        <p className="text-sm text-slate-500 bg-white rounded-xl border border-slate-200 p-4">
-          ※ 記録は<strong>このパソコンの中</strong>に保存されています。別のパソコンで学習した記録は、そのパソコンの
-          「先生用ページ」で確認するか、CSVでダウンロードして集めてください。
-        </p>
+        <div className="text-sm text-slate-500 bg-white rounded-xl border border-slate-200 p-4 space-y-2">
+          <p>
+            ※ このページには<strong>このパソコンで学習した記録</strong>が表示されます。
+          </p>
+          {isSheetSyncEnabled() ? (
+            <p className="text-green-600 font-bold">
+              ✅ スプレッドシート連携：オン — 全生徒の記録は先生のGoogleスプレッドシートに自動で集まります。
+            </p>
+          ) : (
+            <p className="text-amber-600">
+              ⚠️ スプレッドシート連携：未設定 — 設定すると、どのパソコンの記録も先生のGoogleスプレッドシートに自動で集まります。
+              設定方法はリポジトリの <code className="bg-slate-100 px-1 rounded">docs/スプレッドシート連携の設定.md</code> を見てください。
+            </p>
+          )}
+        </div>
 
         {/* 今日の活動 */}
         <section className="space-y-3">
