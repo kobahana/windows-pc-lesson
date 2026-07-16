@@ -3,7 +3,7 @@
 // 学籍番号ベースの学習記録ストア（localStorage 永続化）
 // この端末で学習した生徒の記録を保存し、/teacher ページで先生が閲覧できる
 
-export type ActivityType = "start" | "stage_clear" | "lesson_clear"
+export type ActivityType = "start" | "stage_clear" | "lesson_clear" | "test_clear"
 
 export interface ActivityEvent {
   at: string // ISO 8601
@@ -33,12 +33,14 @@ export const LESSON_TITLES: Record<number, string> = {
   3: "ローマ字入力",
   4: "漢字変換",
   5: "ビジネス日本語",
+  6: "まとめテスト",
 }
 
 export const ACTIVITY_LABELS: Record<ActivityType, string> = {
   start: "開始",
   stage_clear: "ステージクリア",
   lesson_clear: "レッスンクリア",
+  test_clear: "テスト完了",
 }
 
 export function loadStudents(): Record<string, StudentRecord> {

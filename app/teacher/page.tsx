@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import {
   ArrowLeft, Download, Trash2, ChevronDown, ChevronUp,
-  CalendarDays, Users, CheckCircle2, Circle, GraduationCap,
+  CalendarDays, Users, CheckCircle2, Circle, GraduationCap, ClipboardCheck,
 } from "lucide-react"
 import {
   ACTIVITY_LABELS,
@@ -19,6 +19,7 @@ import {
   type StudentRecord,
 } from "@/lib/student-store"
 import { isSheetSyncEnabled } from "@/lib/sheet-sync"
+import { checkRemoteSettings, fetchTestEnabled, isTestEnabled, saveTestEnabled } from "@/lib/test-settings"
 
 const LESSON_IDS = [1, 2, 3, 4, 5]
 
@@ -45,11 +46,23 @@ export default function TeacherPage() {
   const [students, setStudents] = useState<Record<string, StudentRecord>>({})
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [loaded, setLoaded] = useState(false)
+  const [testEnabled, setTestEnabledState] = useState(false)
+  const [remoteStatus, setRemoteStatus] = useState<"ok" | "error" | "none" | null>(null)
 
   useEffect(() => {
     setStudents(loadStudents())
+    setTestEnabledState(isTestEnabled())
     setLoaded(true)
+    // スプレッドシート側に保存された最新の設定と、一括切り替えが使えるかを確認
+    void fetchTestEnabled().then(setTestEnabledState)
+    void checkRemoteSettings().then(setRemoteStatus)
   }, [])
+
+  const handleToggleTest = () => {
+    const next = !testEnabled
+    setTestEnabledState(next)
+    void saveTestEnabled(next)
+  }
 
   const studentList = useMemo(() => {
     const list = Object.values(students)
@@ -122,6 +135,55 @@ export default function TeacherPage() {
             </p>
           )}
         </div>
+
+        {/* まとめテストの表示切り替え */}
+        <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <div className={`p-2.5 rounded-xl shrink-0 ${testEnabled ? "bg-amber-100 text-amber-600" : "bg-slate-100 text-slate-400"}`}>
+              <ClipboardCheck className="w-6 h-6" />
+            </div>
+            <div>
+              <h2 className="font-bold text-slate-800">まとめテスト（漢字変換・28問）</h2>
+              <p className="text-sm text-slate-500 mt-0.5">
+                オンにすると、生徒のホーム画面に「まとめテスト」が表示されます。テストの時間だけオンにしてください。
+              </p>
+              {remoteStatus === "ok" && (
+                <p className="text-xs text-green-600 font-bold mt-1">
+                  ✅ 全端末一括切り替え：この1つのスイッチが、教室のすべてのパソコンに反映されます（各端末には20秒ほどで反映）。
+                </p>
+              )}
+              {remoteStatus === "error" && (
+                <p className="text-xs text-amber-600 mt-1">
+                  ⚠️ Apps Script が設定の読み書きに未対応です。<code className="bg-slate-100 px-1 rounded">docs/スプレッドシート連携の設定.md</code> の新しいコードを貼り直して再デプロイすると、全端末を一括で切り替えられます。それまでは<strong>このパソコンのみ</strong>に反映されます。
+                </p>
+              )}
+              {remoteStatus === "none" && (
+                <p className="text-xs text-amber-600 mt-1">
+                  ⚠️ スプレッドシート連携が未設定のため、<strong>このパソコンのみ</strong>に反映されます。連携を設定すると、全端末を一括で切り替えられます。
+                </p>
+              )}
+            </div>
+          </div>
+          <button
+            onClick={handleToggleTest}
+            role="switch"
+            aria-checked={testEnabled}
+            className={`shrink-0 flex items-center gap-3 pl-4 pr-2 py-2 rounded-full border-2 font-bold transition-colors ${
+              testEnabled
+                ? "bg-amber-50 border-amber-400 text-amber-700"
+                : "bg-slate-50 border-slate-200 text-slate-500 hover:border-slate-300"
+            }`}
+          >
+            {testEnabled ? "表示中" : "非表示"}
+            <span
+              className={`relative w-12 h-7 rounded-full transition-colors ${testEnabled ? "bg-amber-500" : "bg-slate-300"}`}
+            >
+              <span
+                className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow transition-all ${testEnabled ? "left-6" : "left-1"}`}
+              />
+            </span>
+          </button>
+        </section>
 
         {/* 今日の活動 */}
         <section className="space-y-3">

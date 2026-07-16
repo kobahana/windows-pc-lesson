@@ -5,11 +5,12 @@ import Link from "next/link"
 import { Character, Ruby } from "@/components/game/character"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Monitor, Keyboard, Languages, PenTool, Briefcase, IdCard, LogOut, UserRound } from "lucide-react"
+import { Monitor, Keyboard, Languages, PenTool, Briefcase, IdCard, LogOut, UserRound, ClipboardCheck } from "lucide-react"
 
 import { useSettings } from "@/components/providers/settings-provider"
 import { SettingsDropdown } from "@/components/layout/settings-dropdown"
 import { loadStudents, type StudentRecord } from "@/lib/student-store"
+import { useTestEnabled } from "@/lib/test-settings"
 import { CheckCircle2 } from "lucide-react"
 
 const GUEST_KEY = "pclesson_guest"
@@ -128,6 +129,8 @@ function LoginCard() {
 export default function Home() {
   const { ready, completedLessons, student, logout } = useSettings()
   const [guestMode, setGuestMode] = useState(false)
+  // 先生の切り替えを定期的に確認し、「まとめテスト」の表示を反映する
+  const testEnabled = useTestEnabled(true) ?? false
 
   useEffect(() => {
     setGuestMode(sessionStorage.getItem(GUEST_KEY) === "1")
@@ -299,6 +302,34 @@ export default function Home() {
             )
           })}
         </div>
+
+        {testEnabled && (
+          <div className="relative bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl p-8 shadow-md border-2 border-amber-300 hover:border-amber-400 hover:shadow-xl transition-all">
+            <div className="absolute top-4 right-4 bg-amber-500 text-white text-[10px] px-3 py-1 rounded-full font-bold tracking-wider animate-pulse">
+              テスト開催中！
+            </div>
+            <div className="flex items-start gap-6">
+              <div className="p-4 rounded-2xl shrink-0 bg-amber-100 text-amber-600">
+                <ClipboardCheck className="w-10 h-10" />
+              </div>
+              <div className="space-y-3 flex-1">
+                <span className="text-sm font-bold text-amber-600 block">Final Test</span>
+                <h2 className="text-2xl font-bold text-slate-800 leading-relaxed">
+                  <Ruby rt="かんじへんかん">漢字変換</Ruby>まとめテスト
+                </h2>
+                <p className="text-slate-500 leading-relaxed pt-2">
+                  Lesson 1〜5で学んだことをテストしよう！ヒントを見ると点数が減るよ。
+                  <span className="block text-xs text-slate-400 mt-1">Kanji conversion test — show what you learned!</span>
+                </p>
+                <Link href="/test">
+                  <Button className="mt-4 w-full text-lg h-12 shadow-md bg-amber-500 hover:bg-amber-600">
+                    テストにちょうせん！
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
