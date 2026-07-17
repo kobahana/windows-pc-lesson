@@ -315,11 +315,11 @@ export default function Home() {
               <div className="space-y-3 flex-1">
                 <span className="text-sm font-bold text-amber-600 block">Final Test</span>
                 <h2 className="text-2xl font-bold text-slate-800 leading-relaxed">
-                  <Ruby rt="かんじへんかん">漢字変換</Ruby>まとめテスト
+                  まとめテスト
                 </h2>
                 <p className="text-slate-500 leading-relaxed pt-2">
-                  Lesson 1〜5で学んだことをテストしよう！ヒントを見ると点数が減るよ。
-                  <span className="block text-xs text-slate-400 mt-1">Kanji conversion test — show what you learned!</span>
+                  5分間でどれだけクリアできるかな？全問クリアでボーナス問題もあるよ！
+                  <span className="block text-xs text-slate-400 mt-1">5-minute time attack — clear all for a bonus round!</span>
                 </p>
                 <Link href="/test">
                   <Button className="mt-4 w-full text-lg h-12 shadow-md bg-amber-500 hover:bg-amber-600">

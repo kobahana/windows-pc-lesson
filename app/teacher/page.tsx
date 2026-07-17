@@ -3,9 +3,10 @@
 import { Fragment, useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import {
   ArrowLeft, Download, Trash2, ChevronDown, ChevronUp,
-  CalendarDays, Users, CheckCircle2, Circle, GraduationCap, ClipboardCheck,
+  CalendarDays, Users, CheckCircle2, Circle, GraduationCap, ClipboardCheck, Lock,
 } from "lucide-react"
 import {
   ACTIVITY_LABELS,
@@ -22,6 +23,11 @@ import { isSheetSyncEnabled } from "@/lib/sheet-sync"
 import { checkRemoteSettings, fetchTestEnabled, isTestEnabled, saveTestEnabled } from "@/lib/test-settings"
 
 const LESSON_IDS = [1, 2, 3, 4, 5]
+
+// 先生用ページのパスワード（生徒が誤って開かないための簡易ロック）
+const TEACHER_PASSWORD = "hana90"
+// ログイン状態はタブを閉じるまで有効（共有PCでも残らない）
+const TEACHER_AUTH_KEY = "pclesson_teacher_auth_v1"
 
 function formatTime(iso: string) {
   return new Date(iso).toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })
@@ -42,21 +48,85 @@ function eventLabel(ev: ActivityEvent) {
   return text
 }
 
+function TeacherLogin({ onSuccess }: { onSuccess: () => void }) {
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState(false)
+
+  const handleSubmit = () => {
+    if (password === TEACHER_PASSWORD) {
+      sessionStorage.setItem(TEACHER_AUTH_KEY, "1")
+      onSuccess()
+    } else {
+      setError(true)
+      setPassword("")
+    }
+  }
+
+  return (
+    <div className="min-h-screen bg-slate-100 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-8 max-w-sm w-full space-y-6">
+        <div className="text-center space-y-2">
+          <div className="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center mx-auto">
+            <Lock className="w-7 h-7 text-blue-600" />
+          </div>
+          <h1 className="text-xl font-bold text-slate-800">先生用ページ</h1>
+          <p className="text-sm text-slate-500">パスワードを入力してください</p>
+        </div>
+
+        <div className="space-y-3">
+          <Input
+            type="password"
+            value={password}
+            onChange={(e) => { setPassword(e.target.value); setError(false) }}
+            onKeyDown={(e) => { if (e.key === "Enter") handleSubmit() }}
+            placeholder="パスワード"
+            className="h-12 text-lg text-center tracking-widest"
+            autoFocus
+          />
+          {error && (
+            <p className="text-sm text-red-500 font-bold text-center">パスワードがちがいます</p>
+          )}
+          <Button
+            onClick={handleSubmit}
+            disabled={!password}
+            className="w-full h-12 text-lg font-bold bg-blue-600 hover:bg-blue-700"
+          >
+            ひらく
+          </Button>
+        </div>
+
+        <div className="text-center">
+          <Link href="/" className="text-sm text-slate-400 underline hover:text-slate-600">
+            ホームへもどる
+          </Link>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function TeacherPage() {
+  const [authed, setAuthed] = useState<boolean | null>(null)
   const [students, setStudents] = useState<Record<string, StudentRecord>>({})
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [loaded, setLoaded] = useState(false)
   const [testEnabled, setTestEnabledState] = useState(false)
   const [remoteStatus, setRemoteStatus] = useState<"ok" | "error" | "none" | null>(null)
 
+  // ログイン確認（タブを閉じるまで有効）
   useEffect(() => {
+    setAuthed(sessionStorage.getItem(TEACHER_AUTH_KEY) === "1")
+  }, [])
+
+  useEffect(() => {
+    if (!authed) return
     setStudents(loadStudents())
     setTestEnabledState(isTestEnabled())
     setLoaded(true)
     // スプレッドシート側に保存された最新の設定と、一括切り替えが使えるかを確認
     void fetchTestEnabled().then(setTestEnabledState)
     void checkRemoteSettings().then(setRemoteStatus)
-  }, [])
+  }, [authed])
 
   const handleToggleTest = () => {
     const next = !testEnabled
@@ -96,6 +166,14 @@ export default function TeacherPage() {
     if (!window.confirm(`学籍番号「${id}」の記録をすべて削除します。よろしいですか？`)) return
     deleteStudent(id)
     setStudents(loadStudents())
+  }
+
+  if (authed === null) {
+    return <div className="min-h-screen bg-slate-100" />
+  }
+
+  if (!authed) {
+    return <TeacherLogin onSuccess={() => setAuthed(true)} />
   }
 
   return (
@@ -143,7 +221,7 @@ export default function TeacherPage() {
               <ClipboardCheck className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="font-bold text-slate-800">まとめテスト（漢字変換・28問）</h2>
+              <h2 className="font-bold text-slate-800">まとめテスト（漢字変換・5分間タイムアタック）</h2>
               <p className="text-sm text-slate-500 mt-0.5">
                 オンにすると、生徒のホーム画面に「まとめテスト」が表示されます。テストの時間だけオンにしてください。
               </p>

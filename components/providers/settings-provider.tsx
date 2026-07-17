@@ -34,6 +34,10 @@ interface SettingsContextType {
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined)
 
+// 15分間操作がなければ自動ログアウト（次のクラスの生徒に前の生徒のログインが残らないように）
+const INACTIVITY_LIMIT_MS = 15 * 60 * 1000
+const LAST_ACTIVITY_KEY = "pclesson_last_activity_v1"
+
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [showRuby, setShowRuby] = useState(true)
   const [soundEnabled, setSoundEnabled] = useState(true)
@@ -57,12 +61,19 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     // ログイン中の生徒がいればその生徒の進捗、いなければ従来のグローバル進捗
     const currentId = getCurrentStudentId()
     if (currentId) {
-      const record = getStudent(currentId)
-      if (record) {
-        setStudent({ id: record.id, name: record.name })
-        setCompletedLessons(record.completedLessons)
-        setIsMounted(true)
-        return
+      // 15分以上操作がなければ、前の生徒を自動ログアウトしてログイン画面に戻す
+      const lastActivity = Number(localStorage.getItem(LAST_ACTIVITY_KEY) || 0)
+      const expired = !lastActivity || Date.now() - lastActivity > INACTIVITY_LIMIT_MS
+      if (expired) {
+        setCurrentStudentId(null)
+      } else {
+        const record = getStudent(currentId)
+        if (record) {
+          setStudent({ id: record.id, name: record.name })
+          setCompletedLessons(record.completedLessons)
+          setIsMounted(true)
+          return
+        }
       }
     }
 
@@ -90,6 +101,27 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     sounds?.setEnabled(soundEnabled)
   }, [soundEnabled, isMounted])
 
+  // 操作のたびに時刻を記録（30秒に1回まで。15分無操作の判定に使う）
+  useEffect(() => {
+    let lastWrite = 0
+    const touch = () => {
+      const now = Date.now()
+      if (now - lastWrite < 30000) return
+      lastWrite = now
+      try {
+        localStorage.setItem(LAST_ACTIVITY_KEY, String(now))
+      } catch {
+        // 保存できなくても動作は続行
+      }
+    }
+    window.addEventListener("pointerdown", touch)
+    window.addEventListener("keydown", touch)
+    return () => {
+      window.removeEventListener("pointerdown", touch)
+      window.removeEventListener("keydown", touch)
+    }
+  }, [])
+
   const login = useCallback((id: string, name?: string) => {
     const trimmedId = id.trim()
     if (!trimmedId) return
@@ -110,6 +142,18 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       setCompletedLessons([])
     }
   }, [])
+
+  // ログイン中、15分間操作がなければ自動的にログアウトする
+  useEffect(() => {
+    if (!student) return
+    const timer = setInterval(() => {
+      const lastActivity = Number(localStorage.getItem(LAST_ACTIVITY_KEY) || 0)
+      if (!lastActivity || Date.now() - lastActivity > INACTIVITY_LIMIT_MS) {
+        logout()
+      }
+    }, 60000)
+    return () => clearInterval(timer)
+  }, [student, logout])
 
   const markLessonCompleted = useCallback((lessonId: number) => {
     setCompletedLessons((prev) => {
