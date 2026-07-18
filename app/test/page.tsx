@@ -5,7 +5,8 @@ import Link from "next/link"
 import { Character } from "@/components/game/character"
 import { SuccessOverlay } from "@/components/game/success-overlay"
 import { Button } from "@/components/ui/button"
-import { Trophy, Target, Lightbulb, Home, ClipboardCheck, CornerDownLeft, Timer, Sparkles } from "lucide-react"
+import { Trophy, Target, Lightbulb, Home, ClipboardCheck, CornerDownLeft, Timer, Sparkles, IdCard, Pencil } from "lucide-react"
+import { Input } from "@/components/ui/input"
 import { LessonHeader } from "@/components/layout/lesson-header"
 import { useSettings } from "@/components/providers/settings-provider"
 import { sounds } from "@/lib/sounds"
@@ -81,13 +82,55 @@ function formatRemaining(sec: number) {
   return `${m}:${String(s).padStart(2, "0")}`
 }
 
-type Phase = "intro" | "main" | "bonusOffer" | "bonus" | "done"
+// ===== 受験者情報の入力チェック =====
+// 採点はこの学籍番号・名前で記録されるため、入力ミスを徹底的に防ぐ
+
+// 学籍番号の形式：数字4つ＋ローマ字1つ＋数字3つ（例: 2024k001）
+const STUDENT_ID_RE = /^[0-9]{4}[a-z][0-9]{3}$/
+const STUDENT_ID_EXAMPLE = "2024k001"
+
+// 全角の英数字を半角に直す（２０２４ｋ００１ → 2024k001）
+function toHalfWidth(s: string): string {
+  return s.replace(/[Ａ-Ｚａ-ｚ０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0))
+}
+
+// ひらがなをカタカナに直す（たなか → タナカ）
+function toKatakana(s: string): string {
+  return s.replace(/[ぁ-ゖ]/g, (c) => String.fromCharCode(c.charCodeAt(0) + 0x60))
+}
+
+// 学籍番号を正規化して返す。形式がおかしければエラーメッセージを返す
+function normalizeStudentId(raw: string): { value?: string; error?: string } {
+  const v = toHalfWidth(raw.trim()).toLowerCase()
+  if (!v) return { error: "学籍番号を入力してね / Enter your student ID" }
+  if (!STUDENT_ID_RE.test(v)) {
+    return { error: `学籍番号の形がちがうよ。「${STUDENT_ID_EXAMPLE}」のように、半角の数字4つ＋ローマ字1つ＋数字3つで入力してね` }
+  }
+  return { value: v }
+}
+
+// 名前を正規化して返す。カタカナ以外が入っていればエラーメッセージを返す
+function normalizeStudentName(raw: string): { value?: string; error?: string } {
+  const v = toKatakana(raw.trim().replace(/　/g, " ").replace(/\s+/g, " "))
+  if (!v) return { error: "名前（カタカナ）を入力してね / Enter your name in katakana" }
+  if (/[ｦ-ﾟ]/.test(v)) return { error: "半角カタカナはつかえないよ。全角カタカナで入力してね（例：タナカ タロウ）" }
+  if (!/^[ァ-ヶー・ ]+$/.test(v)) return { error: "名前は全角カタカナで入力してね（例：タナカ タロウ）" }
+  return { value: v }
+}
+
+type Phase = "register" | "confirm" | "intro" | "main" | "bonusOffer" | "bonus" | "done"
 
 export default function TestPage() {
-  const { recordEvent, ready } = useSettings()
+  const { recordEvent, ready, student, login } = useSettings()
   // 先生の切り替えを定期的に確認（テスト開始後は最後まで解けるよう、入口だけを制御する）
   const enabled = useTestEnabled(true)
-  const [phase, setPhase] = useState<Phase>("intro")
+  const [phase, setPhase] = useState<Phase>("register")
+  // 受験者情報（この学籍番号・名前で点数が記録される）
+  const [studentId, setStudentId] = useState("")
+  const [studentName, setStudentName] = useState("")
+  const [idError, setIdError] = useState("")
+  const [nameError, setNameError] = useState("")
+  const prefilledRef = useRef(false)
   const [qIndex, setQIndex] = useState(0)
   const [userInput, setUserInput] = useState("")
   const [showHint, setShowHint] = useState(false)
@@ -113,6 +156,40 @@ export default function TestPage() {
       // 壊れたデータは無視
     }
   }, [])
+
+  // ページにログイン中の生徒がいれば、入力欄にあらかじめ入れておく（確認は必ずさせる）
+  useEffect(() => {
+    if (!ready || prefilledRef.current) return
+    prefilledRef.current = true
+    if (student) {
+      setStudentId(student.id)
+      setStudentName(student.name ?? "")
+    }
+  }, [ready, student])
+
+  // 入力チェック → OKなら確認画面へ
+  const handleRegisterNext = () => {
+    const id = normalizeStudentId(studentId)
+    const name = normalizeStudentName(studentName)
+    setIdError(id.error ?? "")
+    setNameError(name.error ?? "")
+    if (id.error || name.error) {
+      window.alert([id.error, name.error].filter(Boolean).join("\n"))
+      return
+    }
+    sounds?.playClick()
+    // 正規化した値（半角・小文字・カタカナ）に置き換えて確認してもらう
+    setStudentId(id.value!)
+    setStudentName(name.value!)
+    setPhase("confirm")
+  }
+
+  // 確認OK → この学籍番号・名前で記録するようにログインしてルール画面へ
+  const handleConfirm = () => {
+    sounds?.playClick()
+    login(studentId, studentName)
+    setPhase("intro")
+  }
 
   const isBonus = phase === "bonus"
   const questionList = isBonus ? bonusQuestions : mainQuestions
@@ -227,12 +304,15 @@ export default function TestPage() {
     setHintUsed(false)
   }
 
-  if (enabled === null && phase === "intro") {
+  // テスト開始前の画面（受験者情報の入力 → 確認 → ルール説明）
+  const isPreStart = phase === "register" || phase === "confirm" || phase === "intro"
+
+  if (enabled === null && isPreStart) {
     return <div className="min-h-screen bg-slate-50" />
   }
 
   // 先生がテストをオフにしている場合(開始前のみ。開始後は最後まで解ける)
-  if (!enabled && phase === "intro") {
+  if (!enabled && isPreStart) {
     return (
       <div className="h-screen bg-slate-50 flex flex-col">
         <LessonHeader />
@@ -249,6 +329,135 @@ export default function TestPage() {
                 <Home className="w-5 h-5" /> ホームへもどる
               </Button>
             </Link>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // 受験者情報の入力画面（この学籍番号・名前で点数が記録される）
+  if (phase === "register") {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col">
+        <LessonHeader>
+          <div className="bg-amber-500 text-white px-4 py-1 rounded-full font-bold text-xs shadow-sm tracking-wider whitespace-nowrap">
+            まとめテスト：受験者の情報
+          </div>
+        </LessonHeader>
+        <div className="flex-1 flex items-center justify-center p-4">
+          <div className="max-w-xl w-full space-y-6">
+            <Character
+              message={
+                <>
+                  テストの前に、学籍番号と名前を教えてね！この情報で点数が記録されるから、まちがえないでね！
+                  <span className="block text-sm text-muted-foreground mt-1">
+                    Enter your student ID and name. Your score will be recorded with them!
+                  </span>
+                </>
+              }
+              mood="happy"
+            />
+            <div className="bg-white rounded-3xl p-8 shadow-lg border-2 border-amber-100 space-y-6">
+              <div className="space-y-2">
+                <label className="block font-bold text-slate-700">
+                  学籍番号 <span className="text-sm font-normal text-slate-400">Student ID</span>
+                </label>
+                <Input
+                  value={studentId}
+                  onChange={(e) => { setStudentId(e.target.value); setIdError("") }}
+                  placeholder={`例: ${STUDENT_ID_EXAMPLE}`}
+                  className={cn(
+                    "h-16 text-3xl text-center font-bold tracking-widest",
+                    idError && "border-red-400 bg-red-50"
+                  )}
+                  autoFocus
+                />
+                <p className="text-xs text-slate-400">
+                  半角（はんかく）で「数字4つ＋ローマ字1つ＋数字3つ」 / Half-width, like {STUDENT_ID_EXAMPLE}
+                </p>
+                {idError && <p className="text-sm text-red-500 font-bold">{idError}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <label className="block font-bold text-slate-700">
+                  なまえ（カタカナ） <span className="text-sm font-normal text-slate-400">Name in katakana</span>
+                </label>
+                <Input
+                  value={studentName}
+                  onChange={(e) => { setStudentName(e.target.value); setNameError("") }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.nativeEvent.isComposing) handleRegisterNext()
+                  }}
+                  placeholder="例: タナカ タロウ"
+                  className={cn(
+                    "h-14 text-2xl text-center font-bold",
+                    nameError && "border-red-400 bg-red-50"
+                  )}
+                />
+                <p className="text-xs text-slate-400">カタカナで入力してね / Katakana only</p>
+                {nameError && <p className="text-sm text-red-500 font-bold">{nameError}</p>}
+              </div>
+
+              <Button
+                onClick={handleRegisterNext}
+                disabled={!studentId.trim() || !studentName.trim()}
+                className="w-full h-14 text-xl font-bold bg-amber-500 hover:bg-amber-600 shadow-md gap-2"
+              >
+                <IdCard className="w-6 h-6" /> つぎへ / Next
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  // 入力内容の確認画面（まちがい防止のため必ず確認させる）
+  if (phase === "confirm") {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col">
+        <LessonHeader>
+          <div className="bg-amber-500 text-white px-4 py-1 rounded-full font-bold text-xs shadow-sm tracking-wider whitespace-nowrap">
+            まとめテスト：かくにん
+          </div>
+        </LessonHeader>
+        <div className="flex-1 flex items-center justify-center p-4">
+          <div className="max-w-xl w-full space-y-6">
+            <Character
+              message={
+                <>
+                  この学籍番号と名前で点数が記録されるよ。<strong>まちがいないかな？</strong>
+                  <span className="block text-sm text-muted-foreground mt-1">
+                    Your score will be recorded with this ID and name. Is it correct?
+                  </span>
+                </>
+              }
+              mood="neutral"
+            />
+            <div className="bg-white rounded-3xl p-8 shadow-lg border-2 border-amber-100 space-y-6 text-center">
+              <div className="bg-slate-50 rounded-2xl p-6 border-2 border-slate-200 space-y-4">
+                <div>
+                  <p className="text-sm font-bold text-slate-400 mb-1">学籍番号 / Student ID</p>
+                  <p className="text-4xl font-black text-slate-800 tracking-widest">{studentId}</p>
+                </div>
+                <div className="border-t border-slate-200 pt-4">
+                  <p className="text-sm font-bold text-slate-400 mb-1">なまえ / Name</p>
+                  <p className="text-4xl font-black text-slate-800">{studentName}</p>
+                </div>
+              </div>
+              <div className="flex flex-col gap-3">
+                <Button onClick={handleConfirm} className="w-full h-14 text-xl font-bold bg-green-600 hover:bg-green-700 shadow-md">
+                  まちがいない！つぎへ / Correct!
+                </Button>
+                <Button
+                  onClick={() => { sounds?.playClick(); setPhase("register") }}
+                  variant="outline"
+                  className="w-full h-12 text-lg font-bold gap-2"
+                >
+                  <Pencil className="w-5 h-5" /> なおす / Fix it
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
