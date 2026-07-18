@@ -9,8 +9,9 @@ import { Trophy, Target, Lightbulb, Home, ClipboardCheck, CornerDownLeft, Timer,
 import { Input } from "@/components/ui/input"
 import { LessonHeader } from "@/components/layout/lesson-header"
 import { useSettings } from "@/components/providers/settings-provider"
-import { sounds } from "@/lib/sounds"
 import { useTestEnabled } from "@/lib/test-settings"
+
+// ※ まとめテストは効果音を一切鳴らさない（テスト中の教室に音が響かないように）
 
 function cn(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(" ")
@@ -177,7 +178,6 @@ export default function TestPage() {
       window.alert([id.error, name.error].filter(Boolean).join("\n"))
       return
     }
-    sounds?.playClick()
     // 正規化した値（半角・小文字・カタカナ）に置き換えて確認してもらう
     setStudentId(id.value!)
     setStudentName(name.value!)
@@ -186,7 +186,6 @@ export default function TestPage() {
 
   // 確認OK → この学籍番号・名前で記録するようにログインしてルール画面へ
   const handleConfirm = () => {
-    sounds?.playClick()
     login(studentId, studentName)
     setPhase("intro")
   }
@@ -224,7 +223,6 @@ export default function TestPage() {
     } catch {
       // 保存できなくてもテスト自体は続行
     }
-    sounds?.playClear()
     setPhase("done")
     recordEvent(
       6,
@@ -254,7 +252,6 @@ export default function TestPage() {
   const submit = () => {
     if (!userInput.trim() || phase === "done" || !question) return
     if (userInput.trim() === question.k.trim()) {
-      sounds?.playSuccess()
       const entry: ClearedEntry = { hint: hintUsed, bonus: isBonus }
       const newCleared = [...cleared, entry]
       setCleared(newCleared)
@@ -280,7 +277,6 @@ export default function TestPage() {
       inputRef.current?.focus()
     } else {
       // まちがえても何回でもチャレンジできる（入力は残すので直して再挑戦）
-      sounds?.playError()
       setMissCount((m) => m + 1)
       setWrongFlash(true)
       setTimeout(() => setWrongFlash(false), 700)
@@ -288,7 +284,6 @@ export default function TestPage() {
   }
 
   const start = () => {
-    sounds?.playClick()
     setDeadline(Date.now() + TIME_LIMIT_SEC * 1000)
     setRemainingSec(TIME_LIMIT_SEC)
     setPhase("main")
@@ -296,7 +291,6 @@ export default function TestPage() {
   }
 
   const startBonus = () => {
-    sounds?.playClick()
     setPhase("bonus")
     setQIndex(0)
     setUserInput("")
@@ -450,7 +444,7 @@ export default function TestPage() {
                   まちがいない！つぎへ / Correct!
                 </Button>
                 <Button
-                  onClick={() => { sounds?.playClick(); setPhase("register") }}
+                  onClick={() => setPhase("register")}
                   variant="outline"
                   className="w-full h-12 text-lg font-bold gap-2"
                 >
@@ -763,7 +757,6 @@ export default function TestPage() {
                     <div className="flex gap-2 mb-3">
                       <button
                         onClick={() => {
-                          sounds?.playClick()
                           if (!showHint && !hintUsed) {
                             setHintUsed(true)
                             setHintTotal((t) => t + 1)
@@ -776,10 +769,7 @@ export default function TestPage() {
                         {showHint ? "ヒントを隠す" : hintUsed ? "ヒントを見る" : "ヒントを見る（1点→0.5点）"}
                       </button>
                       <button
-                        onClick={() => {
-                          sounds?.playClick()
-                          setUserInput("")
-                        }}
+                        onClick={() => setUserInput("")}
                         className="px-5 py-2 text-lg bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition-colors"
                       >
                         クリア (Esc)
