@@ -74,8 +74,30 @@ type DoneSummary = {
   missCount: number
 }
 
-// テストはタブを開いている間、1回だけ受けられる（形式変更に伴い v2）
-const TEST_DONE_KEY = "pclesson_test_done_v2"
+// 受験済みの記録は「学籍番号ごと」に持つ（1台のPCを学生が交代で使うため）。
+// 同じ学籍番号は再受験できないが、別の学生（別の学籍番号）は受験できる。
+// sessionStorage なのでタブを閉じるとリセットされる。
+const TEST_DONE_KEY = "pclesson_test_done_v3"
+
+function loadDoneMap(): Record<string, DoneSummary> {
+  if (typeof window === "undefined") return {}
+  try {
+    const raw = sessionStorage.getItem(TEST_DONE_KEY)
+    return raw ? JSON.parse(raw) : {}
+  } catch {
+    return {}
+  }
+}
+
+function saveDone(studentId: string, summary: DoneSummary) {
+  try {
+    const map = loadDoneMap()
+    map[studentId] = summary
+    sessionStorage.setItem(TEST_DONE_KEY, JSON.stringify(map))
+  } catch {
+    // 保存できなくてもテスト自体は成立する
+  }
+}
 
 function formatRemaining(sec: number) {
   const m = Math.floor(sec / 60)
@@ -143,20 +165,12 @@ export default function TestPage() {
   const [deadline, setDeadline] = useState<number | null>(null)
   const [remainingSec, setRemainingSec] = useState(TIME_LIMIT_SEC)
   const [summary, setSummary] = useState<DoneSummary | null>(null)
+  // すでに受験済みの学籍番号でもう一度入ってきた場合は true（結果画面の文言を変える）
+  const [alreadyTaken, setAlreadyTaken] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  // このタブで受験済みなら、結果画面だけを表示する（再受験はできない）
-  useEffect(() => {
-    try {
-      const raw = sessionStorage.getItem(TEST_DONE_KEY)
-      if (raw) {
-        setSummary(JSON.parse(raw))
-        setPhase("done")
-      }
-    } catch {
-      // 壊れたデータは無視
-    }
-  }, [])
+  // 受験済みかどうかは「学籍番号」ごとに判定する（下の handleConfirm 参照）。
+  // 別の学生（別の学籍番号）でログインすれば、同じPCでもテストを受けられる。
 
   // ページにログイン中の生徒がいれば、入力欄にあらかじめ入れておく（確認は必ずさせる）
   useEffect(() => {
@@ -184,10 +198,18 @@ export default function TestPage() {
     setPhase("confirm")
   }
 
-  // 確認OK → この学籍番号・名前で記録するようにログインしてルール画面へ
+  // 確認OK → この学籍番号・名前で記録するようにログインしてルール画面へ。
+  // ただし、その学籍番号がすでに受験済みなら結果画面を表示する（同じ学生の再受験は不可）。
   const handleConfirm = () => {
     login(studentId, studentName)
-    setPhase("intro")
+    const done = loadDoneMap()[studentId]
+    if (done) {
+      setSummary(done)
+      setAlreadyTaken(true)
+      setPhase("done")
+    } else {
+      setPhase("intro")
+    }
   }
 
   const isBonus = phase === "bonus"
@@ -217,12 +239,8 @@ export default function TestPage() {
       missCount,
     }
     setSummary(result)
-    // このタブでは再受験できないように記録しておく
-    try {
-      sessionStorage.setItem(TEST_DONE_KEY, JSON.stringify(result))
-    } catch {
-      // 保存できなくてもテスト自体は続行
-    }
+    // この学籍番号は受験済みとして記録（同じ学生の再受験を防ぐ）
+    saveDone(studentId, result)
     setPhase("done")
     recordEvent(
       6,
@@ -546,16 +564,22 @@ export default function TestPage() {
     return (
       <div className="h-screen bg-slate-50 flex flex-col">
         <LessonHeader />
-        <SuccessOverlay show={true} message="" />
+        {!alreadyTaken && <SuccessOverlay show={true} message="" />}
         <div className="flex-1 flex items-center justify-center p-4 z-10">
           <div className="bg-white rounded-3xl shadow-xl border-2 border-amber-100 p-8 max-w-lg w-full text-center">
             <div className="w-24 h-24 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
               <Trophy className="w-12 h-12 text-white" />
             </div>
             <h2 className="text-3xl font-bold text-slate-800 mb-2">
-              {perfect ? "パーフェクト！全問クリア！" : "テストおわり！おつかれさま！"}
+              {alreadyTaken
+                ? "この学籍番号はもう受験ずみだよ"
+                : perfect ? "パーフェクト！全問クリア！" : "テストおわり！おつかれさま！"}
             </h2>
-            <p className="text-slate-600 mb-6 font-medium">きみの結果はこちら！ / Here are your results!</p>
+            <p className="text-slate-600 mb-6 font-medium">
+              {alreadyTaken
+                ? "べつの学生がうけるときは、ログアウトしてからね / Already taken. Log out for the next student."
+                : "きみの結果はこちら！ / Here are your results!"}
+            </p>
             <div className="bg-amber-50 rounded-2xl p-5 border-2 border-amber-200 mb-6">
               <p className="text-amber-700 font-bold mb-1">とくてん / Score</p>
               <p className="text-5xl font-black text-amber-600">
