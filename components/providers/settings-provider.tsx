@@ -11,7 +11,7 @@ import {
   setCurrentStudentId,
   upsertStudent,
 } from "@/lib/student-store"
-import { buildSheetRow, flushSheetQueue, queueSheetRow } from "@/lib/sheet-sync"
+import { buildSheetRow, flushSheetQueue, flushWithBeacon, migrateQueueV1ToV2, queueSheetRow } from "@/lib/sheet-sync"
 
 interface StudentInfo {
   id: string
@@ -45,9 +45,28 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [student, setStudent] = useState<StudentInfo | null>(null)
   const [isMounted, setIsMounted] = useState(false)
 
-  // 前回送信できなかった学習記録があれば再送する
+  // 旧キュー（v1）からの移行 + 前回送信できなかった学習記録があれば再送する
   useEffect(() => {
+    migrateQueueV1ToV2()
     void flushSheetQueue()
+  }, [])
+
+  // ページ離脱・タブ切り替え時に未送信データを sendBeacon で送信する
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "hidden") {
+        flushWithBeacon()
+      }
+    }
+    const handleBeforeUnload = () => {
+      flushWithBeacon()
+    }
+    document.addEventListener("visibilitychange", handleVisibilityChange)
+    window.addEventListener("beforeunload", handleBeforeUnload)
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange)
+      window.removeEventListener("beforeunload", handleBeforeUnload)
+    }
   }, [])
 
   // Load from localStorage on mount
