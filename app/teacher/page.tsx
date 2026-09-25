@@ -409,7 +409,7 @@ export default function TeacherPage() {
         {loaded && studentList.length > 0 && (
           <section className="space-y-3">
             <h2 className="flex items-center gap-2 text-xl font-bold text-slate-800">
-              <Stamp className="w-6 h-6 text-rose-500" />
+              <Stamp className="w-6 h-6 text-amber-500" />
               ショートカット・パスポート（習得表）
             </h2>
             <p className="text-sm text-slate-500">● ＝ 合格済み。空欄が多い列は、クラス全体で復習が必要な操作です。タイピングは1分間の自己ベスト（文字数）。</p>
@@ -435,7 +435,7 @@ export default function TeacherPage() {
                         <td className="px-2 py-1.5 text-center tabular-nums">{best || "—"}</td>
                         {SKILLS.map((sk) => (
                           <td key={sk.id} className="px-1 py-1.5 text-center">
-                            {st.skills?.[sk.id] ? <span className="text-rose-500" title={new Date(st.skills[sk.id]).toLocaleDateString("ja-JP")}>●</span> : <span className="text-slate-200">・</span>}
+                            {st.skills?.[sk.id] ? <span className="text-amber-500" title={new Date(st.skills[sk.id]).toLocaleDateString("ja-JP")}>●</span> : <span className="text-slate-200">・</span>}
                           </td>
                         ))}
                       </tr>

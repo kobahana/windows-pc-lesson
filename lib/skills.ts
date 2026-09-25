@@ -11,6 +11,8 @@ export interface Skill {
   en: string
   keys: string // 例: "Mod+C"
   level: SkillLevel
+  // 練習できるレッスンのミッション。ウォームアップで練習できるものは書かない（パスポートからはウォームアップへ飛ぶ）
+  lesson?: { href: string; mission: number }
 }
 
 export const SKILLS: Skill[] = [
@@ -21,8 +23,8 @@ export const SKILLS: Skill[] = [
   { id: "selectall", label: "全部選ぶ", ruby: "ぜんぶえらぶ", en: "Select all", keys: "Mod+A", level: 1 },
   { id: "halfwidth", label: "半角で入力", ruby: "はんかくでにゅうりょく", en: "Half-width input", keys: "半角/全角", level: 1 },
   { id: "katakana", label: "カタカナに変換", ruby: "カタカナにへんかん", en: "Convert to katakana", keys: "Space", level: 1 },
-  { id: "back", label: "前のページに戻る", ruby: "まえのページにもどる", en: "Go back", keys: "←ボタン", level: 1 },
-  { id: "reload", label: "ページを新しくする", ruby: "ページをあたらしくする", en: "Reload", keys: "⟳ボタン", level: 1 },
+  { id: "back", lesson: { href: "/lessons/lesson6", mission: 3 }, label: "前のページに戻る", ruby: "まえのページにもどる", en: "Go back", keys: "←ボタン", level: 1 },
+  { id: "reload", lesson: { href: "/lessons/lesson6", mission: 3 }, label: "ページを新しくする", ruby: "ページをあたらしくする", en: "Reload", keys: "⟳ボタン", level: 1 },
   // ★2 仕事がはやくなる
   { id: "cut", label: "切り取り", ruby: "きりとり", en: "Cut", keys: "Mod+X", level: 2 },
   { id: "redo", label: "やり直し", ruby: "やりなおし", en: "Redo", keys: "Mod+Y", level: 2 },
@@ -30,15 +32,15 @@ export const SKILLS: Skill[] = [
   { id: "find", label: "ページ内を検索", ruby: "ページないをけんさく", en: "Find", keys: "Mod+F", level: 2 },
   { id: "tab", label: "次の欄へ移動", ruby: "つぎのらんへいどう", en: "Next field", keys: "Tab", level: 2 },
   { id: "rightclick", label: "右クリック", ruby: "みぎクリック", en: "Right-click", keys: "右クリック", level: 2 },
-  { id: "reloadkey", label: "リロード（キー）", en: "Reload (key)", keys: "Mod+R", level: 2 },
-  { id: "backkey", label: "戻る（キー）", ruby: "もどる（キー）", en: "Back (key)", keys: "Alt+←", level: 2 },
+  { id: "reloadkey", lesson: { href: "/lessons/lesson6", mission: 3 }, label: "リロード（キー）", en: "Reload (key)", keys: "Mod+R", level: 2 },
+  { id: "backkey", lesson: { href: "/lessons/lesson6", mission: 3 }, label: "戻る（キー）", ruby: "もどる（キー）", en: "Back (key)", keys: "Alt+←", level: 2 },
   // ★3 できたら上級者
   { id: "print", label: "印刷", ruby: "いんさつ", en: "Print", keys: "Mod+P", level: 3 },
-  { id: "newtab", label: "新しいタブ", ruby: "あたらしいタブ", en: "New tab", keys: "Mod+T", level: 3 },
-  { id: "alttab", label: "アプリの切り替え", ruby: "アプリのきりかえ", en: "Switch apps", keys: "Alt+Tab", level: 3 },
-  { id: "snap", label: "画面を左右に並べる", ruby: "がめんをさゆうにならべる", en: "Snap windows", keys: "Win+←/→", level: 3 },
-  { id: "screenshot", label: "スクリーンショット", en: "Screenshot", keys: "Win+Shift+S", level: 3 },
-  { id: "lock", label: "画面をロック", ruby: "がめんをロック", en: "Lock screen", keys: "Win+L", level: 3 },
+  { id: "newtab", lesson: { href: "/lessons/lesson6", mission: 3 }, label: "新しいタブ", ruby: "あたらしいタブ", en: "New tab", keys: "Mod+T", level: 3 },
+  { id: "alttab", lesson: { href: "/lessons/lesson9", mission: 4 }, label: "アプリの切り替え", ruby: "アプリのきりかえ", en: "Switch apps", keys: "Alt+Tab", level: 3 },
+  { id: "snap", lesson: { href: "/lessons/lesson9", mission: 4 }, label: "画面を左右に並べる", ruby: "がめんをさゆうにならべる", en: "Snap windows", keys: "Win+←/→", level: 3 },
+  { id: "screenshot", lesson: { href: "/lessons/lesson9", mission: 4 }, label: "スクリーンショット", en: "Screenshot", keys: "Win+Shift+S", level: 3 },
+  { id: "lock", lesson: { href: "/lessons/lesson9", mission: 3 }, label: "画面をロック", ruby: "がめんをロック", en: "Lock screen", keys: "Win+L", level: 3 },
 ]
 
 export const SKILL_BY_ID: Record<string, Skill> = Object.fromEntries(SKILLS.map((s) => [s.id, s]))

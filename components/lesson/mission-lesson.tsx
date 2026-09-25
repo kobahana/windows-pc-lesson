@@ -42,6 +42,15 @@ export function MissionLesson({ lessonId, missions }: { lessonId: number; missio
     } catch {
       // 読めなければ最初から
     }
+    // パスポートから来たときは ?mission=N のミッションを開く。
+    // URL からは消しておく（このあとリロードの練習をしても、進んだミッションに戻れるように）
+    const url = new URL(window.location.href)
+    const mission = Number(url.searchParams.get("mission"))
+    if (mission >= 1 && mission <= missions.length) {
+      setCurrent(mission)
+      url.searchParams.delete("mission")
+      window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash)
+    }
     setRestored(true)
   }, [storageKey, missions.length])
 

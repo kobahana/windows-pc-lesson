@@ -11,7 +11,7 @@ import { Character, Ruby } from "@/components/game/character"
 import { SuccessOverlay } from "@/components/game/success-overlay"
 import { Button } from "@/components/ui/button"
 import { Card, useAward } from "@/components/lesson/kit"
-import { pickTasks, type WarmupTask } from "@/components/warmup/tasks"
+import { WARMUP_TASKS, pickTasks, type WarmupTask } from "@/components/warmup/tasks"
 import { SKILLS } from "@/lib/skills"
 import { sounds } from "@/lib/sounds"
 import { Timer, Stamp, RotateCcw, Home } from "lucide-react"
@@ -30,20 +30,27 @@ export default function WarmupPage() {
   const busyRef = useRef(false)
   const skillsRef = useRef(skills)
   skillsRef.current = skills
+  // パスポートから来たとき（?task=ID）は、その1問だけを練習する
+  const [focusTask, setFocusTask] = useState<WarmupTask | null | undefined>(undefined)
+
+  useEffect(() => {
+    const id = new URLSearchParams(window.location.search).get("task")
+    setFocusTask(WARMUP_TASKS.find((t) => t.id === id) ?? null)
+  }, [])
 
   const start = useCallback(() => {
-    setTasks(pickTasks(skillsRef.current, 3))
+    setTasks(focusTask ? [focusTask] : pickTasks(skillsRef.current, 3))
     setIdx(0)
     setFinished(false)
     setStartAt(Date.now())
     setElapsed(0)
     busyRef.current = false
     recordEvent(LESSON_ID, "start")
-  }, [recordEvent])
+  }, [recordEvent, focusTask])
 
   useEffect(() => {
-    if (ready && !tasks) start()
-  }, [ready, tasks, start])
+    if (ready && focusTask !== undefined && !tasks) start()
+  }, [ready, focusTask, tasks, start])
 
   useEffect(() => {
     if (!tasks || finished) return
@@ -82,7 +89,11 @@ export default function WarmupPage() {
           <>
             <Character
               mood="happy"
-              message={<><Ruby rt="じゅぎょう">授業</Ruby>の<Ruby rt="まえ">前</Ruby>のウォームアップ！3<Ruby rt="もん">問</Ruby>だけ、<Ruby rt="はや">速</Ruby>くできるかな？<span className="block text-sm text-muted-foreground mt-1">3 quick tasks to warm up your fingers.</span></>}
+              message={
+                focusTask
+                  ? <>パスポートの<Ruby rt="れんしゅう">練習</Ruby>だよ。できたらスタンプがもらえるよ！<span className="block text-sm text-muted-foreground mt-1">Practice this one to get the stamp.</span></>
+                  : <><Ruby rt="じゅぎょう">授業</Ruby>の<Ruby rt="まえ">前</Ruby>のウォームアップ！3<Ruby rt="もん">問</Ruby>だけ、<Ruby rt="はや">速</Ruby>くできるかな？<span className="block text-sm text-muted-foreground mt-1">3 quick tasks to warm up your fingers.</span></>
+              }
             />
             {task && (
               <Card key={`${task.id}-${idx}`} className="space-y-4 animate-fade-in">
@@ -98,7 +109,7 @@ export default function WarmupPage() {
           <Card className="text-center space-y-4 py-8">
             <p className="text-4xl font-bold">おつかれさま！</p>
             <p className="text-lg text-slate-600"><span className="font-mono font-bold text-3xl text-slate-800">{elapsed}</span> <Ruby rt="びょう">秒</Ruby>でできたよ</p>
-            <p className="flex items-center justify-center gap-2 text-rose-600 font-bold"><Stamp className="w-5 h-5" /> スタンプ {got} / {SKILLS.length}</p>
+            <p className="flex items-center justify-center gap-2 text-amber-600 font-bold"><Stamp className="w-5 h-5" /> スタンプ {got} / {SKILLS.length}</p>
             <div className="flex gap-3 justify-center flex-wrap">
               <Button size="lg" variant="outline" className="gap-2" onClick={start}><RotateCcw className="w-5 h-5" /> もう<Ruby rt="いっかい">1回</Ruby></Button>
               <Link href="/passport"><Button size="lg" variant="outline" className="gap-2"><Stamp className="w-5 h-5" /> パスポート</Button></Link>

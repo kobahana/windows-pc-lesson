@@ -204,12 +204,12 @@ export function SkillStampToast() {
   if (!current) return null
   return (
     <div className="fixed bottom-6 right-6 z-[60] animate-bounce-in pointer-events-none">
-      <div className="flex items-center gap-3 bg-white border-4 border-rose-400 rounded-2xl shadow-2xl px-5 py-3">
-        <div className="w-12 h-12 rounded-full bg-rose-500 text-white flex items-center justify-center rotate-[-12deg]">
+      <div className="flex items-center gap-3 bg-white border-4 border-amber-400 rounded-2xl shadow-2xl px-5 py-3">
+        <div className="w-12 h-12 rounded-full bg-amber-500 text-white flex items-center justify-center rotate-[-12deg]">
           <Stamp className="w-6 h-6" />
         </div>
         <div>
-          <p className="text-xs font-bold text-rose-500">スタンプGET！ / New stamp</p>
+          <p className="text-xs font-bold text-amber-600">スタンプGET！ / New stamp</p>
           <p className="font-bold text-slate-800">{current.label}</p>
           <p className="text-xs text-slate-500">{formatKeys(current.keys, isMac)}</p>
         </div>

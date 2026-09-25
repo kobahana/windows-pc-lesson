@@ -7,9 +7,10 @@ import { LessonHeader } from "@/components/layout/lesson-header"
 import { useSettings } from "@/components/providers/settings-provider"
 import { Ruby } from "@/components/game/character"
 import { Button } from "@/components/ui/button"
-import { SKILLS, formatKeys, type SkillLevel } from "@/lib/skills"
+import { SKILLS, formatKeys, type Skill, type SkillLevel } from "@/lib/skills"
+import { WARMUP_TASKS } from "@/components/warmup/tasks"
 import { usePlatform } from "@/lib/platform"
-import { Stamp, Zap } from "lucide-react"
+import { ChevronRight, Stamp, Zap } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const LEVELS: { level: SkillLevel; title: React.ReactNode; en: string }[] = [
@@ -17,6 +18,15 @@ const LEVELS: { level: SkillLevel; title: React.ReactNode; en: string }[] = [
   { level: 2, title: <>★2 <Ruby rt="しごと">仕事</Ruby>がはやくなる</>, en: "Work faster" },
   { level: 3, title: <>★3 できたら<Ruby rt="じょうきゅうしゃ">上級者</Ruby></>, en: "Advanced" },
 ]
+
+// その操作を練習できる場所。ウォームアップにあればその1問、なければレッスンのミッション
+// （スキルを足すときは、ウォームアップの問題か lib/skills.ts の lesson のどちらかを用意する）
+function practiceHref(skill: Skill): string {
+  const task = WARMUP_TASKS.find((t) => t.skills.includes(skill.id))
+  if (task) return `/warmup?task=${task.id}`
+  if (skill.lesson) return `${skill.lesson.href}?mission=${skill.lesson.mission}`
+  return "/warmup"
+}
 
 export default function PassportPage() {
   const { skills, ready, student } = useSettings()
@@ -29,16 +39,16 @@ export default function PassportPage() {
         <span className="font-bold text-slate-700">ショートカット・パスポート</span>
       </LessonHeader>
       <main className="max-w-4xl w-full mx-auto p-4 md:p-8 space-y-6">
-        <div className="bg-white rounded-3xl border-2 border-rose-200 p-6 flex flex-col md:flex-row items-center gap-6">
-          <div className="w-24 h-24 rounded-full bg-rose-500 text-white flex flex-col items-center justify-center shrink-0 rotate-[-8deg] shadow-lg">
+        <div className="bg-white rounded-3xl border-2 border-amber-200 p-6 flex flex-col md:flex-row items-center gap-6">
+          <div className="w-24 h-24 rounded-full bg-amber-500 text-white flex flex-col items-center justify-center shrink-0 rotate-[-8deg] shadow-lg">
             <span className="text-3xl font-black tabular-nums">{ready ? got : "-"}</span>
             <span className="text-xs">/ {SKILLS.length}</span>
           </div>
           <div className="flex-1 space-y-2 text-center md:text-left">
             <h1 className="text-2xl font-bold text-slate-800">{student ? `${student.name ?? student.id} さんのパスポート` : "パスポート"}</h1>
-            <p className="text-slate-500">レッスンやウォームアップで<Ruby rt="ごうかく">合格</Ruby>すると、スタンプが<Ruby rt="お">押</Ruby>されるよ。<Ruby rt="ぜんぶ">全部</Ruby><Ruby rt="あつ">集</Ruby>めよう！<span className="block text-xs">Collect stamps by passing lessons and warm-ups.</span></p>
+            <p className="text-slate-500">レッスンやウォームアップで<Ruby rt="ごうかく">合格</Ruby>すると、スタンプが<Ruby rt="お">押</Ruby>されるよ。<Ruby rt="ぜんぶ">全部</Ruby><Ruby rt="あつ">集</Ruby>めよう！カードを<Ruby rt="お">押</Ruby>すと<Ruby rt="れんしゅう">練習</Ruby>できるよ。<span className="block text-xs">Collect stamps by passing lessons and warm-ups. Tap a card to practice.</span></p>
             <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
-              <div className="h-full bg-rose-500 rounded-full transition-all" style={{ width: `${(got / SKILLS.length) * 100}%` }} />
+              <div className="h-full bg-amber-500 rounded-full transition-all" style={{ width: `${(got / SKILLS.length) * 100}%` }} />
             </div>
           </div>
           <Link href="/warmup">
@@ -53,17 +63,27 @@ export default function PassportPage() {
               {SKILLS.filter((s) => s.level === lv.level).map((s) => {
                 const at = skills[s.id]
                 return (
-                  <div key={s.id} className={cn("relative rounded-2xl border-2 p-4 bg-white min-h-32 flex flex-col", at ? "border-rose-300" : "border-dashed border-slate-200")}>
+                  <Link
+                    key={s.id}
+                    href={practiceHref(s)}
+                    className={cn(
+                      "group relative rounded-2xl border-2 p-4 bg-white min-h-32 flex flex-col hover:border-solid hover:border-amber-400 hover:shadow-md transition-all",
+                      at ? "border-amber-300" : "border-dashed border-slate-200",
+                    )}
+                  >
                     <p className="font-bold text-slate-800">{s.ruby ? <Ruby rt={s.ruby}>{s.label}</Ruby> : s.label}</p>
                     <p className="text-xs text-slate-400">{s.en}</p>
                     <p className="mt-auto pt-2 font-mono font-bold text-slate-600 text-sm">{formatKeys(s.keys, isMac)}</p>
+                    <p className="flex items-center text-xs font-bold text-amber-600 group-hover:text-amber-700">
+                      {at ? "もう一度" : ""}<Ruby rt="れんしゅう">練習</Ruby>する<ChevronRight className="w-3.5 h-3.5" />
+                    </p>
                     {at && (
-                      <div className="absolute top-2 right-2 w-12 h-12 rounded-full border-4 border-rose-500 text-rose-500 flex flex-col items-center justify-center rotate-[-15deg] bg-white/80">
+                      <div className="absolute top-2 right-2 w-12 h-12 rounded-full border-4 border-amber-500 text-amber-600 flex flex-col items-center justify-center rotate-[-15deg] bg-white/80">
                         <Stamp className="w-4 h-4" />
                         <span className="text-[9px] font-bold leading-none">{new Date(at).toLocaleDateString("ja-JP", { month: "numeric", day: "numeric" })}</span>
                       </div>
                     )}
-                  </div>
+                  </Link>
                 )
               })}
             </div>

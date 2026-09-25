@@ -317,8 +317,9 @@ export default function Home() {
 
   if (!student && !guestMode) {
     return (
-      <div className="min-h-screen bg-slate-50 p-6 md:p-12 relative">
-        <div className="absolute top-6 right-6 md:top-12 md:right-12">
+      <div className="min-h-screen bg-slate-50 p-6 md:p-12">
+        {/* 右上のボタンは重ねずに1行とる（パソ先生のふきだしで隠れないように） */}
+        <div className="flex justify-end mb-4">
           <SettingsDropdown />
         </div>
         <LoginCard />
@@ -327,8 +328,9 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 md:p-12 relative">
-      <div className="absolute top-6 right-6 md:top-12 md:right-12 flex items-center gap-2">
+    <div className="min-h-screen bg-slate-50 p-6 md:p-12">
+      {/* 右上のボタンは重ねずに1行とる（パソ先生のふきだしで隠れないように） */}
+      <div className="flex justify-end items-center gap-2 mb-4">
         <div className="flex items-center gap-2 bg-white border-2 border-blue-100 rounded-full pl-4 pr-2 py-1 shadow-sm">
           <UserRound className="w-4 h-4 text-blue-500" />
           <span className="font-bold text-slate-700 text-sm">
