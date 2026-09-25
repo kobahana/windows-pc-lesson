@@ -1,0 +1,172 @@
+"use client"
+
+// L7 ミッション1：アイコンを読もう
+// ① 形から予想する（選択肢から意味を選ぶ）
+// ② ツールバーで探す（マウスを乗せて名前を確かめる）
+// ③ アイコンの「文法」はどのアプリでも同じ
+
+import { useEffect, useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Card, MissionFrame, RuleBadge, Ruby, Tip, Warn, useStepFlow } from "@/components/lesson/kit"
+import { DocToolbar, TOOLS, type ToolId } from "./doc-editor"
+import {
+  AlignCenter, AlignLeft, AlignRight, List, ListOrdered, Bold, Undo2, Redo2, ChevronDown, MoreVertical, Menu, Link2, Printer, Trash2, Italic, Underline,
+} from "lucide-react"
+import { cn } from "@/lib/utils"
+
+const GUESS = [
+  {
+    icon: <AlignCenter className="w-16 h-16" />,
+    choices: ["文字を真ん中にそろえる", "文字を消す", "文字を大きくする"],
+    answer: 0,
+    why: <><Ruby rt="よこせん">横線</Ruby>が<Ruby rt="ま">真</Ruby>ん<Ruby rt="なか">中</Ruby>に<Ruby rt="よ">寄</Ruby>っている → <Ruby rt="まん">真ん</Ruby><Ruby rt="なか">中</Ruby>ぞろえ</>,
+  },
+  {
+    icon: <List className="w-16 h-16" />,
+    choices: ["表をつくる", "点をつけて1行ずつ並べる（箇条書き）", "印刷する"],
+    answer: 1,
+    why: <><Ruby rt="てん">点</Ruby>（●）と<Ruby rt="せん">線</Ruby> → <Ruby rt="かじょうが">箇条書</Ruby>き。<Ruby rt="すうじ">数字</Ruby>と<Ruby rt="せん">線</Ruby>なら<Ruby rt="ばんごう">番号</Ruby><Ruby rt="つ">付</Ruby>き</>,
+  },
+  {
+    icon: <Bold className="w-16 h-16" />,
+    choices: ["文字を太くする（太字）", "英語にする", "ブックマークする"],
+    answer: 0,
+    why: <>Bold（ボールド）の B。<Ruby rt="ふと">太</Ruby>い<Ruby rt="もじ">文字</Ruby>で<Ruby rt="か">書</Ruby>いてある</>,
+  },
+  {
+    icon: <Undo2 className="w-16 h-16" />,
+    choices: ["次へ進む", "ページを新しくする", "ひとつ前に戻す"],
+    answer: 2,
+    why: <><Ruby rt="ひだり">左</Ruby>に<Ruby rt="もど">戻</Ruby>る<Ruby rt="やじるし">矢印</Ruby> → <Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>す。<Ruby rt="みぎ">右</Ruby><Ruby rt="む">向</Ruby>きはやり<Ruby rt="なお">直</Ruby>し</>,
+  },
+]
+
+const FIND: { q: React.ReactNode; answer: ToolId }[] = [
+  { q: <><Ruby rt="ぶんしょう">文章</Ruby>を<Ruby rt="みぎ">右</Ruby>にそろえるボタンは？</>, answer: "alignRight" },
+  { q: <><Ruby rt="ばんごう">番号</Ruby>（1. 2. 3.）をつけて<Ruby rt="なら">並</Ruby>べるボタンは？</>, answer: "numbered" },
+  { q: <><Ruby rt="もじ">文字</Ruby>を<Ruby rt="おお">大</Ruby>きくするボタンは？</>, answer: "sizeUp" },
+  { q: <><Ruby rt="もじ">文字</Ruby>の<Ruby rt="した">下</Ruby>に<Ruby rt="せん">線</Ruby>を<Ruby rt="ひ">引</Ruby>くボタンは？</>, answer: "underline" },
+  { q: <>「<Ruby rt="き">記</Ruby>」を<Ruby rt="まん">真ん</Ruby><Ruby rt="なか">中</Ruby>にしたい。どのボタン？</>, answer: "alignCenter" },
+  { q: <><Ruby rt="まちが">間違</Ruby>えた！ひとつ<Ruby rt="まえ">前</Ruby>に<Ruby rt="もど">戻</Ruby>したいときは？</>, answer: "undo" },
+]
+
+const GRAMMAR: { icons: React.ReactNode; meaning: React.ReactNode }[] = [
+  { icons: <><AlignLeft /><AlignCenter /><AlignRight /></>, meaning: <><Ruby rt="よこせん">横線</Ruby>の<Ruby rt="よ">寄</Ruby>り<Ruby rt="かた">方</Ruby> → <Ruby rt="もじ">文字</Ruby>のそろえ<Ruby rt="かた">方</Ruby></> },
+  { icons: <><Bold /><Italic /><Underline /></>, meaning: <>B・I・U → <Ruby rt="もじ">文字</Ruby>のかざり（<Ruby rt="ふとじ">太字</Ruby>・<Ruby rt="しゃたい">斜体</Ruby>・<Ruby rt="かせん">下線</Ruby>）</> },
+  { icons: <><List /><ListOrdered /></>, meaning: <>● や 1. と<Ruby rt="せん">線</Ruby> → リスト</> },
+  { icons: <><Undo2 /><Redo2 /></>, meaning: <><Ruby rt="まる">丸</Ruby>い<Ruby rt="やじるし">矢印</Ruby> → <Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>す・やり<Ruby rt="なお">直</Ruby>し</> },
+  { icons: <ChevronDown />, meaning: <>▼ →「ほかにも<Ruby rt="えら">選</Ruby>べるよ」</> },
+  { icons: <><MoreVertical /><Menu /></>, meaning: <>⋮ ☰ → かくれたメニュー（スマホも<Ruby rt="おな">同</Ruby>じ）</> },
+  { icons: <><Link2 /><Printer /><Trash2 /></>, meaning: <>リンク・<Ruby rt="いんさつ">印刷</Ruby>・<Ruby rt="さくじょ">削除</Ruby>（ゴミ<Ruby rt="ばこ">箱</Ruby>）</> },
+]
+
+export function IconReadingMission({ onComplete }: { onComplete: () => void }) {
+  const { step, succeed, showSuccess, successMsg } = useStepFlow(3, onComplete)
+  const [warn, setWarn] = useState<React.ReactNode>(null)
+  const [gi, setGi] = useState(0)
+  const [picked, setPicked] = useState<number | null>(null)
+  const [fi, setFi] = useState(0)
+  const [flash, setFlash] = useState<ToolId | undefined>()
+  useEffect(() => { setWarn(null) }, [step])
+
+  const pickGuess = (i: number) => {
+    if (picked !== null) return
+    setPicked(i)
+  }
+  const nextGuess = () => {
+    setPicked(null)
+    if (gi + 1 >= GUESS.length) succeed("予想の名人！")
+    else setGi(gi + 1)
+  }
+
+  const onTool = (id: ToolId) => {
+    if (id === FIND[fi].answer) {
+      setWarn(null)
+      setFlash(id)
+      setTimeout(() => {
+        setFlash(undefined)
+        if (fi + 1 >= FIND.length) succeed("ツールバー名人！")
+        else setFi((n) => n + 1)
+      }, 600)
+    } else {
+      const name = TOOLS.find((t) => t.id === id)?.name ?? ""
+      setWarn(<>それは「{name}」だよ。マウスを<Ruby rt="の">乗</Ruby>せると<Ruby rt="なまえ">名前</Ruby>が<Ruby rt="で">出</Ruby>るよ</>)
+    }
+  }
+
+  const g = GUESS[gi]
+  const messages: React.ReactNode[] = [
+    <>このアイコン、<Ruby rt="なに">何</Ruby>をするボタンだと<Ruby rt="おも">思</Ruby>う？<Ruby rt="かたち">形</Ruby>をよく<Ruby rt="み">見</Ruby>て<Ruby rt="よそう">予想</Ruby>してみよう！<span className="block text-sm text-muted-foreground mt-1">Guess what the icon does from its shape.</span></>,
+    <>Googleドキュメントのツールバーだよ。<Ruby rt="しつもん">質問</Ruby>のボタンを<Ruby rt="さが">探</Ruby>してクリックしてね。<span className="block text-sm text-muted-foreground mt-1">Find the button in the Google Docs toolbar.</span></>,
+    <>アイコンの<Ruby rt="かたち">形</Ruby>にはルールがあるよ。Word でも Excel でも Gmail でも、ほとんど<Ruby rt="おな">同</Ruby>じ！<span className="block text-sm text-muted-foreground mt-1">Icons follow the same rules in almost every app.</span></>,
+  ]
+
+  return (
+    <MissionFrame message={messages[step]} step={step} total={3} showSuccess={showSuccess} successMsg={successMsg}>
+      {step === 0 && (
+        <Card className="space-y-5">
+          <RuleBadge n={2} />
+          <div className="flex justify-center">
+            <div className="w-32 h-32 rounded-3xl bg-slate-50 border-2 border-slate-200 flex items-center justify-center text-slate-700">{g.icon}</div>
+          </div>
+          <div className="grid gap-3 max-w-md mx-auto">
+            {g.choices.map((c, i) => (
+              <Button
+                key={i}
+                variant="outline"
+                size="lg"
+                onClick={() => pickGuess(i)}
+                className={cn(
+                  "text-lg h-auto py-3 whitespace-normal",
+                  picked !== null && i === g.answer && "border-success bg-success/10 text-success",
+                  picked === i && i !== g.answer && "border-amber-400 bg-amber-50",
+                )}
+              >
+                {c}
+              </Button>
+            ))}
+          </div>
+          {picked !== null && (
+            <div className="text-center space-y-3 animate-fade-in">
+              <p className="text-lg font-bold">{picked === g.answer ? "正解！🎉" : "おしい！"}</p>
+              <p className="text-slate-600">{g.why}</p>
+              <Button size="lg" onClick={nextGuess}>{gi + 1 >= GUESS.length ? "つぎへ" : "つぎの問題"} →</Button>
+            </div>
+          )}
+          <p className="text-center text-sm text-slate-400">{gi + 1} / {GUESS.length}</p>
+        </Card>
+      )}
+
+      {step === 1 && (
+        <div className="space-y-4">
+          <Card className="text-center">
+            <p className="text-sm text-slate-400">{fi + 1} / {FIND.length}</p>
+            <p className="text-xl font-bold text-slate-800">{FIND[fi].q}</p>
+          </Card>
+          <div className="bg-white rounded-2xl border-2 border-slate-200 p-3 overflow-x-auto">
+            <DocToolbar onAction={onTool} size={11} flash={flash} />
+          </div>
+          <Warn>{warn}</Warn>
+          <Tip>わからないときは、アイコンにマウスを<Ruby rt="の">乗</Ruby>せて1<Ruby rt="びょう">秒</Ruby><Ruby rt="ま">待</Ruby>とう。<Ruby rt="ほんもの">本物</Ruby>のGoogleドキュメントでも<Ruby rt="なまえ">名前</Ruby>が<Ruby rt="で">出</Ruby>るよ。</Tip>
+        </div>
+      )}
+
+      {step === 2 && (
+        <div className="space-y-4">
+          <Card className="space-y-3">
+            <p className="font-bold text-lg text-slate-800">アイコンの<Ruby rt="ぶんぽう">文法</Ruby> / Icon grammar</p>
+            {GRAMMAR.map((row, i) => (
+              <div key={i} className="flex items-center gap-4 border-b border-slate-100 last:border-0 pb-3 last:pb-0">
+                <div className="flex gap-1 text-slate-700 [&>svg]:w-6 [&>svg]:h-6 w-28 shrink-0">{row.icons}</div>
+                <p className="text-slate-700">{row.meaning}</p>
+              </div>
+            ))}
+          </Card>
+          <div className="text-center">
+            <Button size="lg" className="text-lg px-10" onClick={() => succeed("覚えた！")}>おぼえた！ / Got it</Button>
+          </div>
+        </div>
+      )}
+    </MissionFrame>
+  )
+}

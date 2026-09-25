@@ -270,7 +270,7 @@ export default function Home() {
       en: "Business documents (Google Docs)",
       icon: <FileText className="w-10 h-10 text-slate-400" />,
       link: "/lessons/lesson7",
-      available: false,
+      available: true,
     },
     {
       id: 9,
