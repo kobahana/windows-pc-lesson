@@ -5,11 +5,12 @@ import Link from "next/link"
 import { Character, Ruby } from "@/components/game/character"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Monitor, Keyboard, Languages, PenTool, Briefcase, IdCard, LogOut, UserRound, ClipboardCheck, MousePointerClick, FileText, Sheet, ShieldCheck, AppWindow } from "lucide-react"
+import { Monitor, Keyboard, Languages, PenTool, Briefcase, IdCard, LogOut, UserRound, ClipboardCheck, MousePointerClick, FileText, Sheet, ShieldCheck, AppWindow, Zap, Timer, Stamp, ListChecks } from "lucide-react"
 
 import { useSettings } from "@/components/providers/settings-provider"
 import { SettingsDropdown } from "@/components/layout/settings-dropdown"
 import { loadStudents, type StudentRecord } from "@/lib/student-store"
+import { SKILLS } from "@/lib/skills"
 import { useTestEnabled } from "@/lib/test-settings"
 import { CheckCircle2 } from "lucide-react"
 import { STUDENT_ID_EXAMPLE, halfWidthProblem, katakanaProblem, normalizeStudentId, toKatakana } from "@/lib/input-check"
@@ -169,7 +170,7 @@ function LoginCard() {
 }
 
 export default function Home() {
-  const { ready, completedLessons, student, logout } = useSettings()
+  const { ready, completedLessons, student, logout, skills } = useSettings()
   const [guestMode, setGuestMode] = useState(false)
   // 先生の切り替えを定期的に確認し、「まとめテスト」の表示を反映する
   const testEnabled = useTestEnabled(true) ?? false
@@ -355,6 +356,23 @@ export default function Home() {
           mood="happy"
         />
 
+        {/* まいにちの練習 */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[
+            { href: "/warmup", icon: <Zap className="w-7 h-7" />, title: <>ウォームアップ</>, sub: "授業のはじめに3問 / 3 quick tasks", color: "bg-rose-500" },
+            { href: "/typing", icon: <Timer className="w-7 h-7" />, title: <>タイピング<Ruby rt="けいそく">計測</Ruby></>, sub: "1分間で何文字？ / 1-minute test", color: "bg-sky-500" },
+            { href: "/passport", icon: <Stamp className="w-7 h-7" />, title: <>パスポート（{SKILLS.filter((x) => skills[x.id]).length}/{SKILLS.length}）</>, sub: "ショートカットのスタンプ帳 / Stamps", color: "bg-amber-500" },
+          ].map((c) => (
+            <Link key={c.href} href={c.href} className="flex items-center gap-4 bg-white rounded-2xl p-4 shadow-sm border-2 border-transparent hover:border-blue-300 hover:shadow-md transition-all">
+              <span className={`w-12 h-12 rounded-xl ${c.color} text-white flex items-center justify-center shrink-0`}>{c.icon}</span>
+              <span>
+                <span className="block font-bold text-slate-800 text-lg">{c.title}</span>
+                <span className="block text-xs text-slate-400">{c.sub}</span>
+              </span>
+            </Link>
+          ))}
+        </div>
+
         {([
           { key: "basic", title: "きほんコース", en: "Basic course — mouse, typing, Japanese input" },
           { key: "work", title: "しごとコース", en: "Work course — skills for your future job" },
@@ -445,6 +463,31 @@ export default function Home() {
                   <span className="block text-xs text-slate-400 mt-1">5-minute time attack — clear all for a bonus round!</span>
                 </p>
                 <Link href="/test">
+                  <Button className="mt-4 w-full text-lg h-12 shadow-md bg-amber-500 hover:bg-amber-600">
+                    テストにちょうせん！
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {testEnabled && (
+          <div className="relative bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl p-8 shadow-md border-2 border-amber-300 hover:border-amber-400 hover:shadow-xl transition-all">
+            <div className="flex items-start gap-6">
+              <div className="p-4 rounded-2xl shrink-0 bg-amber-100 text-amber-600">
+                <ListChecks className="w-10 h-10" />
+              </div>
+              <div className="space-y-3 flex-1">
+                <span className="text-sm font-bold text-amber-600 block">Skill Test</span>
+                <h2 className="text-2xl font-bold text-slate-800 leading-relaxed">
+                  PC<Ruby rt="そうさ">操作</Ruby>テスト
+                </h2>
+                <p className="text-slate-500 leading-relaxed pt-2">
+                  コピペ・半角/全角・ショートカットなど、パソコンの操作をテストするよ！
+                  <span className="block text-xs text-slate-400 mt-1">5-minute test of real PC operations</span>
+                </p>
+                <Link href="/skill-test">
                   <Button className="mt-4 w-full text-lg h-12 shadow-md bg-amber-500 hover:bg-amber-600">
                     テストにちょうせん！
                   </Button>

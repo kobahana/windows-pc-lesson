@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
   ArrowLeft, Download, Trash2, ChevronDown, ChevronUp,
-  CalendarDays, Users, CheckCircle2, Circle, GraduationCap, ClipboardCheck, Lock,
+  CalendarDays, Users, CheckCircle2, Circle, GraduationCap, ClipboardCheck, Lock, Stamp,
 } from "lucide-react"
 import {
   ACTIVITY_LABELS,
-  LESSON_TITLES,
+  COURSE_LESSON_IDS,
+  LESSON_DISPLAY_NUMBER,
+  lessonLabel,
   activityToCsv,
   deleteStudent,
   loadStudents,
@@ -20,9 +22,9 @@ import {
   type StudentRecord,
 } from "@/lib/student-store"
 import { isSheetSyncEnabled } from "@/lib/sheet-sync"
+import { SKILLS } from "@/lib/skills"
 import { checkRemoteSettings, fetchTestEnabled, isTestEnabled, saveTestEnabled } from "@/lib/test-settings"
 
-const LESSON_IDS = [1, 2, 3, 4, 5]
 
 // 先生用ページのパスワード（生徒が誤って開かないための簡易ロック）
 const TEACHER_PASSWORD = "hana90"
@@ -38,8 +40,7 @@ function formatDateTime(iso: string) {
 }
 
 function eventLabel(ev: ActivityEvent) {
-  const lesson = LESSON_TITLES[ev.lessonId] ?? `Lesson ${ev.lessonId}`
-  let text = `L${ev.lessonId} ${lesson}：${ACTIVITY_LABELS[ev.type]}`
+  let text = `${lessonLabel(ev.lessonId)}：${ACTIVITY_LABELS[ev.type]}`
   if (ev.detail) text += `（${ev.detail}）`
   const extras: string[] = []
   if (ev.timeSec != null) extras.push(`${ev.timeSec}秒`)
@@ -221,9 +222,9 @@ export default function TeacherPage() {
               <ClipboardCheck className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="font-bold text-slate-800">まとめテスト（漢字変換・5分間タイムアタック）</h2>
+              <h2 className="font-bold text-slate-800">テストの表示（まとめテスト・PC操作テスト）</h2>
               <p className="text-sm text-slate-500 mt-0.5">
-                オンにすると、生徒のホーム画面に「まとめテスト」が表示されます。テストの時間だけオンにしてください。
+                オンにすると、生徒のホーム画面に「まとめテスト（漢字変換）」と「PC操作テスト」が表示されます。テストの時間だけオンにしてください。
               </p>
               {remoteStatus === "ok" && (
                 <p className="text-xs text-green-600 font-bold mt-1">
@@ -316,7 +317,7 @@ export default function TeacherPage() {
                   <tr className="bg-slate-50 text-slate-500 text-left">
                     <th className="px-4 py-3 font-bold">学籍番号</th>
                     <th className="px-4 py-3 font-bold">名前</th>
-                    <th className="px-4 py-3 font-bold text-center">クリア状況（L1〜L5）</th>
+                    <th className="px-4 py-3 font-bold text-center">クリア状況（L1〜L10）</th>
                     <th className="px-4 py-3 font-bold">最終利用</th>
                     <th className="px-4 py-3" />
                   </tr>
@@ -343,13 +344,14 @@ export default function TeacherPage() {
                           <td className="px-4 py-3 text-slate-600">{s.name ?? "—"}</td>
                           <td className="px-4 py-3">
                             <div className="flex justify-center gap-1.5">
-                              {LESSON_IDS.map((id) =>
-                                s.completedLessons.includes(id) ? (
-                                  <CheckCircle2 key={id} className="w-5 h-5 text-green-500" aria-label={`L${id} クリア`} />
+                              {COURSE_LESSON_IDS.map((id) => {
+                                const n = LESSON_DISPLAY_NUMBER[id]
+                                return s.completedLessons.includes(id) ? (
+                                  <CheckCircle2 key={id} className="w-5 h-5 text-green-500" aria-label={`L${n} クリア`}><title>{`L${n} クリア`}</title></CheckCircle2>
                                 ) : (
-                                  <Circle key={id} className="w-5 h-5 text-slate-200" aria-label={`L${id} 未クリア`} />
+                                  <Circle key={id} className="w-5 h-5 text-slate-200" aria-label={`L${n} 未クリア`}><title>{`L${n} 未クリア`}</title></Circle>
                                 )
-                              )}
+                              })}
                             </div>
                           </td>
                           <td className="px-4 py-3 text-slate-500">{formatDateTime(s.lastActiveAt)}</td>
@@ -403,6 +405,54 @@ export default function TeacherPage() {
             </div>
           )}
         </section>
+        {/* ショートカット習得表 */}
+        {loaded && studentList.length > 0 && (
+          <section className="space-y-3">
+            <h2 className="flex items-center gap-2 text-xl font-bold text-slate-800">
+              <Stamp className="w-6 h-6 text-rose-500" />
+              ショートカット・パスポート（習得表）
+            </h2>
+            <p className="text-sm text-slate-500">● ＝ 合格済み。空欄が多い列は、クラス全体で復習が必要な操作です。タイピングは1分間の自己ベスト（文字数）。</p>
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-x-auto">
+              <table className="text-xs">
+                <thead>
+                  <tr className="bg-slate-50 text-slate-500">
+                    <th className="px-3 py-2 text-left sticky left-0 bg-slate-50 font-bold">学籍番号</th>
+                    <th className="px-2 py-2 font-bold whitespace-nowrap">タイピング</th>
+                    {SKILLS.map((sk) => (
+                      <th key={sk.id} className="px-1 py-2 font-bold align-bottom">
+                        <span className="block [writing-mode:vertical-rl] mx-auto whitespace-nowrap">{"★".repeat(sk.level)} {sk.label}</span>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {studentList.map((st) => {
+                    const best = (st.typing ?? []).reduce((m, r) => Math.max(m, r.cpm), 0)
+                    return (
+                      <tr key={st.id} className="border-t border-slate-100">
+                        <td className="px-3 py-1.5 font-bold text-slate-700 sticky left-0 bg-white whitespace-nowrap">{st.id}{st.name ? `（${st.name}）` : ""}</td>
+                        <td className="px-2 py-1.5 text-center tabular-nums">{best || "—"}</td>
+                        {SKILLS.map((sk) => (
+                          <td key={sk.id} className="px-1 py-1.5 text-center">
+                            {st.skills?.[sk.id] ? <span className="text-rose-500" title={new Date(st.skills[sk.id]).toLocaleDateString("ja-JP")}>●</span> : <span className="text-slate-200">・</span>}
+                          </td>
+                        ))}
+                      </tr>
+                    )
+                  })}
+                  <tr className="border-t-2 border-slate-200 bg-slate-50 font-bold">
+                    <td className="px-3 py-1.5 sticky left-0 bg-slate-50">合格した人数</td>
+                    <td />
+                    {SKILLS.map((sk) => (
+                      <td key={sk.id} className="px-1 py-1.5 text-center tabular-nums">{studentList.filter((st) => st.skills?.[sk.id]).length}</td>
+                    ))}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        )}
       </main>
     </div>
   )
