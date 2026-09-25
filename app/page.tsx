@@ -306,7 +306,7 @@ export default function Home() {
       en: "Challenge: apps you have never seen",
       icon: <AppWindow className="w-10 h-10 text-slate-400" />,
       link: "/lessons/lesson10",
-      available: false,
+      available: true,
     },
   ]
 
