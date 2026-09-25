@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input"
 import { LessonHeader } from "@/components/layout/lesson-header"
 import { useSettings } from "@/components/providers/settings-provider"
 import { useTestEnabled } from "@/lib/test-settings"
+import { STUDENT_ID_EXAMPLE, normalizeStudentId, normalizeStudentName } from "@/lib/input-check"
 
 // ※ まとめテストは効果音を一切鳴らさない（テスト中の教室に音が響かないように）
 
@@ -107,39 +108,6 @@ function formatRemaining(sec: number) {
 
 // ===== 受験者情報の入力チェック =====
 // 採点はこの学籍番号・名前で記録されるため、入力ミスを徹底的に防ぐ
-
-// 学籍番号の形式：数字4つ＋ローマ字1つ＋数字3つ（例: 2024k001）
-const STUDENT_ID_RE = /^[0-9]{4}[a-z][0-9]{3}$/
-const STUDENT_ID_EXAMPLE = "2024k001"
-
-// 全角の英数字を半角に直す（２０２４ｋ００１ → 2024k001）
-function toHalfWidth(s: string): string {
-  return s.replace(/[Ａ-Ｚａ-ｚ０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0))
-}
-
-// ひらがなをカタカナに直す（たなか → タナカ）
-function toKatakana(s: string): string {
-  return s.replace(/[ぁ-ゖ]/g, (c) => String.fromCharCode(c.charCodeAt(0) + 0x60))
-}
-
-// 学籍番号を正規化して返す。形式がおかしければエラーメッセージを返す
-function normalizeStudentId(raw: string): { value?: string; error?: string } {
-  const v = toHalfWidth(raw.trim()).toLowerCase()
-  if (!v) return { error: "学籍番号を入力してね / Enter your student ID" }
-  if (!STUDENT_ID_RE.test(v)) {
-    return { error: `学籍番号の形がちがうよ。「${STUDENT_ID_EXAMPLE}」のように、半角の数字4つ＋ローマ字1つ＋数字3つで入力してね` }
-  }
-  return { value: v }
-}
-
-// 名前を正規化して返す。カタカナ以外が入っていればエラーメッセージを返す
-function normalizeStudentName(raw: string): { value?: string; error?: string } {
-  const v = toKatakana(raw.trim().replace(/　/g, " ").replace(/\s+/g, " "))
-  if (!v) return { error: "名前（カタカナ）を入力してね / Enter your name in katakana" }
-  if (/[ｦ-ﾟ]/.test(v)) return { error: "半角カタカナはつかえないよ。全角カタカナで入力してね（例：タナカ タロウ）" }
-  if (!/^[ァ-ヶー・ ]+$/.test(v)) return { error: "名前は全角カタカナで入力してね（例：タナカ タロウ）" }
-  return { value: v }
-}
 
 type Phase = "register" | "confirm" | "intro" | "main" | "bonusOffer" | "bonus" | "done"
 

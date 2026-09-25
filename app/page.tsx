@@ -12,6 +12,7 @@ import { SettingsDropdown } from "@/components/layout/settings-dropdown"
 import { loadStudents, type StudentRecord } from "@/lib/student-store"
 import { useTestEnabled } from "@/lib/test-settings"
 import { CheckCircle2 } from "lucide-react"
+import { STUDENT_ID_EXAMPLE, halfWidthProblem, katakanaProblem, normalizeStudentId, toKatakana } from "@/lib/input-check"
 
 const GUEST_KEY = "pclesson_guest"
 
@@ -21,6 +22,14 @@ function LoginCard() {
   const [nameInput, setNameInput] = useState("")
   const [recentStudents, setRecentStudents] = useState<StudentRecord[]>([])
   const [, forceUpdate] = useState(0)
+  // 変換中（IMEで入力中）は、ひらがなが見えていても注意を出さない
+  const [nameComposing, setNameComposing] = useState(false)
+  const [idError, setIdError] = useState("")
+  const [triedLogin, setTriedLogin] = useState(false)
+
+  // 入力中にすぐ気づけるよう、半角/全角の間違いはその場で知らせる（自動では直さない＝練習の機会にする）
+  const idHint = halfWidthProblem(idInput)
+  const nameHint = nameComposing ? null : katakanaProblem(nameInput)
 
   useEffect(() => {
     const students = Object.values(loadStudents())
@@ -30,7 +39,20 @@ function LoginCard() {
 
   const handleLogin = () => {
     if (!idInput.trim()) return
-    login(idInput, nameInput)
+    setTriedLogin(true)
+    // 全角・日本語モードのままなら、自分で切り替えてもらう
+    if (idHint) {
+      setIdError(idHint)
+      return
+    }
+    const id = normalizeStudentId(idInput)
+    if (id.error) {
+      setIdError(id.error)
+      return
+    }
+    if (nameHint) return
+    setIdError("")
+    login(id.value!, toKatakana(nameInput.trim()) || undefined)
   }
 
   const startAsGuest = () => {
@@ -64,12 +86,22 @@ function LoginCard() {
           </label>
           <Input
             value={idInput}
-            onChange={(e) => setIdInput(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter") handleLogin() }}
-            placeholder="例: 24A001"
-            className="h-16 text-3xl text-center font-bold tracking-widest"
+            onChange={(e) => { setIdInput(e.target.value); setIdError("") }}
+            onKeyDown={(e) => { if (e.key === "Enter" && !e.nativeEvent.isComposing) handleLogin() }}
+            placeholder={`例: ${STUDENT_ID_EXAMPLE}`}
+            className={`h-16 text-3xl text-center font-bold tracking-widest ${idHint || idError ? "border-amber-400 focus-visible:ring-amber-300" : ""}`}
             autoFocus
+            autoComplete="off"
           />
+          {(idHint || (triedLogin && idError)) ? (
+            <p className="text-sm font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
+              ⚠️ {idHint ?? idError}
+            </p>
+          ) : (
+            <p className="text-xs text-slate-400">
+              <Ruby rt="はんかく">半角</Ruby>（はんかく）で<Ruby rt="にゅうりょく">入力</Ruby> / Half-width
+            </p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -79,10 +111,20 @@ function LoginCard() {
           <Input
             value={nameInput}
             onChange={(e) => setNameInput(e.target.value)}
-            onKeyDown={(e) => { if (e.key === "Enter") handleLogin() }}
+            onCompositionStart={() => setNameComposing(true)}
+            onCompositionEnd={() => setNameComposing(false)}
+            onKeyDown={(e) => { if (e.key === "Enter" && !e.nativeEvent.isComposing) handleLogin() }}
             placeholder="例: グエン"
-            className="h-12 text-xl text-center"
+            className={`h-12 text-xl text-center ${nameHint ? "border-amber-400 focus-visible:ring-amber-300" : ""}`}
+            autoComplete="off"
           />
+          {nameHint ? (
+            <p className="text-sm font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">⚠️ {nameHint}</p>
+          ) : (
+            <p className="text-xs text-slate-400">
+              <Ruby rt="ぜんかく">全角</Ruby>カタカナで<Ruby rt="にゅうりょく">入力</Ruby> / Katakana
+            </p>
+          )}
         </div>
 
         <Button

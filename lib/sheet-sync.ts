@@ -10,7 +10,7 @@
 // - flushing 中に追加されたデータは完了後に自動で再送する
 // - ページ離脱時は navigator.sendBeacon で送信を試みる
 
-import { ACTIVITY_LABELS, LESSON_TITLES, localDateKey, type ActivityEvent } from "./student-store"
+import { ACTIVITY_LABELS, lessonLabel, localDateKey, type ActivityEvent } from "./student-store"
 
 // Vercel の環境変数（Settings → Environment Variables）で設定する
 const WEBHOOK_URL = process.env.NEXT_PUBLIC_SHEETS_WEBHOOK_URL
@@ -74,7 +74,7 @@ export function buildSheetRow(studentId: string, name: string | undefined, event
     time: d.toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" }),
     studentId,
     name: name ?? "",
-    lesson: `L${event.lessonId} ${LESSON_TITLES[event.lessonId] ?? ""}`,
+    lesson: lessonLabel(event.lessonId),
     event: ACTIVITY_LABELS[event.type],
     detail: event.detail ?? "",
     timeSec: event.timeSec ?? "",

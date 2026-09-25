@@ -8,9 +8,11 @@ import {
   getCurrentStudentId,
   getStudent,
   markStudentLessonCompleted,
+  markStudentSkill,
   setCurrentStudentId,
   upsertStudent,
 } from "@/lib/student-store"
+import { SKILL_BY_ID } from "@/lib/skills"
 import { buildSheetRow, flushSheetQueue, flushWithBeacon, migrateQueueV1ToV2, queueSheetRow } from "@/lib/sheet-sync"
 
 interface StudentInfo {
@@ -30,6 +32,10 @@ interface SettingsContextType {
   login: (id: string, name?: string) => void;
   logout: () => void;
   recordEvent: (lessonId: number, type: ActivityType, detail?: string, extra?: { timeSec?: number; missCount?: number }) => void;
+  // ショートカット・パスポート（skillId → 合格日時）
+  skills: Record<string, string>;
+  // スキル合格を記録する。はじめての合格なら true（スタンプ演出に使う）
+  markSkill: (skillId: string, lessonId: number) => boolean;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined)
@@ -37,12 +43,24 @@ const SettingsContext = createContext<SettingsContextType | undefined>(undefined
 // 15分間操作がなければ自動ログアウト（次のクラスの生徒に前の生徒のログインが残らないように）
 const INACTIVITY_LIMIT_MS = 15 * 60 * 1000
 const LAST_ACTIVITY_KEY = "pclesson_last_activity_v1"
+// 未ログイン（ゲスト）時のスキル記録
+const GUEST_SKILLS_KEY = "pclesson_guest_skills_v1"
+
+function loadGuestSkills(): Record<string, string> {
+  try {
+    const raw = localStorage.getItem(GUEST_SKILLS_KEY)
+    return raw ? JSON.parse(raw) : {}
+  } catch {
+    return {}
+  }
+}
 
 export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [showRuby, setShowRuby] = useState(true)
   const [soundEnabled, setSoundEnabled] = useState(true)
   const [completedLessons, setCompletedLessons] = useState<number[]>([])
   const [student, setStudent] = useState<StudentInfo | null>(null)
+  const [skills, setSkills] = useState<Record<string, string>>({})
   const [isMounted, setIsMounted] = useState(false)
 
   // 旧キュー（v1）からの移行 + 前回送信できなかった学習記録があれば再送する
@@ -90,6 +108,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         if (record) {
           setStudent({ id: record.id, name: record.name })
           setCompletedLessons(record.completedLessons)
+          setSkills(record.skills ?? {})
           setIsMounted(true)
           return
         }
@@ -104,6 +123,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
         console.error("Failed to parse completed lessons", e)
       }
     }
+    setSkills(loadGuestSkills())
     setIsMounted(true)
   }, [])
 
@@ -148,6 +168,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     setCurrentStudentId(trimmedId)
     setStudent({ id: record.id, name: record.name })
     setCompletedLessons(record.completedLessons)
+    setSkills(record.skills ?? {})
   }, [])
 
   const logout = useCallback(() => {
@@ -160,6 +181,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     } catch {
       setCompletedLessons([])
     }
+    setSkills(loadGuestSkills())
   }, [])
 
   // ログイン中、15分間操作がなければ自動的にログアウトする
@@ -204,6 +226,25 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     queueSheetRow(buildSheetRow(student.id, student.name, event))
   }, [student])
 
+  const markSkill = useCallback((skillId: string, lessonId: number) => {
+    if (skills[skillId]) return false
+    const now = new Date().toISOString()
+    setSkills((prev) => (prev[skillId] ? prev : { ...prev, [skillId]: now }))
+    if (student) {
+      const isNew = markStudentSkill(student.id, skillId)
+      if (isNew) recordEvent(lessonId, "skill_clear", SKILL_BY_ID[skillId]?.label ?? skillId)
+    } else {
+      try {
+        const guest = loadGuestSkills()
+        guest[skillId] = now
+        localStorage.setItem(GUEST_SKILLS_KEY, JSON.stringify(guest))
+      } catch {
+        // 保存できなくても続行
+      }
+    }
+    return true
+  }, [skills, student, recordEvent])
+
   return (
     <SettingsContext.Provider value={{
       ready: isMounted,
@@ -216,7 +257,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       student,
       login,
       logout,
-      recordEvent
+      recordEvent,
+      skills,
+      markSkill,
     }}>
       {children}
     </SettingsContext.Provider>
