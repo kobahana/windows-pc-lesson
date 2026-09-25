@@ -217,3 +217,70 @@ export function SkillStampToast() {
     </div>
   )
 }
+
+// ===== 選択式クイズ（理由つき） =====
+
+export interface QuizChoice {
+  label: React.ReactNode
+  ok: boolean
+  why?: React.ReactNode
+}
+export interface QuizQuestion {
+  q: React.ReactNode
+  en?: string
+  visual?: React.ReactNode
+  choices: QuizChoice[]
+}
+
+// 全問正解すると onDone。間違えたら理由を見せて、もう一度選ばせる
+export function ChoiceQuiz({ questions, onDone, columns = 1 }: { questions: QuizQuestion[]; onDone: () => void; columns?: 1 | 2 | 3 }) {
+  const [qi, setQi] = useState(0)
+  const [picked, setPicked] = useState<number | null>(null)
+  const q = questions[qi]
+  const choice = picked !== null ? q.choices[picked] : null
+
+  const next = () => {
+    setPicked(null)
+    if (qi + 1 >= questions.length) onDone()
+    else setQi(qi + 1)
+  }
+
+  return (
+    <Card className="space-y-4">
+      <p className="text-sm text-slate-400 text-center">{qi + 1} / {questions.length}</p>
+      <div>
+        <p className="text-xl font-bold text-slate-800">{q.q}</p>
+        {q.en && <p className="text-sm text-slate-400">{q.en}</p>}
+      </div>
+      {q.visual}
+      <div className={cn("grid gap-3", columns === 2 && "md:grid-cols-2", columns === 3 && "md:grid-cols-3")}>
+        {q.choices.map((c, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => { if (!choice?.ok) { setPicked(i); if (!c.ok) sounds?.playError() } }}
+            className={cn(
+              "rounded-xl border-2 px-4 py-3 text-left text-lg transition-colors",
+              picked === i ? (c.ok ? "border-success bg-success/10" : "border-amber-400 bg-amber-50") : "border-slate-200 hover:border-slate-400 bg-white",
+            )}
+          >
+            {c.label}
+          </button>
+        ))}
+      </div>
+      {choice && (
+        <div className={cn("rounded-xl p-4 animate-fade-in", choice.ok ? "bg-success/10 text-slate-800" : "bg-amber-50 text-amber-900")}>
+          <p className="font-bold">{choice.ok ? "正解！🎉" : "ちがうよ。もう一度えらんでね"}</p>
+          {choice.why && <p className="mt-1">{choice.why}</p>}
+          {choice.ok && (
+            <div className="text-right mt-2">
+              <button type="button" onClick={next} className="bg-primary text-primary-foreground font-bold rounded-lg px-5 py-2">
+                {qi + 1 >= questions.length ? "つぎへ" : "つぎの問題"} →
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+    </Card>
+  )
+}

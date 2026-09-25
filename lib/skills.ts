@@ -50,7 +50,7 @@ export function formatKeys(keys: string, isMac: boolean): string {
     k = k
       .replace("Alt+←", "⌘+[")
       .replace("Alt+Tab", "⌘+Tab")
-      .replace("Win+Shift+S", "⌘+Shift+4")
+      .replace("Win+Shift+S", "⌘+Ctrl+Shift+4")
       .replace("Win+L", "⌘+Ctrl+Q")
       .replace("Win+←/→", "緑ボタン長押し")
       .replace("半角/全角", "英数 / かな")

@@ -294,7 +294,7 @@ export default function Home() {
       en: "Files, email, security, getting help",
       icon: <ShieldCheck className="w-10 h-10 text-slate-400" />,
       link: "/lessons/lesson9",
-      available: false,
+      available: true,
     },
     {
       id: 11,
