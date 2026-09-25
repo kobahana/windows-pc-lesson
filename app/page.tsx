@@ -282,7 +282,7 @@ export default function Home() {
       en: "Invoices (Google Sheets)",
       icon: <Sheet className="w-10 h-10 text-slate-400" />,
       link: "/lessons/lesson8",
-      available: false,
+      available: true,
     },
     {
       id: 10,
