@@ -5,7 +5,7 @@ import Link from "next/link"
 import { Character, Ruby } from "@/components/game/character"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Monitor, Keyboard, Languages, PenTool, Briefcase, IdCard, LogOut, UserRound, ClipboardCheck } from "lucide-react"
+import { Monitor, Keyboard, Languages, PenTool, Briefcase, IdCard, LogOut, UserRound, ClipboardCheck, MousePointerClick, FileText, Sheet, ShieldCheck, AppWindow } from "lucide-react"
 
 import { useSettings } from "@/components/providers/settings-provider"
 import { SettingsDropdown } from "@/components/layout/settings-dropdown"
@@ -190,6 +190,8 @@ export default function Home() {
   const lessons = [
     {
       id: 1,
+      num: 1,
+      course: "basic",
       title: "Windowsの基本操作",
       ruby: "Windowsのきほんそうさ",
       description: "マウス操作、Wi-Fi、保存、シャットダウンを覚えよう！",
@@ -200,6 +202,8 @@ export default function Home() {
     },
     {
       id: 2,
+      num: 2,
+      course: "basic",
       title: "ホームポジションに慣れよう",
       ruby: "ホームポジションになれよう",
       description: "正しい指の置き方を覚えて、タイピングの準備をしよう！",
@@ -210,6 +214,8 @@ export default function Home() {
     },
     {
       id: 3,
+      num: 3,
+      course: "basic",
       title: "日本語をローマ字入力しよう",
       ruby: "にほんごをローマじにゅうりょくしよう",
       description: "「ん」や「っ」など、難しい打ち方を練習しよう！",
@@ -220,6 +226,8 @@ export default function Home() {
     },
     {
       id: 4,
+      num: 4,
+      course: "basic",
       title: "漢字変換マスターになろう",
       ruby: "かんじへんかんマスターになろう",
       description: "正しい漢字を選んで、文章を完成させよう！",
@@ -230,6 +238,8 @@ export default function Home() {
     },
     {
       id: 5,
+      num: 5,
+      course: "basic",
       title: "ビジネス日本語をマスターしよう",
       ruby: "ビジネスにほんごをマスターしよう",
       description: "よく使うビジネス用語をタイピングして覚えよう！",
@@ -237,6 +247,66 @@ export default function Home() {
       icon: <Briefcase className="w-10 h-10 text-slate-400" />,
       link: "/lessons/lesson5",
       available: true,
+    },
+      {
+      id: 7,
+      num: 6,
+      course: "work",
+      title: "毎日つかう基本ワザ",
+      ruby: "まいにちつかうきほんワザ",
+      description: "半角/全角、コピペ、戻る・リロード、5つのルール！",
+      en: "Input mode, copy & paste, browser basics",
+      icon: <MousePointerClick className="w-10 h-10 text-slate-400" />,
+      link: "/lessons/lesson6",
+      available: true,
+    },
+    {
+      id: 8,
+      num: 7,
+      course: "work",
+      title: "ビジネス文書をつくろう",
+      ruby: "ビジネスぶんしょをつくろう",
+      description: "要点を箇条書きに。ボタンで文書を整えよう！",
+      en: "Business documents (Google Docs)",
+      icon: <FileText className="w-10 h-10 text-slate-400" />,
+      link: "/lessons/lesson7",
+      available: false,
+    },
+    {
+      id: 9,
+      num: 8,
+      course: "work",
+      title: "請求書をつくろう",
+      ruby: "せいきゅうしょをつくろう",
+      description: "計算式、セル結合、罫線で請求書を作ろう！",
+      en: "Invoices (Google Sheets)",
+      icon: <Sheet className="w-10 h-10 text-slate-400" />,
+      link: "/lessons/lesson8",
+      available: false,
+    },
+    {
+      id: 10,
+      num: 9,
+      course: "work",
+      title: "仕事で困らないパソコン術",
+      ruby: "しごとでこまらないパソコンじゅつ",
+      description: "ファイル整理、メール、セキュリティ、困ったとき！",
+      en: "Files, email, security, getting help",
+      icon: <ShieldCheck className="w-10 h-10 text-slate-400" />,
+      link: "/lessons/lesson9",
+      available: false,
+    },
+    {
+      id: 11,
+      num: 10,
+      course: "work",
+      title: "初めて見るアプリにチャレンジ",
+      ruby: "はじめてみるアプリにチャレンジ",
+      description: "5つのルールで、知らないアプリも使いこなそう！",
+      en: "Challenge: apps you have never seen",
+      icon: <AppWindow className="w-10 h-10 text-slate-400" />,
+      link: "/lessons/lesson10",
+      available: false,
     },
   ]
 
@@ -285,8 +355,17 @@ export default function Home() {
           mood="happy"
         />
 
+        {([
+          { key: "basic", title: "きほんコース", en: "Basic course — mouse, typing, Japanese input" },
+          { key: "work", title: "しごとコース", en: "Work course — skills for your future job" },
+        ] as const).map((course) => (
+        <section key={course.key} className="space-y-4">
+          <div className="flex items-baseline gap-3 px-1">
+            <h2 className="text-2xl font-bold text-slate-800">{course.title}</h2>
+            <span className="text-sm text-slate-400">{course.en}</span>
+          </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {lessons.map((lesson) => {
+          {lessons.filter((l) => l.course === course.key).map((lesson) => {
             const isCompleted = completedLessons.includes(lesson.id)
 
             return (
@@ -304,7 +383,7 @@ export default function Home() {
                   </div>
                   <div className="space-y-3 flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-bold text-blue-500 block">Lesson {lesson.id}</span>
+                      <span className="text-sm font-bold text-blue-500 block">Lesson {lesson.num}</span>
                       {isCompleted && (
                         <span className="bg-success text-success-foreground text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1 shadow-sm">
                           <CheckCircle2 className="w-3 h-3" /> CLEAR!
@@ -344,6 +423,8 @@ export default function Home() {
             )
           })}
         </div>
+        </section>
+        ))}
 
         {testEnabled && (
           <div className="relative bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl p-8 shadow-md border-2 border-amber-300 hover:border-amber-400 hover:shadow-xl transition-all">

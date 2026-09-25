@@ -20,12 +20,15 @@ export { Ruby }
 
 // ===== ステップ進行 =====
 
-export function useStepFlow(total: number, onComplete: () => void) {
-  const [step, setStepState] = useState(0)
-  const stepRef = useRef(0)
+export function useStepFlow(total: number, onComplete: () => void, initialStep = 0) {
+  const [step, setStepState] = useState(initialStep)
+  const stepRef = useRef(initialStep)
   const [showSuccess, setShowSuccess] = useState(false)
   const [successMsg, setSuccessMsg] = useState<React.ReactNode>("")
   const busyRef = useRef(false)
+  // onComplete は毎回新しい関数で渡されることが多いので、ref で持って succeed を安定させる
+  const onCompleteRef = useRef(onComplete)
+  onCompleteRef.current = onComplete
 
   const setStep = useCallback((n: number) => {
     stepRef.current = n
@@ -43,10 +46,10 @@ export function useStepFlow(total: number, onComplete: () => void) {
       setShowSuccess(false)
       busyRef.current = false
       const next = stepRef.current + 1
-      if (next >= total) onComplete()
+      if (next >= total) onCompleteRef.current()
       else setStep(next)
     }, 1400)
-  }, [total, onComplete, setStep])
+  }, [total, setStep])
 
   return { step, setStep, succeed, showSuccess, successMsg }
 }
