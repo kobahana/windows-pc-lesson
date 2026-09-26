@@ -25,6 +25,8 @@ export interface StudentRecord {
   skills?: Record<string, string>
   // タイピング計測の記録（1分間の文字数）
   typing?: TypingResult[]
+  // 補助の言語（lib/i18n/languages.ts の code）。この端末の中だけに保存する
+  lang?: string
 }
 
 export interface TypingResult {
@@ -118,6 +120,14 @@ export function upsertStudent(id: string, name?: string): StudentRecord {
   students[id] = record
   saveStudents(students)
   return record
+}
+
+export function setStudentLang(id: string, lang: string) {
+  const students = loadStudents()
+  const record = students[id]
+  if (!record || record.lang === lang) return
+  record.lang = lang
+  saveStudents(students)
 }
 
 export function getStudent(id: string): StudentRecord | null {

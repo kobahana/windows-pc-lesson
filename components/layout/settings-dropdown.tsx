@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Switch } from "@/components/ui/switch"
 import { useSettings } from "../providers/settings-provider"
+import { LanguagePicker } from "./language-picker"
+import { T } from "@/lib/i18n"
 
 export function SettingsDropdown() {
   const { showRuby, setShowRuby, soundEnabled, setSoundEnabled } = useSettings()
@@ -22,7 +24,7 @@ export function SettingsDropdown() {
           <Settings className="w-5 h-5" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56 p-2 rounded-xl">
+      <DropdownMenuContent align="end" className="w-64 p-2 rounded-xl">
         <div className="px-2 py-1.5 text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
           設定
         </div>
@@ -51,6 +53,11 @@ export function SettingsDropdown() {
             checked={soundEnabled}
             onCheckedChange={setSoundEnabled}
           />
+        </div>
+
+        <div className="p-2">
+          <LanguagePicker compact />
+          <p className="mt-1 text-[11px] text-slate-400">せつめいの言語 / <T>Language</T></p>
         </div>
 
         <div className="mt-1 pt-1 border-t border-slate-100">

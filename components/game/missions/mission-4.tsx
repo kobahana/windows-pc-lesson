@@ -13,6 +13,7 @@ import {
 } from "lucide-react"
 import { sounds } from "@/lib/sounds"
 import { usePlatform } from "@/lib/platform"
+import { T } from "@/lib/i18n"
 
 // 未接続時の「地球儀🚫」アイコン（白くはっきり見えるように修正）
 const DisconnectedGlobe = ({ className }: { className?: string }) => (
@@ -113,9 +114,9 @@ export function Mission4({ onComplete }: Mission4Props) {
   const getMessage = (): React.ReactNode => {
     switch (step) {
       case "intro": return <><Ruby rt="さいご">最後</Ruby>のミッション！これができれば<Ruby rt="かんぺき">完璧</Ruby>だよ！</>
-      case "wifi": return <><Ruby rt="みぎした">右下</Ruby>のアイコンを<Ruby rt="お">押</Ruby>して、「<span className="text-primary font-bold">Campus_WiFi</span>」につないでみよう！<span className="block text-xs text-muted-foreground mt-1">Click the icons at the bottom-right and connect to Campus_WiFi!</span></>
-      case "save": return <>大事だいじなデータだから「<span className="text-primary font-bold">{modKey} + S</span>」で<Ruby rt="ほぞん">保存</Ruby>してね！<span className="block text-xs text-muted-foreground mt-1">Press {modKey}+S to save!</span></>
-      case "shutdown": return <>Windowsマークをクリックして、<Ruby rt="でんげん">電源</Ruby>を<Ruby rt="き">切</Ruby>ってみよう！<span className="block text-xs text-muted-foreground mt-1">Click the Windows mark, then the power button to shut down!</span></>
+      case "wifi": return <><Ruby rt="みぎした">右下</Ruby>のアイコンを<Ruby rt="お">押</Ruby>して、「<span className="text-primary font-bold">Campus_WiFi</span>」につないでみよう！<span className="block text-xs text-muted-foreground mt-1"><T>Click the icons at the bottom-right and connect to Campus_WiFi!</T></span></>
+      case "save": return <><Ruby rt="だいじ">大事</Ruby>なデータだから「<span className="text-primary font-bold">{modKey} + S</span>」で<Ruby rt="ほぞん">保存</Ruby>してね！<span className="block text-xs text-muted-foreground mt-1"><T s="Press {key} to save!" v={{ key: `${modKey}+S` }} /></span></>
+      case "shutdown": return <>Windowsマークをクリックして、<Ruby rt="でんげん">電源</Ruby>を<Ruby rt="き">切</Ruby>ってみよう！<span className="block text-xs text-muted-foreground mt-1"><T>Click the Windows mark, then the power button to shut down!</T></span></>
       case "complete": return <>おめでとう！パソコンマスターだね！</>
       default: return ""
     }
@@ -208,7 +209,7 @@ export function Mission4({ onComplete }: Mission4Props) {
                             {wifiError && (
                               <p className="text-sm text-red-300 mt-2 font-bold animate-in fade-in">
                                 ✕ パスワードがちがうよ。「password123」と入力してね。
-                                <span className="block text-xs font-normal">Wrong password. Type "password123".</span>
+                                <span className="block text-xs font-normal"><T>Wrong password. Type "password123".</T></span>
                               </p>
                             )}
                           </div>

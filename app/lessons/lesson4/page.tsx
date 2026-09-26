@@ -8,6 +8,7 @@ import { RotateCcw, Trophy, Clock, Target } from "lucide-react"
 import { LessonHeader } from "@/components/layout/lesson-header"
 import { useSettings } from "@/components/providers/settings-provider"
 import { sounds } from "@/lib/sounds"
+import { T } from "@/lib/i18n"
 
 function cn(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(" ")
@@ -327,7 +328,7 @@ const chunks = currentWord.chunks || splitIntoChunks(currentWord.k, currentWord.
                 message={
                   <>
                     ひらがなを見て、漢字に変換して入力しよう！
-                    <span className="block text-xs text-slate-400 mt-1">Type the sentence, convert to kanji (Space), then press Enter!</span>
+                    <span className="block text-xs text-slate-400 mt-1"><T>Type the sentence, convert to kanji (Space), then press Enter!</T></span>
                   </>
                 }
                 mood="happy"

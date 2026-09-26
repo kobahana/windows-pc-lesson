@@ -19,6 +19,7 @@ import {
   Apple,
   Mail
 } from "lucide-react"
+import { T } from "@/lib/i18n"
 
 interface Mission1Props {
   onComplete: () => void
@@ -178,9 +179,9 @@ export function Mission1({ onComplete }: Mission1Props) {
       case "tutorial-click":
         return (
           <div className="space-y-2">
-            <p className="font-bold text-primary">【クリックの<Ruby rt="やりかた">やり方</Ruby> / Click】</p>
+            <p className="font-bold text-primary">【クリックの<Ruby rt="やりかた">やり方</Ruby> / <T>Click</T>】</p>
             <p>タッチパッドを<span className="font-bold text-primary">1<Ruby rt="ぼん">本</Ruby>の<Ruby rt="ゆび">指</Ruby>で1<Ruby rt="かい">回</Ruby>タップ</span>するよ！</p>
-            <p className="text-xs text-muted-foreground">Tap the touchpad once with 1 finger.</p>
+            <p className="text-xs text-muted-foreground"><T>Tap the touchpad once with 1 finger.</T></p>
             <div className="mt-4 flex justify-center">
               <div className="bg-gray-200 rounded-xl p-4 w-32 h-20 flex items-center justify-center relative">
                 <div className="absolute w-4 h-4 bg-primary rounded-full animate-ping" />
@@ -192,9 +193,9 @@ export function Mission1({ onComplete }: Mission1Props) {
       case "tutorial-doubleclick":
         return (
           <div className="space-y-2">
-            <p className="font-bold text-primary">【ダブルクリックの<Ruby rt="やりかた">やり方</Ruby> / Double click】</p>
+            <p className="font-bold text-primary">【ダブルクリックの<Ruby rt="やりかた">やり方</Ruby> / <T>Double click</T>】</p>
             <p>タッチパッドを<span className="font-bold text-primary">すばやく2<Ruby rt="かい">回</Ruby>タップ</span>するとアプリが<Ruby rt="ひら">開</Ruby>くよ！</p>
-            <p className="text-xs text-muted-foreground">Tap twice, quickly! It opens an app.</p>
+            <p className="text-xs text-muted-foreground"><T>Tap twice, quickly! It opens an app.</T></p>
             <div className="mt-4 flex justify-center">
               <div className="bg-gray-200 rounded-xl p-4 w-32 h-20 flex items-center justify-center relative">
                 <div className="flex gap-4">
@@ -209,10 +210,10 @@ export function Mission1({ onComplete }: Mission1Props) {
       case "tutorial-rightclick":
         return (
           <div className="space-y-2">
-            <p className="font-bold text-primary">【<Ruby rt="みぎ">右</Ruby>クリックの<Ruby rt="やりかた">やり方</Ruby> / Right click】</p>
+            <p className="font-bold text-primary">【<Ruby rt="みぎ">右</Ruby>クリックの<Ruby rt="やりかた">やり方</Ruby> / <T>Right click</T>】</p>
             <p>タッチパッドを<span className="font-bold text-primary">2<Ruby rt="ほん">本</Ruby>の<Ruby rt="ゆび">指</Ruby>で1<Ruby rt="かい">回</Ruby>タップ</span>するよ！</p>
             <p className="text-sm text-muted-foreground">（または、<Ruby rt="みぎした">右下</Ruby>のコーナーを<Ruby rt="お">押</Ruby>す）</p>
-            <p className="text-xs text-muted-foreground">Tap with 2 fingers.</p>
+            <p className="text-xs text-muted-foreground"><T>Tap with 2 fingers.</T></p>
             <div className="mt-4 flex justify-center">
               <div className="bg-gray-200 rounded-xl p-4 w-32 h-20 flex items-center justify-center relative gap-2">
                 <div className="w-4 h-4 bg-primary rounded-full animate-ping" />
@@ -224,9 +225,9 @@ export function Mission1({ onComplete }: Mission1Props) {
       case "tutorial-scroll":
         return (
           <div className="space-y-2">
-            <p className="font-bold text-primary">【スクロールの<Ruby rt="やりかた">やり方</Ruby> / Scroll】</p>
+            <p className="font-bold text-primary">【スクロールの<Ruby rt="やりかた">やり方</Ruby> / <T>Scroll</T>】</p>
             <p>タッチパッドを<span className="font-bold text-primary">2<Ruby rt="ほん">本</Ruby>の<Ruby rt="ゆび">指</Ruby>で<Ruby rt="うえ">上</Ruby>か<Ruby rt="した">下</Ruby>にスライド</span>するよ！</p>
-            <p className="text-xs text-muted-foreground">Slide 2 fingers up or down.</p>
+            <p className="text-xs text-muted-foreground"><T>Slide 2 fingers up or down.</T></p>
             <div className="mt-4 flex justify-center">
               <div className="bg-gray-200 rounded-xl p-4 w-32 h-20 flex items-center justify-center relative">
                 <div className="flex gap-2 animate-bounce">
@@ -242,10 +243,10 @@ export function Mission1({ onComplete }: Mission1Props) {
       case "tutorial-drag":
         return (
           <div className="space-y-2">
-            <p className="font-bold text-primary">【ドラッグの<Ruby rt="やりかた">やり方</Ruby> / Drag】</p>
+            <p className="font-bold text-primary">【ドラッグの<Ruby rt="やりかた">やり方</Ruby> / <T>Drag</T>】</p>
             <p><span className="font-bold text-primary">クリックしたまま<Ruby rt="ゆび">指</Ruby>を<Ruby rt="うご">動</Ruby>かす</span>と、ものを<Ruby rt="うご">動</Ruby>かせるよ！</p>
             <p className="text-sm text-muted-foreground">（タッチパッドを<Ruby rt="お">押</Ruby>しながらスライド）</p>
-            <p className="text-xs text-muted-foreground">Press and hold, then move your finger.</p>
+            <p className="text-xs text-muted-foreground"><T>Press and hold, then move your finger.</T></p>
             <div className="mt-4 flex justify-center items-center gap-4">
               <div className="bg-gray-200 rounded-xl p-4 w-32 h-20 flex items-center justify-center relative">
                 <div className="w-4 h-4 bg-primary rounded-full" />
@@ -259,9 +260,9 @@ export function Mission1({ onComplete }: Mission1Props) {
       case "tutorial-selectall":
         return (
           <div className="space-y-2">
-            <p className="font-bold text-primary">【<Ruby rt="ぜんぶ">全部</Ruby><Ruby rt="えら">選</Ruby>ぶ<Ruby rt="やりかた">やり方</Ruby> / Select all】</p>
+            <p className="font-bold text-primary">【<Ruby rt="ぜんぶ">全部</Ruby><Ruby rt="えら">選</Ruby>ぶ<Ruby rt="やりかた">やり方</Ruby> / <T>Select all</T>】</p>
             <p>キーボードの<span className="font-bold text-primary">「{modKey}」キーと「A」キーを<Ruby rt="どうじ">同時</Ruby>に<Ruby rt="お">押</Ruby>す</span>と、<Ruby rt="ぜんぶ">全部</Ruby><Ruby rt="えら">選</Ruby>べるよ！</p>
-            <p className="text-xs text-muted-foreground">Press {modKey} and A together to select everything.</p>
+            <p className="text-xs text-muted-foreground"><T s="Press {key} and A together to select everything." v={{ key: modKey }} /></p>
             <div className="mt-4 flex justify-center items-center gap-2">
               <div className="bg-gray-800 text-white px-3 py-2 rounded text-sm font-mono">{modKey}</div>
               <span className="text-lg">+</span>
@@ -273,28 +274,28 @@ export function Mission1({ onComplete }: Mission1Props) {
         return (
           <>
             <Ruby rt="やじるし">矢印</Ruby>（カーソル）を<Ruby rt="うご">動</Ruby>かして、この「スタート」ボタンを1<Ruby rt="かい">回</Ruby>タップ（クリック）して！
-            <span className="block text-xs text-muted-foreground mt-1">Click the START button!</span>
+            <span className="block text-xs text-muted-foreground mt-1"><T>Click the START button!</T></span>
           </>
         )
       case "doubleclick":
         return (
           <>
             <Ruby rt="つぎ">次</Ruby>はダブルクリック！「メール」アイコンを<span className="font-bold text-primary">すばやく2<Ruby rt="かい">回</Ruby>タップ</span>して、アプリを<Ruby rt="ひら">開</Ruby>いてみよう！
-            <span className="block text-xs text-muted-foreground mt-1">Double-click the Mail icon!</span>
+            <span className="block text-xs text-muted-foreground mt-1"><T>Double-click the Mail icon!</T></span>
           </>
         )
       case "rightclick":
         return (
           <>
             このフォルダを2<Ruby rt="ほん">本</Ruby><Ruby rt="ゆび">指</Ruby>でタップ（または<Ruby rt="みぎした">右下</Ruby>を<Ruby rt="お">押</Ruby>す）して、メニューを<Ruby rt="だ">出</Ruby>してみよう！
-            <span className="block text-xs text-muted-foreground mt-1">Right-click (2-finger tap) the folder!</span>
+            <span className="block text-xs text-muted-foreground mt-1"><T>Right-click (2-finger tap) the folder!</T></span>
           </>
         )
       case "scroll-drag":
         return (
           <>
             2<Ruby rt="ほん">本</Ruby><Ruby rt="ゆび">指</Ruby>で<Ruby rt="がめん">画面</Ruby>を<Ruby rt="した">下</Ruby>に<Ruby rt="うご">動</Ruby>かして（スクロール）、<Ruby rt="み">見</Ruby>つけた「りんご」を「カゴ」まで<Ruby rt="はこ">運</Ruby>んで（ドラッグ）！
-            <span className="block text-xs text-muted-foreground mt-1">Scroll down, find the apple, and drag it to the basket!</span>
+            <span className="block text-xs text-muted-foreground mt-1"><T>Scroll down, find the apple, and drag it to the basket!</T></span>
           </>
         )
       case "window":
@@ -496,7 +497,7 @@ export function Mission1({ onComplete }: Mission1Props) {
                       </div>
                       <p className="text-white text-center mt-4">
                         ↑ りんごをカゴにドラッグ！
-                        <span className="block text-xs text-white/70">Drag the apple to the basket!</span>
+                        <span className="block text-xs text-white/70"><T>Drag the apple to the basket!</T></span>
                       </p>
                     </div>
                   </div>
@@ -518,7 +519,7 @@ export function Mission1({ onComplete }: Mission1Props) {
                     )}
                   >
                     <span className="text-white text-2xl">🧺</span>
-                    <span className="absolute -bottom-6 text-white text-xs">カゴ / Basket</span>
+                    <span className="absolute -bottom-6 text-white text-xs">カゴ / <T>Basket</T></span>
                   </div>
                 </div>
               )}

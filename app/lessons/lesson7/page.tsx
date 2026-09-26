@@ -7,6 +7,7 @@ import { Ruby } from "@/components/game/character"
 import { IconReadingMission } from "@/components/lessons/l7/icon-reading"
 import { SummarizeMission } from "@/components/lessons/l7/summarize"
 import { BusinessDocMission } from "@/components/lessons/l7/business-doc"
+import { T } from "@/lib/i18n"
 
 const LESSON_ID = 8
 
@@ -57,7 +58,7 @@ export default function Lesson7Page() {
                 ],
                 extra: (
                   <Card className="space-y-2">
-                    <p className="font-bold text-slate-800">PDFにする<Ruby rt="ほうほう">方法</Ruby> / Save as PDF</p>
+                    <p className="font-bold text-slate-800">PDFにする<Ruby rt="ほうほう">方法</Ruby> / <T>Save as PDF</T></p>
                     <p className="text-slate-700">
                       「ファイル」→「ダウンロード」→「PDF ドキュメント（.pdf）」
                     </p>

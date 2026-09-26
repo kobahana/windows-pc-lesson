@@ -7,6 +7,7 @@ import { useState } from "react"
 import { Card, ChoiceQuiz, Keys, MissionFrame, Ruby, Tip, Warn, useAward, useStepFlow } from "@/components/lesson/kit"
 import { Lock, ShieldAlert, MessageSquare, Mail } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { T } from "@/lib/i18n"
 
 const LESSON_ID = 10
 
@@ -32,10 +33,10 @@ export function SecurityMission({ onComplete }: { onComplete: () => void }) {
   const [foundUrl, setFoundUrl] = useState(false)
 
   const messages: React.ReactNode[] = [
-    <><Ruby rt="りゅうがくせい">留学生</Ruby>をねらった<Ruby rt="さぎ">詐欺</Ruby>メール・SMS が<Ruby rt="おお">多</Ruby>いよ。<Ruby rt="あんぜん">安全</Ruby>か、あやしいか、<Ruby rt="み">見</Ruby><Ruby rt="わ">分</Ruby>けよう！<span className="block text-sm text-muted-foreground mt-1">Spot the scam messages.</span></>,
-    <>メールのリンクを<Ruby rt="ひら">開</Ruby>いたら、ログイン<Ruby rt="がめん">画面</Ruby>が<Ruby rt="で">出</Ruby>た。<Ruby rt="ほんもの">本物</Ruby>そうだけど…あやしいところをクリックしてね。<span className="block text-sm text-muted-foreground mt-1">This login page looks real. Click the suspicious part.</span></>,
-    <>パスワードの<Ruby rt="まも">守</Ruby>り<Ruby rt="かた">方</Ruby>を<Ruby rt="おぼ">覚</Ruby>えよう。<span className="block text-sm text-muted-foreground mt-1">Protect your passwords.</span></>,
-    <><Ruby rt="せき">席</Ruby>を<Ruby rt="はな">離</Ruby>れるときは、<Ruby rt="がめん">画面</Ruby>をロック！<span className="block text-sm text-muted-foreground mt-1">Lock your screen when you leave your desk.</span></>,
+    <><Ruby rt="りゅうがくせい">留学生</Ruby>をねらった<Ruby rt="さぎ">詐欺</Ruby>メール・SMS が<Ruby rt="おお">多</Ruby>いよ。<Ruby rt="あんぜん">安全</Ruby>か、あやしいか、<Ruby rt="み">見</Ruby><Ruby rt="わ">分</Ruby>けよう！<span className="block text-sm text-muted-foreground mt-1"><T>Spot the scam messages.</T></span></>,
+    <>メールのリンクを<Ruby rt="ひら">開</Ruby>いたら、ログイン<Ruby rt="がめん">画面</Ruby>が<Ruby rt="で">出</Ruby>た。<Ruby rt="ほんもの">本物</Ruby>そうだけど…あやしいところをクリックしてね。<span className="block text-sm text-muted-foreground mt-1"><T>This login page looks real. Click the suspicious part.</T></span></>,
+    <>パスワードの<Ruby rt="まも">守</Ruby>り<Ruby rt="かた">方</Ruby>を<Ruby rt="おぼ">覚</Ruby>えよう。<span className="block text-sm text-muted-foreground mt-1"><T>Protect your passwords.</T></span></>,
+    <><Ruby rt="せき">席</Ruby>を<Ruby rt="はな">離</Ruby>れるときは、<Ruby rt="がめん">画面</Ruby>をロック！<span className="block text-sm text-muted-foreground mt-1"><T>Lock your screen when you leave your desk.</T></span></>,
   ]
 
   return (

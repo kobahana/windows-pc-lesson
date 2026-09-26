@@ -11,6 +11,7 @@ import { Card, Keys, MissionFrame, Ruby, Tip, Warn, useAward, useStepFlow } from
 import { usePlatform } from "@/lib/platform"
 import { ClipboardList } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { T, useT } from "@/lib/i18n"
 
 const LESSON_ID = 7
 
@@ -77,9 +78,9 @@ function ClipboardBox({ content, history }: { content: string; history: string[]
         <ClipboardList className="w-6 h-6" />
       </div>
       <div className="min-w-0 flex-1">
-        <p className="text-xs font-bold text-violet-600">クリップボード（<Ruby rt="み">見</Ruby>えない<Ruby rt="はこ">箱</Ruby>） / Clipboard</p>
+        <p className="text-xs font-bold text-violet-600">クリップボード（<Ruby rt="み">見</Ruby>えない<Ruby rt="はこ">箱</Ruby>） / <T>Clipboard</T></p>
         <p key={content} className={cn("font-bold text-lg truncate animate-bounce-in", content ? "text-slate-800" : "text-slate-400")}>
-          {content || "（からっぽ / empty）"}
+          {content || <>（からっぽ / <T>empty</T>）</>}
         </p>
         {history.length > 0 && (
           <p className="text-xs text-slate-400 truncate">
@@ -95,6 +96,7 @@ const ADDRESS = "東京都新宿区西新宿2-8-1"
 const SELF_INTRO = "はじめまして。ベトナムから来ました。\n趣味は料理と写真です。\nどうぞよろしくお願いします。"
 
 export function ClipboardMission({ onComplete }: { onComplete: () => void }) {
+  const t = useT()
   const { step, succeed, showSuccess, successMsg } = useStepFlow(5, onComplete)
   const { modKey, isMac } = usePlatform()
   const award = useAward(LESSON_ID)
@@ -135,11 +137,11 @@ export function ClipboardMission({ onComplete }: { onComplete: () => void }) {
   }, [step, itemsField, placeField, succeed])
 
   const messages: React.ReactNode[] = [
-    <><Ruby rt="コピー">コピー</Ruby>すると、<Ruby rt="もじ">文字</Ruby>は「クリップボード」という<Ruby rt="み">見</Ruby>えない<Ruby rt="はこ">箱</Ruby>に<Ruby rt="はい">入</Ruby>るよ。<Ruby rt="はりつ">貼り付</Ruby>けると、<Ruby rt="はこ">箱</Ruby>の<Ruby rt="なか">中</Ruby>から<Ruby rt="で">出</Ruby>てくる！<span className="block text-sm text-muted-foreground mt-1">Copy puts text in an invisible box. Paste takes it out.</span></>,
-    <><Ruby rt="はこ">箱</Ruby>には<b>1つ</b>しか<Ruby rt="はい">入</Ruby>らないよ。<Ruby rt="ためし">試</Ruby>してみよう！<span className="block text-sm text-muted-foreground mt-1">The box holds only ONE thing.</span></>,
-    <>「<Ruby rt="き">切</Ruby>り<Ruby rt="と">取</Ruby>り」は、<Ruby rt="もじ">文字</Ruby>を<Ruby rt="いどう">移動</Ruby>するときに<Ruby rt="つか">使</Ruby>うよ。<Ruby rt="もと">元</Ruby>の<Ruby rt="ばしょ">場所</Ruby>からは<Ruby rt="き">消</Ruby>えるんだ。<span className="block text-sm text-muted-foreground mt-1">Cut = move text.</span></>,
-    <><Ruby rt="なが">長</Ruby>い<Ruby rt="ぶんしょう">文章</Ruby>は、マウスでなぞるより <Keys k="Mod+A" /> で<Ruby rt="ぜんぶ">全部</Ruby><Ruby rt="えら">選</Ruby>ぶと<Ruby rt="らく">楽</Ruby>だよ！<span className="block text-sm text-muted-foreground mt-1">Select all with {modKey}+A.</span></>,
-    <><Ruby rt="ほんもの">本物</Ruby>のブラウザでやってみよう！<Ruby rt="うえ">上</Ruby>のアドレスバーの URL をコピーして、ここに<Ruby rt="はりつ">貼り付</Ruby>けてね。<span className="block text-sm text-muted-foreground mt-1">Copy the real URL from the address bar.</span></>,
+    <><Ruby rt="コピー">コピー</Ruby>すると、<Ruby rt="もじ">文字</Ruby>は「クリップボード」という<Ruby rt="み">見</Ruby>えない<Ruby rt="はこ">箱</Ruby>に<Ruby rt="はい">入</Ruby>るよ。<Ruby rt="はりつ">貼り付</Ruby>けると、<Ruby rt="はこ">箱</Ruby>の<Ruby rt="なか">中</Ruby>から<Ruby rt="で">出</Ruby>てくる！<span className="block text-sm text-muted-foreground mt-1"><T>Copy puts text in an invisible box. Paste takes it out.</T></span></>,
+    <><Ruby rt="はこ">箱</Ruby>には<b>1つ</b>しか<Ruby rt="はい">入</Ruby>らないよ。<Ruby rt="ためし">試</Ruby>してみよう！<span className="block text-sm text-muted-foreground mt-1"><T>The box holds only ONE thing.</T></span></>,
+    <>「<Ruby rt="き">切</Ruby>り<Ruby rt="と">取</Ruby>り」は、<Ruby rt="もじ">文字</Ruby>を<Ruby rt="いどう">移動</Ruby>するときに<Ruby rt="つか">使</Ruby>うよ。<Ruby rt="もと">元</Ruby>の<Ruby rt="ばしょ">場所</Ruby>からは<Ruby rt="き">消</Ruby>えるんだ。<span className="block text-sm text-muted-foreground mt-1"><T>Cut = move text.</T></span></>,
+    <><Ruby rt="なが">長</Ruby>い<Ruby rt="ぶんしょう">文章</Ruby>は、マウスでなぞるより <Keys k="Mod+A" /> で<Ruby rt="ぜんぶ">全部</Ruby><Ruby rt="えら">選</Ruby>ぶと<Ruby rt="らく">楽</Ruby>だよ！<span className="block text-sm text-muted-foreground mt-1"><T s="Select all with {key}." v={{ key: `${modKey}+A` }} /></span></>,
+    <><Ruby rt="ほんもの">本物</Ruby>のブラウザでやってみよう！<Ruby rt="うえ">上</Ruby>のアドレスバーの URL をコピーして、ここに<Ruby rt="はりつ">貼り付</Ruby>けてね。<span className="block text-sm text-muted-foreground mt-1"><T>Copy the real URL from the address bar.</T></span></>,
   ]
 
   return (
@@ -157,14 +159,14 @@ export function ClipboardMission({ onComplete }: { onComplete: () => void }) {
               <div>
                 <p className="text-sm font-bold text-slate-500 mb-1">② ここをクリックして、<Keys k="Mod+V" /> で<Ruby rt="はりつ">貼り付</Ruby>け</p>
                 <Input
-                  placeholder="ここに貼り付け / Paste here"
+                  placeholder={`ここに貼り付け / ${t("Paste here")}`}
                   className="h-14 text-xl"
                   onPaste={(e) => {
                     const t = pasted(e)
                     if (t.trim() === ADDRESS) succeed("コピペ成功！")
                     else setWarn(<>コピーした<Ruby rt="もじ">文字</Ruby>が<Ruby rt="ちが">違</Ruby>うみたい。<Ruby rt="じゅうしょ">住所</Ruby>を<Ruby rt="ぜんぶ">全部</Ruby><Ruby rt="えら">選</Ruby>べているかな？</>)
                   }}
-                  onChange={(e) => { if (e.target.value && !e.target.value.includes("東京")) setWarn(<><Ruby rt="て">手</Ruby>で<Ruby rt="う">打</Ruby>たずに、コピーして<Ruby rt="はりつ">貼り付</Ruby>けてね / Don&apos;t type — paste!</>) }}
+                  onChange={(e) => { if (e.target.value && !e.target.value.includes("東京")) setWarn(<><Ruby rt="て">手</Ruby>で<Ruby rt="う">打</Ruby>たずに、コピーして<Ruby rt="はりつ">貼り付</Ruby>けてね / <T>Don&apos;t type — paste!</T></>) }}
                 />
               </div>
               <Warn>{warn}</Warn>
@@ -182,9 +184,9 @@ export function ClipboardMission({ onComplete }: { onComplete: () => void }) {
               <span className="text-3xl font-bold bg-red-50 border-2 border-red-200 rounded-xl px-6 py-3 select-text">りんご</span>
               <span className="text-3xl font-bold bg-orange-50 border-2 border-orange-200 rounded-xl px-6 py-3 select-text">みかん</span>
             </div>
-            <p className="text-xs text-center text-slate-400"><Ruby rt="もじ">文字</Ruby>をダブルクリックすると、すぐに<Ruby rt="えら">選</Ruby>べるよ / Double-click to select a word</p>
+            <p className="text-xs text-center text-slate-400"><Ruby rt="もじ">文字</Ruby>をダブルクリックすると、すぐに<Ruby rt="えら">選</Ruby>べるよ / <T>Double-click to select a word</T></p>
             <Input
-              placeholder="ここに貼り付け / Paste here"
+              placeholder={`ここに貼り付け / ${t("Paste here")}`}
               className="h-14 text-2xl text-center"
               onPaste={(e) => {
                 const t = pasted(e).trim()
@@ -221,7 +223,7 @@ export function ClipboardMission({ onComplete }: { onComplete: () => void }) {
             <div>
               <p className="text-sm font-bold text-slate-500 mb-1">② ここをクリック → <Keys k="Mod+V" /></p>
               <Textarea
-                placeholder="ここに貼り付け / Paste here"
+                placeholder={`ここに貼り付け / ${t("Paste here")}`}
                 className="text-lg h-32"
                 onPaste={(e) => {
                   const t = pasted(e)
@@ -243,7 +245,7 @@ export function ClipboardMission({ onComplete }: { onComplete: () => void }) {
             <div className="rounded-xl border-2 border-slate-200 overflow-hidden">
               <div className="bg-slate-100 px-3 py-2 flex items-center gap-2 text-slate-500 text-sm">
                 <span>←</span><span>→</span><span>⟳</span>
-                <span className="flex-1 bg-white rounded-full px-3 py-1 ring-4 ring-yellow-300 text-slate-700 truncate">https://…… ← ここ！ / Here!</span>
+                <span className="flex-1 bg-white rounded-full px-3 py-1 ring-4 ring-yellow-300 text-slate-700 truncate">https://…… ← ここ！ / <T>Here!</T></span>
               </div>
             </div>
             <p className="font-bold text-slate-600">
@@ -252,7 +254,7 @@ export function ClipboardMission({ onComplete }: { onComplete: () => void }) {
               ③ <Ruby rt="した">下</Ruby>をクリックして <Keys k="Mod+V" />
             </p>
             <Input
-              placeholder="URLを貼り付け / Paste the URL"
+              placeholder={`URLを貼り付け / ${t("Paste the URL")}`}
               className="h-14 text-lg"
               onPaste={(e) => {
                 const t = pasted(e).trim()

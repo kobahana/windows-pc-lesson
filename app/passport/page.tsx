@@ -12,11 +12,12 @@ import { WARMUP_TASKS } from "@/components/warmup/tasks"
 import { usePlatform } from "@/lib/platform"
 import { ChevronRight, Stamp, Zap } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { T, tx, useT } from "@/lib/i18n"
 
 const LEVELS: { level: SkillLevel; title: React.ReactNode; en: string }[] = [
-  { level: 1, title: <>★1 まずはこれだけ</>, en: "Must-know" },
-  { level: 2, title: <>★2 <Ruby rt="しごと">仕事</Ruby>がはやくなる</>, en: "Work faster" },
-  { level: 3, title: <>★3 できたら<Ruby rt="じょうきゅうしゃ">上級者</Ruby></>, en: "Advanced" },
+  { level: 1, title: <>★1 まずはこれだけ</>, en: tx("Must-know") },
+  { level: 2, title: <>★2 <Ruby rt="しごと">仕事</Ruby>がはやくなる</>, en: tx("Work faster") },
+  { level: 3, title: <>★3 できたら<Ruby rt="じょうきゅうしゃ">上級者</Ruby></>, en: tx("Advanced") },
 ]
 
 // その操作を練習できる場所。ウォームアップにあればその1問、なければレッスンのミッション
@@ -31,6 +32,7 @@ function practiceHref(skill: Skill): string {
 export default function PassportPage() {
   const { skills, ready, student } = useSettings()
   const { isMac } = usePlatform()
+  const t = useT()
   const got = SKILLS.filter((s) => skills[s.id]).length
 
   return (
@@ -46,7 +48,7 @@ export default function PassportPage() {
           </div>
           <div className="flex-1 space-y-2 text-center md:text-left">
             <h1 className="text-2xl font-bold text-slate-800">{student ? `${student.name ?? student.id} さんのパスポート` : "パスポート"}</h1>
-            <p className="text-slate-500">レッスンやウォームアップで<Ruby rt="ごうかく">合格</Ruby>すると、スタンプが<Ruby rt="お">押</Ruby>されるよ。<Ruby rt="ぜんぶ">全部</Ruby><Ruby rt="あつ">集</Ruby>めよう！カードを<Ruby rt="お">押</Ruby>すと<Ruby rt="れんしゅう">練習</Ruby>できるよ。<span className="block text-xs">Collect stamps by passing lessons and warm-ups. Tap a card to practice.</span></p>
+            <p className="text-slate-500">レッスンやウォームアップで<Ruby rt="ごうかく">合格</Ruby>すると、スタンプが<Ruby rt="お">押</Ruby>されるよ。<Ruby rt="ぜんぶ">全部</Ruby><Ruby rt="あつ">集</Ruby>めよう！カードを<Ruby rt="お">押</Ruby>すと<Ruby rt="れんしゅう">練習</Ruby>できるよ。<span className="block text-xs"><T>Collect stamps by passing lessons and warm-ups. Tap a card to practice.</T></span></p>
             <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
               <div className="h-full bg-amber-500 rounded-full transition-all" style={{ width: `${(got / SKILLS.length) * 100}%` }} />
             </div>
@@ -58,7 +60,7 @@ export default function PassportPage() {
 
         {LEVELS.map((lv) => (
           <section key={lv.level} className="space-y-3">
-            <h2 className="text-xl font-bold text-slate-800">{lv.title} <span className="text-sm font-normal text-slate-400">{lv.en}</span></h2>
+            <h2 className="text-xl font-bold text-slate-800">{lv.title} <span className="text-sm font-normal text-slate-400">{t(lv.en)}</span></h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {SKILLS.filter((s) => s.level === lv.level).map((s) => {
                 const at = skills[s.id]
@@ -72,7 +74,7 @@ export default function PassportPage() {
                     )}
                   >
                     <p className="font-bold text-slate-800">{s.ruby ? <Ruby rt={s.ruby}>{s.label}</Ruby> : s.label}</p>
-                    <p className="text-xs text-slate-400">{s.en}</p>
+                    <p className="text-xs text-slate-400">{t(s.en)}</p>
                     <p className="mt-auto pt-2 font-mono font-bold text-slate-600 text-sm">{formatKeys(s.keys, isMac)}</p>
                     <p className="flex items-center text-xs font-bold text-amber-600 group-hover:text-amber-700">
                       {at ? "もう一度" : ""}<Ruby rt="れんしゅう">練習</Ruby>する<ChevronRight className="w-3.5 h-3.5" />

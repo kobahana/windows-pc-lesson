@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, FIVE_RULES, Keys, MissionFrame, RuleBadge, Ruby, Tip, Warn, useAward, useStepFlow } from "@/components/lesson/kit"
 import { Bold, Printer, Trash2, Search, Settings, Share2, Undo2, FileText, MoreVertical, Menu } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { T, tx } from "@/lib/i18n"
 
 const LESSON_ID = 7
 
@@ -57,9 +58,9 @@ export function HoverIcon({
 }
 
 const ICON_QUIZ = [
-  { q: <><Ruby rt="いんさつ">印刷</Ruby>するボタンは？</>, en: "Print", answer: "印刷" },
-  { q: <>ゴミ<Ruby rt="ばこ">箱</Ruby>に<Ruby rt="す">捨</Ruby>てる（<Ruby rt="さくじょ">削除</Ruby>）ボタンは？</>, en: "Delete", answer: "削除" },
-  { q: <><Ruby rt="せってい">設定</Ruby>を<Ruby rt="か">変</Ruby>えるボタンは？</>, en: "Settings", answer: "設定" },
+  { q: <><Ruby rt="いんさつ">印刷</Ruby>するボタンは？</>, en: tx("Print"), answer: "印刷" },
+  { q: <>ゴミ<Ruby rt="ばこ">箱</Ruby>に<Ruby rt="す">捨</Ruby>てる（<Ruby rt="さくじょ">削除</Ruby>）ボタンは？</>, en: tx("Delete"), answer: "削除" },
+  { q: <><Ruby rt="せってい">設定</Ruby>を<Ruby rt="か">変</Ruby>えるボタンは？</>, en: tx("Settings"), answer: "設定" },
 ]
 const QUIZ_ICONS = [
   { name: "検索", icon: <Search className="w-7 h-7" /> },
@@ -86,7 +87,7 @@ export function FiveRulesMission({ onComplete }: { onComplete: () => void }) {
     const text = sel?.toString() ?? ""
     const inside = sel && sel.anchorNode && sentenceRef.current?.contains(sel.anchorNode)
     if (!text || !inside) {
-      setWarn(<>何も<Ruby rt="えら">選</Ruby>ばれていないよ。<Ruby rt="さき">先</Ruby>に「<Ruby rt="たいせつ">大切</Ruby>」をマウスでなぞって<Ruby rt="えら">選</Ruby>んでね / Select first!</>)
+      setWarn(<>何も<Ruby rt="えら">選</Ruby>ばれていないよ。<Ruby rt="さき">先</Ruby>に「<Ruby rt="たいせつ">大切</Ruby>」をマウスでなぞって<Ruby rt="えら">選</Ruby>んでね / <T>Select first!</T></>)
       return
     }
     if (text.includes("大切") && text.length <= 4) {
@@ -183,12 +184,12 @@ export function FiveRulesMission({ onComplete }: { onComplete: () => void }) {
   }
 
   const messages: React.ReactNode[] = [
-    <>アプリはたくさんあるけど、<Ruby rt="つか">使</Ruby>い<Ruby rt="かた">方</Ruby>のルールはだいたい<Ruby rt="おな">同</Ruby>じ！この5つを<Ruby rt="おぼ">覚</Ruby>えれば、<Ruby rt="はじ">初</Ruby>めてのアプリもこわくないよ。<span className="block text-sm text-muted-foreground mt-1">5 rules that work in almost every app.</span></>,
-    <><b>ルール1</b>：パソコンは「<Ruby rt="なに">何</Ruby>に」<Ruby rt="そうさ">操作</Ruby>するかを<Ruby rt="さき">先</Ruby>に<Ruby rt="おし">教</Ruby>えないと<Ruby rt="うご">動</Ruby>かないよ。<span className="block text-sm text-muted-foreground mt-1">Select first, then act.</span></>,
-    <><b>ルール2</b>：アイコンは<Ruby rt="かたち">形</Ruby>を<Ruby rt="み">見</Ruby>て<Ruby rt="よそう">予想</Ruby>！わからなければ、マウスを<Ruby rt="の">乗</Ruby>せて<Ruby rt="すこ">少</Ruby>し<Ruby rt="ま">待</Ruby>つと<Ruby rt="なまえ">名前</Ruby>が<Ruby rt="で">出</Ruby>るよ。<span className="block text-sm text-muted-foreground mt-1">Guess from the shape, hover to check.</span></>,
-    <><b>ルール3</b>：ボタンが<Ruby rt="み">見</Ruby>つからないときは<Ruby rt="みぎ">右</Ruby>クリック！そこでできることが<Ruby rt="で">出</Ruby>てくるよ。<span className="block text-sm text-muted-foreground mt-1">Can&apos;t find a button? Right-click!</span></>,
-    <><b>ルール4</b>：メニューの<Ruby rt="ばしょ">場所</Ruby>はだいたい<Ruby rt="き">決</Ruby>まっているよ。<Ruby rt="ひだりうえ">左上</Ruby>の「ファイル」「<Ruby rt="へんしゅう">編集</Ruby>」、<Ruby rt="みぎうえ">右上</Ruby>の <MoreVertical className="inline w-4 h-4" /> <Menu className="inline w-4 h-4" /> <Settings className="inline w-4 h-4" /> だ！<span className="block text-sm text-muted-foreground mt-1">Menus live in the usual places.</span></>,
-    <><b>ルール5</b>：<Ruby rt="しっぱい">失敗</Ruby>しても <Keys k="Mod+Z" /> で<Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>せる。だから、こわがらずにいろいろ<Ruby rt="ため">試</Ruby>してみよう！<span className="block text-sm text-muted-foreground mt-1">Don&apos;t be afraid — you can always undo.</span></>,
+    <>アプリはたくさんあるけど、<Ruby rt="つか">使</Ruby>い<Ruby rt="かた">方</Ruby>のルールはだいたい<Ruby rt="おな">同</Ruby>じ！この5つを<Ruby rt="おぼ">覚</Ruby>えれば、<Ruby rt="はじ">初</Ruby>めてのアプリもこわくないよ。<span className="block text-sm text-muted-foreground mt-1"><T>5 rules that work in almost every app.</T></span></>,
+    <><b>ルール1</b>：パソコンは「<Ruby rt="なに">何</Ruby>に」<Ruby rt="そうさ">操作</Ruby>するかを<Ruby rt="さき">先</Ruby>に<Ruby rt="おし">教</Ruby>えないと<Ruby rt="うご">動</Ruby>かないよ。<span className="block text-sm text-muted-foreground mt-1"><T>Select first, then act.</T></span></>,
+    <><b>ルール2</b>：アイコンは<Ruby rt="かたち">形</Ruby>を<Ruby rt="み">見</Ruby>て<Ruby rt="よそう">予想</Ruby>！わからなければ、マウスを<Ruby rt="の">乗</Ruby>せて<Ruby rt="すこ">少</Ruby>し<Ruby rt="ま">待</Ruby>つと<Ruby rt="なまえ">名前</Ruby>が<Ruby rt="で">出</Ruby>るよ。<span className="block text-sm text-muted-foreground mt-1"><T>Guess from the shape, hover to check.</T></span></>,
+    <><b>ルール3</b>：ボタンが<Ruby rt="み">見</Ruby>つからないときは<Ruby rt="みぎ">右</Ruby>クリック！そこでできることが<Ruby rt="で">出</Ruby>てくるよ。<span className="block text-sm text-muted-foreground mt-1"><T>Can&apos;t find a button? Right-click!</T></span></>,
+    <><b>ルール4</b>：メニューの<Ruby rt="ばしょ">場所</Ruby>はだいたい<Ruby rt="き">決</Ruby>まっているよ。<Ruby rt="ひだりうえ">左上</Ruby>の「ファイル」「<Ruby rt="へんしゅう">編集</Ruby>」、<Ruby rt="みぎうえ">右上</Ruby>の <MoreVertical className="inline w-4 h-4" /> <Menu className="inline w-4 h-4" /> <Settings className="inline w-4 h-4" /> だ！<span className="block text-sm text-muted-foreground mt-1"><T>Menus live in the usual places.</T></span></>,
+    <><b>ルール5</b>：<Ruby rt="しっぱい">失敗</Ruby>しても <Keys k="Mod+Z" /> で<Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>せる。だから、こわがらずにいろいろ<Ruby rt="ため">試</Ruby>してみよう！<span className="block text-sm text-muted-foreground mt-1"><T>Don&apos;t be afraid — you can always undo.</T></span></>,
   ]
 
   return (
@@ -200,12 +201,12 @@ export function FiveRulesMission({ onComplete }: { onComplete: () => void }) {
               <span className="w-12 h-12 rounded-full bg-indigo-600 text-white text-2xl font-bold flex items-center justify-center shrink-0">{r.n}</span>
               <div>
                 <p className="text-lg font-bold text-slate-800">{r.title}</p>
-                <p className="text-sm text-slate-400">{r.en}</p>
+                <p className="text-sm text-slate-400"><T>{r.en}</T></p>
               </div>
             </Card>
           ))}
           <div className="text-center pt-2">
-            <Button size="lg" className="text-lg px-10" onClick={() => succeed("やってみよう！")}>やってみる！ / Let&apos;s try</Button>
+            <Button size="lg" className="text-lg px-10" onClick={() => succeed("やってみよう！")}>やってみる！ / <T>Let&apos;s try</T></Button>
           </div>
         </div>
       )}
@@ -229,7 +230,7 @@ export function FiveRulesMission({ onComplete }: { onComplete: () => void }) {
       {step === 2 && (
         <Card className="space-y-4">
           <RuleBadge n={2} />
-          <p className="text-xl font-bold text-slate-800">{ICON_QUIZ[quizIndex].q} <span className="text-sm font-normal text-slate-400">{ICON_QUIZ[quizIndex].en}</span></p>
+          <p className="text-xl font-bold text-slate-800">{ICON_QUIZ[quizIndex].q} <span className="text-sm font-normal text-slate-400"><T>{ICON_QUIZ[quizIndex].en}</T></span></p>
           <div className="flex flex-wrap gap-3 justify-center py-4 bg-slate-50 rounded-xl">
             {QUIZ_ICONS.map((ic) => (
               <HoverIcon key={ic.name} icon={ic.icon} name={ic.name} onClick={() => pickIcon(ic.name)} className="p-3 border-2 border-slate-200 bg-white" />
@@ -345,7 +346,7 @@ export function FiveRulesMission({ onComplete }: { onComplete: () => void }) {
                 )}
               </div>
             </div>
-            <div className="h-28 p-4 text-slate-300">（<Ruby rt="ぶんしょ">文書</Ruby>の<Ruby rt="なかみ">中身</Ruby> / document）</div>
+            <div className="h-28 p-4 text-slate-300">（<Ruby rt="ぶんしょ">文書</Ruby>の<Ruby rt="なかみ">中身</Ruby> / <T>document</T>）</div>
           </div>
           <Warn>{warn}</Warn>
           {menuTask === 0 && <p className="text-sm text-slate-500"><Keys k="Mod+P" /> でも<Ruby rt="いんさつ">印刷</Ruby>できるよ。</p>}

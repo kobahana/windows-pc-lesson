@@ -9,6 +9,7 @@ import { Sheet } from "@/components/lessons/l8/sheet"
 import { type SheetState, evaluate, usesCellRef } from "@/components/lessons/l8/sheet-engine"
 import { CheckCircle2, Circle } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { T } from "@/lib/i18n"
 
 const INITIAL: SheetState = {
   cells: {
@@ -45,7 +46,7 @@ export function ExcelChallengeMission({ onComplete }: { onComplete: () => void }
   return (
     <MissionFrame
       wide
-      message={<><Ruby rt="かいしゃ">会社</Ruby>では Excel を<Ruby rt="つか">使</Ruby>うことも<Ruby rt="おお">多</Ruby>いよ。<Ruby rt="み">見</Ruby>た<Ruby rt="め">目</Ruby>はちがうけど…<Ruby rt="おぼ">覚</Ruby>えたことがそのまま<Ruby rt="つか">使</Ruby>えるかな？<Ruby rt="やりかた">やり方</Ruby>は<Ruby rt="おし">教</Ruby>えないよ！<span className="block text-sm text-muted-foreground mt-1">An Excel-style app. Same skills, different look.</span></>}
+      message={<><Ruby rt="かいしゃ">会社</Ruby>では Excel を<Ruby rt="つか">使</Ruby>うことも<Ruby rt="おお">多</Ruby>いよ。<Ruby rt="み">見</Ruby>た<Ruby rt="め">目</Ruby>はちがうけど…<Ruby rt="おぼ">覚</Ruby>えたことがそのまま<Ruby rt="つか">使</Ruby>えるかな？<Ruby rt="やりかた">やり方</Ruby>は<Ruby rt="おし">教</Ruby>えないよ！<span className="block text-sm text-muted-foreground mt-1"><T>An Excel-style app. Same skills, different look.</T></span></>}
       step={step}
       total={1}
       showSuccess={showSuccess}

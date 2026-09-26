@@ -13,12 +13,15 @@ import { loadStudents, type StudentRecord } from "@/lib/student-store"
 import { SKILLS } from "@/lib/skills"
 import { useTestEnabled } from "@/lib/test-settings"
 import { CheckCircle2 } from "lucide-react"
+import { T, tx, useT, useTJaEn } from "@/lib/i18n"
+import { LanguagePicker } from "@/components/layout/language-picker"
 import { STUDENT_ID_EXAMPLE, halfWidthProblem, katakanaProblem, normalizeStudentId, toKatakana } from "@/lib/input-check"
 
 const GUEST_KEY = "pclesson_guest"
 
 function LoginCard() {
   const { login } = useSettings()
+  const tJaEn = useTJaEn()
   const [idInput, setIdInput] = useState("")
   const [nameInput, setNameInput] = useState("")
   const [recentStudents, setRecentStudents] = useState<StudentRecord[]>([])
@@ -69,21 +72,23 @@ function LoginCard() {
         message={
           <>
             <Ruby rt="がくせきばんごう">学籍番号</Ruby>を<Ruby rt="い">入</Ruby>れてスタート！
-            <span className="block text-sm text-muted-foreground mt-1">Enter your Student ID to start!</span>
+            <span className="block text-sm text-muted-foreground mt-1"><T>Enter your Student ID to start!</T></span>
           </>
         }
         mood="happy"
       />
 
       <div className="bg-white rounded-3xl p-8 shadow-lg border-2 border-blue-100 space-y-6">
+        <LanguagePicker />
+
         <div className="flex items-center justify-center gap-3 text-blue-600">
           <IdCard className="w-10 h-10" />
-          <h2 className="text-2xl font-bold">ログイン / Login</h2>
+          <h2 className="text-2xl font-bold">ログイン / <T>Login</T></h2>
         </div>
 
         <div className="space-y-2">
           <label className="block font-bold text-slate-700">
-            <Ruby rt="がくせきばんごう">学籍番号</Ruby> <span className="text-sm font-normal text-slate-400">Student ID</span>
+            <Ruby rt="がくせきばんごう">学籍番号</Ruby> <span className="text-sm font-normal text-slate-400"><T>Student ID</T></span>
           </label>
           <Input
             value={idInput}
@@ -96,18 +101,18 @@ function LoginCard() {
           />
           {(idHint || (triedLogin && idError)) ? (
             <p className="text-sm font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">
-              ⚠️ {idHint ?? idError}
+              ⚠️ {tJaEn(idHint ?? idError)}
             </p>
           ) : (
             <p className="text-xs text-slate-400">
-              <Ruby rt="はんかく">半角</Ruby>（はんかく）で<Ruby rt="にゅうりょく">入力</Ruby> / Half-width
+              <Ruby rt="はんかく">半角</Ruby>（はんかく）で<Ruby rt="にゅうりょく">入力</Ruby> / <T>Half-width</T>
             </p>
           )}
         </div>
 
         <div className="space-y-2">
           <label className="block font-bold text-slate-700">
-            なまえ <span className="text-sm font-normal text-slate-400">Name（なくてもOK / optional）</span>
+            なまえ <span className="text-sm font-normal text-slate-400"><T>Name</T>（なくてもOK / <T>optional</T>）</span>
           </label>
           <Input
             value={nameInput}
@@ -120,10 +125,10 @@ function LoginCard() {
             autoComplete="off"
           />
           {nameHint ? (
-            <p className="text-sm font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">⚠️ {nameHint}</p>
+            <p className="text-sm font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded-xl px-3 py-2">⚠️ {tJaEn(nameHint)}</p>
           ) : (
             <p className="text-xs text-slate-400">
-              <Ruby rt="ぜんかく">全角</Ruby>カタカナで<Ruby rt="にゅうりょく">入力</Ruby> / Katakana
+              <Ruby rt="ぜんかく">全角</Ruby>カタカナで<Ruby rt="にゅうりょく">入力</Ruby> / <T>Katakana</T>
             </p>
           )}
         </div>
@@ -133,13 +138,13 @@ function LoginCard() {
           disabled={!idInput.trim()}
           className="w-full h-16 text-2xl font-bold bg-blue-600 hover:bg-blue-700 shadow-md"
         >
-          はじめる！ / Start!
+          はじめる！ / <T>Start!</T>
         </Button>
 
         {recentStudents.length > 0 && (
           <div className="pt-4 border-t border-slate-100">
             <p className="text-sm font-bold text-slate-500 mb-3">
-              <Ruby rt="まえ">前</Ruby>につかった<Ruby rt="ひと">人</Ruby>はタップ！ <span className="font-normal text-slate-400">Tap your ID</span>
+              <Ruby rt="まえ">前</Ruby>につかった<Ruby rt="ひと">人</Ruby>はタップ！ <span className="font-normal text-slate-400"><T>Tap your ID</T></span>
             </p>
             <div className="flex flex-wrap gap-2">
               {recentStudents.map((s) => (
@@ -159,7 +164,7 @@ function LoginCard() {
 
       <div className="flex justify-between items-center text-sm text-slate-400 px-2">
         <button onClick={startAsGuest} className="underline hover:text-slate-600">
-          とうろくしないで つかう / Skip
+          とうろくしないで つかう / <T>Skip</T>
         </button>
         <Link href="/teacher" className="underline hover:text-slate-600">
           先生用ページ
@@ -171,6 +176,7 @@ function LoginCard() {
 
 export default function Home() {
   const { ready, completedLessons, student, logout, skills } = useSettings()
+  const t = useT()
   const [guestMode, setGuestMode] = useState(false)
   // 先生の切り替えを定期的に確認し、「まとめテスト」の表示を反映する
   const testEnabled = useTestEnabled(true) ?? false
@@ -196,7 +202,7 @@ export default function Home() {
       title: "Windowsの基本操作",
       ruby: "Windowsのきほんそうさ",
       description: "マウス操作、Wi-Fi、保存、シャットダウンを覚えよう！",
-      en: "Mouse, Wi-Fi, Save & Shut down",
+      en: tx("Mouse, Wi-Fi, Save & Shut down"),
       icon: <Monitor className="w-10 h-10 text-blue-500" />,
       link: "/lessons/lesson1",
       available: true,
@@ -208,7 +214,7 @@ export default function Home() {
       title: "ホームポジションに慣れよう",
       ruby: "ホームポジションになれよう",
       description: "正しい指の置き方を覚えて、タイピングの準備をしよう！",
-      en: "Learn the home position",
+      en: tx("Learn the home position"),
       icon: <Keyboard className="w-10 h-10 text-slate-400" />,
       link: "/lessons/lesson2",
       available: true,
@@ -220,7 +226,7 @@ export default function Home() {
       title: "日本語をローマ字入力しよう",
       ruby: "にほんごをローマじにゅうりょくしよう",
       description: "「ん」や「っ」など、難しい打ち方を練習しよう！",
-      en: "Type Japanese in romaji",
+      en: tx("Type Japanese in romaji"),
       icon: <Languages className="w-10 h-10 text-slate-400" />,
       link: "/lessons/lesson3",
       available: true,
@@ -232,7 +238,7 @@ export default function Home() {
       title: "漢字変換マスターになろう",
       ruby: "かんじへんかんマスターになろう",
       description: "正しい漢字を選んで、文章を完成させよう！",
-      en: "Convert to kanji",
+      en: tx("Convert to kanji"),
       icon: <PenTool className="w-10 h-10 text-slate-400" />,
       link: "/lessons/lesson4",
       available: true,
@@ -244,7 +250,7 @@ export default function Home() {
       title: "ビジネス日本語をマスターしよう",
       ruby: "ビジネスにほんごをマスターしよう",
       description: "よく使うビジネス用語をタイピングして覚えよう！",
-      en: "Business Japanese typing",
+      en: tx("Business Japanese typing"),
       icon: <Briefcase className="w-10 h-10 text-slate-400" />,
       link: "/lessons/lesson5",
       available: true,
@@ -256,7 +262,7 @@ export default function Home() {
       title: "毎日つかう基本ワザ",
       ruby: "まいにちつかうきほんワザ",
       description: "半角/全角、コピペ、戻る・リロード、5つのルール！",
-      en: "Input mode, copy & paste, browser basics",
+      en: tx("Input mode, copy & paste, browser basics"),
       icon: <MousePointerClick className="w-10 h-10 text-slate-400" />,
       link: "/lessons/lesson6",
       available: true,
@@ -268,7 +274,7 @@ export default function Home() {
       title: "ビジネス文書をつくろう",
       ruby: "ビジネスぶんしょをつくろう",
       description: "要点を箇条書きに。ボタンで文書を整えよう！",
-      en: "Business documents (Google Docs)",
+      en: tx("Business documents (Google Docs)"),
       icon: <FileText className="w-10 h-10 text-slate-400" />,
       link: "/lessons/lesson7",
       available: true,
@@ -280,7 +286,7 @@ export default function Home() {
       title: "請求書をつくろう",
       ruby: "せいきゅうしょをつくろう",
       description: "計算式、セル結合、罫線で請求書を作ろう！",
-      en: "Invoices (Google Sheets)",
+      en: tx("Invoices (Google Sheets)"),
       icon: <Sheet className="w-10 h-10 text-slate-400" />,
       link: "/lessons/lesson8",
       available: true,
@@ -292,7 +298,7 @@ export default function Home() {
       title: "仕事で困らないパソコン術",
       ruby: "しごとでこまらないパソコンじゅつ",
       description: "ファイル整理、メール、セキュリティ、困ったとき！",
-      en: "Files, email, security, getting help",
+      en: tx("Files, email, security, getting help"),
       icon: <ShieldCheck className="w-10 h-10 text-slate-400" />,
       link: "/lessons/lesson9",
       available: true,
@@ -304,7 +310,7 @@ export default function Home() {
       title: "初めて見るアプリにチャレンジ",
       ruby: "はじめてみるアプリにチャレンジ",
       description: "5つのルールで、知らないアプリも使いこなそう！",
-      en: "Challenge: apps you have never seen",
+      en: tx("Challenge: apps you have never seen"),
       icon: <AppWindow className="w-10 h-10 text-slate-400" />,
       link: "/lessons/lesson10",
       available: true,
@@ -338,7 +344,7 @@ export default function Home() {
           </span>
           <button
             onClick={handleLogout}
-            title="ログアウト / Log out"
+            title={`ログアウト / ${t("Log out")}`}
             className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors"
           >
             <LogOut className="w-4 h-4" />
@@ -352,7 +358,7 @@ export default function Home() {
           message={
             <>
               こんにちは{student?.name ? `、${student.name}さん` : ""}！どの練習（れんしゅう）からはじめる？好きなコースをえらんでね！
-              <span className="block text-sm text-muted-foreground mt-1">Choose a course to start!</span>
+              <span className="block text-sm text-muted-foreground mt-1"><T>Choose a course to start!</T></span>
             </>
           }
           mood="happy"
@@ -361,28 +367,28 @@ export default function Home() {
         {/* まいにちの練習 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
-            { href: "/warmup", icon: <Zap className="w-7 h-7" />, title: <>ウォームアップ</>, sub: "授業のはじめに3問 / 3 quick tasks", color: "bg-rose-500" },
-            { href: "/typing", icon: <Timer className="w-7 h-7" />, title: <>タイピング<Ruby rt="けいそく">計測</Ruby></>, sub: "1分間で何文字？ / 1-minute test", color: "bg-sky-500" },
-            { href: "/passport", icon: <Stamp className="w-7 h-7" />, title: <>パスポート（{SKILLS.filter((x) => skills[x.id]).length}/{SKILLS.length}）</>, sub: "ショートカットのスタンプ帳 / Stamps", color: "bg-amber-500" },
+            { href: "/warmup", icon: <Zap className="w-7 h-7" />, title: <>ウォームアップ</>, sub: "授業のはじめに3問", en: tx("3 quick tasks"), color: "bg-rose-500" },
+            { href: "/typing", icon: <Timer className="w-7 h-7" />, title: <>タイピング<Ruby rt="けいそく">計測</Ruby></>, sub: "1分間で何文字？", en: tx("1-minute test"), color: "bg-sky-500" },
+            { href: "/passport", icon: <Stamp className="w-7 h-7" />, title: <>パスポート（{SKILLS.filter((x) => skills[x.id]).length}/{SKILLS.length}）</>, sub: "ショートカットのスタンプ帳", en: tx("Stamps"), color: "bg-amber-500" },
           ].map((c) => (
             <Link key={c.href} href={c.href} className="flex items-center gap-4 bg-white rounded-2xl p-4 shadow-sm border-2 border-transparent hover:border-blue-300 hover:shadow-md transition-all">
               <span className={`w-12 h-12 rounded-xl ${c.color} text-white flex items-center justify-center shrink-0`}>{c.icon}</span>
               <span>
                 <span className="block font-bold text-slate-800 text-lg">{c.title}</span>
-                <span className="block text-xs text-slate-400">{c.sub}</span>
+                <span className="block text-xs text-slate-400">{c.sub} / {t(c.en)}</span>
               </span>
             </Link>
           ))}
         </div>
 
         {([
-          { key: "basic", title: "きほんコース", en: "Basic course — mouse, typing, Japanese input" },
-          { key: "work", title: "しごとコース", en: "Work course — skills for your future job" },
+          { key: "basic", title: "きほんコース", en: tx("Basic course — mouse, typing, Japanese input") },
+          { key: "work", title: "しごとコース", en: tx("Work course — skills for your future job") },
         ] as const).map((course) => (
         <section key={course.key} className="space-y-4">
           <div className="flex items-baseline gap-3 px-1">
             <h2 className="text-2xl font-bold text-slate-800">{course.title}</h2>
-            <span className="text-sm text-slate-400">{course.en}</span>
+            <span className="text-sm text-slate-400">{t(course.en)}</span>
           </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {lessons.filter((l) => l.course === course.key).map((lesson) => {
@@ -403,7 +409,7 @@ export default function Home() {
                   </div>
                   <div className="space-y-3 flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-sm font-bold text-blue-500 block">Lesson {lesson.num}</span>
+                      <span className="text-sm font-bold text-blue-500 block">{t("Lesson {n}", { n: lesson.num })}</span>
                       {isCompleted && (
                         <span className="bg-success text-success-foreground text-[10px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1 shadow-sm">
                           <CheckCircle2 className="w-3 h-3" /> CLEAR!
@@ -418,7 +424,7 @@ export default function Home() {
 
                     <p className="text-slate-500 leading-relaxed pt-2">
                       {lesson.description}
-                      <span className="block text-xs text-slate-400 mt-1">{lesson.en}</span>
+                      <span className="block text-xs text-slate-400 mt-1">{t(lesson.en)}</span>
                     </p>
 
                     {lesson.available ? (
@@ -456,13 +462,13 @@ export default function Home() {
                 <ClipboardCheck className="w-10 h-10" />
               </div>
               <div className="space-y-3 flex-1">
-                <span className="text-sm font-bold text-amber-600 block">Final Test</span>
+                <span className="text-sm font-bold text-amber-600 block"><T>Final Test</T></span>
                 <h2 className="text-2xl font-bold text-slate-800 leading-relaxed">
                   まとめテスト
                 </h2>
                 <p className="text-slate-500 leading-relaxed pt-2">
                   5分間でどれだけクリアできるかな？全問クリアでボーナス問題もあるよ！
-                  <span className="block text-xs text-slate-400 mt-1">5-minute time attack — clear all for a bonus round!</span>
+                  <span className="block text-xs text-slate-400 mt-1"><T>5-minute time attack — clear all for a bonus round!</T></span>
                 </p>
                 <Link href="/test">
                   <Button className="mt-4 w-full text-lg h-12 shadow-md bg-amber-500 hover:bg-amber-600">
@@ -481,13 +487,13 @@ export default function Home() {
                 <ListChecks className="w-10 h-10" />
               </div>
               <div className="space-y-3 flex-1">
-                <span className="text-sm font-bold text-amber-600 block">Skill Test</span>
+                <span className="text-sm font-bold text-amber-600 block"><T>Skill Test</T></span>
                 <h2 className="text-2xl font-bold text-slate-800 leading-relaxed">
                   PC<Ruby rt="そうさ">操作</Ruby>テスト
                 </h2>
                 <p className="text-slate-500 leading-relaxed pt-2">
                   コピペ・半角/全角・ショートカットなど、パソコンの操作をテストするよ！
-                  <span className="block text-xs text-slate-400 mt-1">5-minute test of real PC operations</span>
+                  <span className="block text-xs text-slate-400 mt-1"><T>5-minute test of real PC operations</T></span>
                 </p>
                 <Link href="/skill-test">
                   <Button className="mt-4 w-full text-lg h-12 shadow-md bg-amber-500 hover:bg-amber-600">

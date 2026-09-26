@@ -13,6 +13,7 @@ import {
   AlignCenter, AlignLeft, AlignRight, List, ListOrdered, Bold, Undo2, Redo2, ChevronDown, MoreVertical, Menu, Link2, Printer, Trash2, Italic, Underline,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { T } from "@/lib/i18n"
 
 const GUESS = [
   {
@@ -96,9 +97,9 @@ export function IconReadingMission({ onComplete }: { onComplete: () => void }) {
 
   const g = GUESS[gi]
   const messages: React.ReactNode[] = [
-    <>このアイコン、<Ruby rt="なに">何</Ruby>をするボタンだと<Ruby rt="おも">思</Ruby>う？<Ruby rt="かたち">形</Ruby>をよく<Ruby rt="み">見</Ruby>て<Ruby rt="よそう">予想</Ruby>してみよう！<span className="block text-sm text-muted-foreground mt-1">Guess what the icon does from its shape.</span></>,
-    <>Googleドキュメントのツールバーだよ。<Ruby rt="しつもん">質問</Ruby>のボタンを<Ruby rt="さが">探</Ruby>してクリックしてね。<span className="block text-sm text-muted-foreground mt-1">Find the button in the Google Docs toolbar.</span></>,
-    <>アイコンの<Ruby rt="かたち">形</Ruby>にはルールがあるよ。Word でも Excel でも Gmail でも、ほとんど<Ruby rt="おな">同</Ruby>じ！<span className="block text-sm text-muted-foreground mt-1">Icons follow the same rules in almost every app.</span></>,
+    <>このアイコン、<Ruby rt="なに">何</Ruby>をするボタンだと<Ruby rt="おも">思</Ruby>う？<Ruby rt="かたち">形</Ruby>をよく<Ruby rt="み">見</Ruby>て<Ruby rt="よそう">予想</Ruby>してみよう！<span className="block text-sm text-muted-foreground mt-1"><T>Guess what the icon does from its shape.</T></span></>,
+    <>Googleドキュメントのツールバーだよ。<Ruby rt="しつもん">質問</Ruby>のボタンを<Ruby rt="さが">探</Ruby>してクリックしてね。<span className="block text-sm text-muted-foreground mt-1"><T>Find the button in the Google Docs toolbar.</T></span></>,
+    <>アイコンの<Ruby rt="かたち">形</Ruby>にはルールがあるよ。Word でも Excel でも Gmail でも、ほとんど<Ruby rt="おな">同</Ruby>じ！<span className="block text-sm text-muted-foreground mt-1"><T>Icons follow the same rules in almost every app.</T></span></>,
   ]
 
   return (
@@ -154,7 +155,7 @@ export function IconReadingMission({ onComplete }: { onComplete: () => void }) {
       {step === 2 && (
         <div className="space-y-4">
           <Card className="space-y-3">
-            <p className="font-bold text-lg text-slate-800">アイコンの<Ruby rt="ぶんぽう">文法</Ruby> / Icon grammar</p>
+            <p className="font-bold text-lg text-slate-800">アイコンの<Ruby rt="ぶんぽう">文法</Ruby> / <T>Icon grammar</T></p>
             {GRAMMAR.map((row, i) => (
               <div key={i} className="flex items-center gap-4 border-b border-slate-100 last:border-0 pb-3 last:pb-0">
                 <div className="flex gap-1 text-slate-700 [&>svg]:w-6 [&>svg]:h-6 w-28 shrink-0">{row.icons}</div>
@@ -163,7 +164,7 @@ export function IconReadingMission({ onComplete }: { onComplete: () => void }) {
             ))}
           </Card>
           <div className="text-center">
-            <Button size="lg" className="text-lg px-10" onClick={() => succeed("覚えた！")}>おぼえた！ / Got it</Button>
+            <Button size="lg" className="text-lg px-10" onClick={() => succeed("覚えた！")}>おぼえた！ / <T>Got it</T></Button>
           </div>
         </div>
       )}

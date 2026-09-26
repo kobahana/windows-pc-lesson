@@ -10,6 +10,7 @@ import {
   Monitor, Download, FileText, Image as ImageIcon, Folder, FolderPlus, FileSpreadsheet, FileArchive, File, ChevronRight, HardDrive,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { T } from "@/lib/i18n"
 
 const LESSON_ID = 10
 
@@ -117,10 +118,10 @@ export function FilesMission({ onComplete }: { onComplete: () => void }) {
   const [nameQuizDone, setNameQuizDone] = useState(false)
 
   const messages: React.ReactNode[] = [
-    <><Ruby rt="せんせい">先生</Ruby>からメールで「<Ruby rt="じかんわり">時間割</Ruby>.pdf」が<Ruby rt="とど">届</Ruby>いて、ダウンロードしたよ。どこにあるかな？<Ruby rt="さが">探</Ruby>して、ダブルクリックで<Ruby rt="ひら">開</Ruby>こう！<span className="block text-sm text-muted-foreground mt-1">Where did the downloaded file go? Find it and double-click.</span></>,
-    <>ファイル<Ruby rt="めい">名</Ruby>の<Ruby rt="さいご">最後</Ruby>の「.pdf」「.xlsx」を<b><Ruby rt="かくちょうし">拡張子</Ruby></b>というよ。ファイルの<Ruby rt="しゅるい">種類</Ruby>がわかるんだ。<span className="block text-sm text-muted-foreground mt-1">The extension tells you the file type.</span></>,
-    <>アルバイトのファイルをまとめよう！「ドキュメント」の<Ruby rt="なか">中</Ruby>に「{FOLDER_NAME}」フォルダを<Ruby rt="つく">作</Ruby>って、アルバイトのファイルだけをドラッグで<Ruby rt="い">入</Ruby>れてね。<span className="block text-sm text-muted-foreground mt-1">Make a folder and drag the work files into it.</span></>,
-    <>ファイル<Ruby rt="めい">名</Ruby>は「<b><Ruby rt="ひづけ">日付</Ruby>_<Ruby rt="ないよう">内容</Ruby>_<Ruby rt="あいて">相手</Ruby></b>」にすると、あとで<Ruby rt="さが">探</Ruby>しやすいよ。<span className="block text-sm text-muted-foreground mt-1">Name files like: date_content_partner.</span></>,
+    <><Ruby rt="せんせい">先生</Ruby>からメールで「<Ruby rt="じかんわり">時間割</Ruby>.pdf」が<Ruby rt="とど">届</Ruby>いて、ダウンロードしたよ。どこにあるかな？<Ruby rt="さが">探</Ruby>して、ダブルクリックで<Ruby rt="ひら">開</Ruby>こう！<span className="block text-sm text-muted-foreground mt-1"><T>Where did the downloaded file go? Find it and double-click.</T></span></>,
+    <>ファイル<Ruby rt="めい">名</Ruby>の<Ruby rt="さいご">最後</Ruby>の「.pdf」「.xlsx」を<b><Ruby rt="かくちょうし">拡張子</Ruby></b>というよ。ファイルの<Ruby rt="しゅるい">種類</Ruby>がわかるんだ。<span className="block text-sm text-muted-foreground mt-1"><T>The extension tells you the file type.</T></span></>,
+    <>アルバイトのファイルをまとめよう！「ドキュメント」の<Ruby rt="なか">中</Ruby>に「{FOLDER_NAME}」フォルダを<Ruby rt="つく">作</Ruby>って、アルバイトのファイルだけをドラッグで<Ruby rt="い">入</Ruby>れてね。<span className="block text-sm text-muted-foreground mt-1"><T>Make a folder and drag the work files into it.</T></span></>,
+    <>ファイル<Ruby rt="めい">名</Ruby>は「<b><Ruby rt="ひづけ">日付</Ruby>_<Ruby rt="ないよう">内容</Ruby>_<Ruby rt="あいて">相手</Ruby></b>」にすると、あとで<Ruby rt="さが">探</Ruby>しやすいよ。<span className="block text-sm text-muted-foreground mt-1"><T>Name files like: date_content_partner.</T></span></>,
   ]
 
   return (
@@ -136,7 +137,7 @@ export function FilesMission({ onComplete }: { onComplete: () => void }) {
                 </button>
               ))}
             </div>
-            {place !== "downloads" && <p className="text-sm text-slate-400 mt-6 text-center">ここにはないみたい… / Not here</p>}
+            {place !== "downloads" && <p className="text-sm text-slate-400 mt-6 text-center">ここにはないみたい… / <T>Not here</T></p>}
           </ExplorerFrame>
           <Warn>{warn}</Warn>
           <Tip>インターネットからダウンロードしたファイルは、ほとんど「<b>ダウンロード</b>」フォルダに<Ruby rt="はい">入</Ruby>るよ。「ファイルがない！」と<Ruby rt="おも">思</Ruby>ったら、まずここを<Ruby rt="み">見</Ruby>よう。</Tip>

@@ -12,6 +12,7 @@ import {
   AlignJustify, List, ListOrdered, RemoveFormatting, Minus, Plus, FileText, Star, MessageSquare, Lock,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { tx } from "@/lib/i18n"
 
 export type Align = "left" | "center" | "right" | "justify"
 export type ListKind = "none" | "bullet" | "number"
@@ -428,11 +429,11 @@ export function DocEditor({
   const handle = useCallback((id: ToolId) => {
     lastToolRef.current = id
     if (id === "undo") {
-      if (!undo()) onMessage?.("これ以上は戻せないよ / Nothing to undo")
+      if (!undo()) onMessage?.(`これ以上は戻せないよ / ${tx("Nothing to undo")}`)
       return
     }
     if (id === "redo") {
-      if (!redo()) onMessage?.("やり直すものがないよ / Nothing to redo")
+      if (!redo()) onMessage?.(`やり直すものがないよ / ${tx("Nothing to redo")}`)
       return
     }
     const sel = pageRef.current ? readSelection(pageRef.current) : null
@@ -441,12 +442,12 @@ export function DocEditor({
       commit(next)
       onMessage?.(null)
     } else if (!result.ok) {
-      if (result.reason === "unused") onMessage?.("このボタンは、今回の練習では使わないよ / Not used in this practice")
+      if (result.reason === "unused") onMessage?.(`このボタンは、今回の練習では使わないよ / ${tx("Not used in this practice")}`)
       else if (result.reason === "noSelection") {
         onMessage?.(
           id === "bold" || id === "italic" || id === "underline"
-            ? "先に文字をマウスでなぞって選んでね（ルール1） / Select the text first"
-            : "先に、変えたい行をクリックしてね（ルール1） / Click the line first",
+            ? `先に文字をマウスでなぞって選んでね（ルール1） / ${tx("Select the text first")}`
+            : `先に、変えたい行をクリックしてね（ルール1） / ${tx("Click the line first")}`,
         )
       }
     }
@@ -483,7 +484,7 @@ export function DocEditor({
 
   return (
     <div className="rounded-2xl border-2 border-slate-300 overflow-hidden bg-white shadow-md">
-      <DocHeader title={title} onTitleChange={onTitleChange} onMenu={() => onMessage?.("メニューは、今回の練習では使わないよ。ツールバーのボタンを使おう / Use the toolbar buttons")} />
+      <DocHeader title={title} onTitleChange={onTitleChange} onMenu={() => onMessage?.(`メニューは、今回の練習では使わないよ。ツールバーのボタンを使おう / ${tx("Use the toolbar buttons")}`)} />
       <div className="px-3 py-2">
         <DocToolbar onAction={handle} size={cur?.size ?? null} active={active} flash={flash} />
       </div>

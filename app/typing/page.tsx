@@ -14,6 +14,7 @@ import { addTypingResult, getStudent, type TypingResult } from "@/lib/student-st
 import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
 import { Timer, RotateCcw, Home, Trophy } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { T } from "@/lib/i18n"
 
 const LESSON_ID = 13
 const DURATION = 60
@@ -171,7 +172,7 @@ export default function TypingPage() {
       <main className="max-w-3xl w-full mx-auto p-4 md:p-8 space-y-6">
         {phase === "intro" && (
           <>
-            <Character mood="happy" message={<>1<Ruby rt="ぷんかん">分間</Ruby>で<Ruby rt="なんもじ">何文字</Ruby><Ruby rt="う">打</Ruby>てるかな？<Ruby rt="かんじ">漢字</Ruby>に<Ruby rt="へんかん">変換</Ruby>して、<Key>Enter</Key> で<Ruby rt="つぎ">次</Ruby>へ。<Ruby rt="まいかい">毎回</Ruby><Ruby rt="はか">測</Ruby>って、<Ruby rt="せいちょう">成長</Ruby>を<Ruby rt="み">見</Ruby>よう！<span className="block text-sm text-muted-foreground mt-1">How many characters can you type in 1 minute?</span></>} />
+            <Character mood="happy" message={<>1<Ruby rt="ぷんかん">分間</Ruby>で<Ruby rt="なんもじ">何文字</Ruby><Ruby rt="う">打</Ruby>てるかな？<Ruby rt="かんじ">漢字</Ruby>に<Ruby rt="へんかん">変換</Ruby>して、<Key>Enter</Key> で<Ruby rt="つぎ">次</Ruby>へ。<Ruby rt="まいかい">毎回</Ruby><Ruby rt="はか">測</Ruby>って、<Ruby rt="せいちょう">成長</Ruby>を<Ruby rt="み">見</Ruby>よう！<span className="block text-sm text-muted-foreground mt-1"><T>How many characters can you type in 1 minute?</T></span></>} />
             <Card className="text-center space-y-4">
               <div className="flex justify-center gap-3 flex-wrap text-sm">
                 {GOALS.map((g) => <span key={g.cpm} className="px-3 py-1 rounded-full bg-slate-100 text-slate-600 font-bold">{g.label}<Ruby rt="もじ">文字</Ruby></span>)}

@@ -12,6 +12,7 @@ import { Card, MissionFrame, RuleBadge, Ruby, Warn, useAward, useStepFlow } from
 import { HoverIcon } from "@/components/lessons/l6/five-rules"
 import { Bold, Italic, Link2, Palette, MoreVertical, StickyNote, Search, Pin, Plus, Lightbulb } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { T } from "@/lib/i18n"
 
 const LESSON_ID = 11
 
@@ -112,7 +113,7 @@ export function MemoAppMission({ onComplete }: { onComplete: () => void }) {
   return (
     <MissionFrame
       wide
-      message={<>このアプリは<Ruby rt="はじ">初</Ruby>めて<Ruby rt="み">見</Ruby>るね。<Ruby rt="やりかた">やり方</Ruby>は<Ruby rt="おし">教</Ruby>えないよ！<b>5つのルール</b>を<Ruby rt="おも">思</Ruby>い<Ruby rt="だ">出</Ruby>して、<Ruby rt="じぶん">自分</Ruby>で<Ruby rt="さが">探</Ruby>してみよう。<span className="block text-sm text-muted-foreground mt-1">No instructions — use the 5 rules to figure it out.</span></>}
+      message={<>このアプリは<Ruby rt="はじ">初</Ruby>めて<Ruby rt="み">見</Ruby>るね。<Ruby rt="やりかた">やり方</Ruby>は<Ruby rt="おし">教</Ruby>えないよ！<b>5つのルール</b>を<Ruby rt="おも">思</Ruby>い<Ruby rt="だ">出</Ruby>して、<Ruby rt="じぶん">自分</Ruby>で<Ruby rt="さが">探</Ruby>してみよう。<span className="block text-sm text-muted-foreground mt-1"><T>No instructions — use the 5 rules to figure it out.</T></span></>}
       step={step}
       total={GOALS.length}
       showSuccess={showSuccess}

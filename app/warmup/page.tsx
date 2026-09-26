@@ -15,6 +15,7 @@ import { WARMUP_TASKS, pickTasks, type WarmupTask } from "@/components/warmup/ta
 import { SKILLS } from "@/lib/skills"
 import { sounds } from "@/lib/sounds"
 import { Timer, Stamp, RotateCcw, Home } from "lucide-react"
+import { T } from "@/lib/i18n"
 
 const LESSON_ID = 12
 
@@ -91,8 +92,8 @@ export default function WarmupPage() {
               mood="happy"
               message={
                 focusTask
-                  ? <>パスポートの<Ruby rt="れんしゅう">練習</Ruby>だよ。できたらスタンプがもらえるよ！<span className="block text-sm text-muted-foreground mt-1">Practice this one to get the stamp.</span></>
-                  : <><Ruby rt="じゅぎょう">授業</Ruby>の<Ruby rt="まえ">前</Ruby>のウォームアップ！3<Ruby rt="もん">問</Ruby>だけ、<Ruby rt="はや">速</Ruby>くできるかな？<span className="block text-sm text-muted-foreground mt-1">3 quick tasks to warm up your fingers.</span></>
+                  ? <>パスポートの<Ruby rt="れんしゅう">練習</Ruby>だよ。できたらスタンプがもらえるよ！<span className="block text-sm text-muted-foreground mt-1"><T>Practice this one to get the stamp.</T></span></>
+                  : <><Ruby rt="じゅぎょう">授業</Ruby>の<Ruby rt="まえ">前</Ruby>のウォームアップ！3<Ruby rt="もん">問</Ruby>だけ、<Ruby rt="はや">速</Ruby>くできるかな？<span className="block text-sm text-muted-foreground mt-1"><T>3 quick tasks to warm up your fingers.</T></span></>
               }
             />
             {task && (

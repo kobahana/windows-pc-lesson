@@ -15,6 +15,7 @@ import { WARMUP_TASKS } from "@/components/warmup/tasks"
 import { useTestEnabled } from "@/lib/test-settings"
 import { AlignCenter, AlignLeft, AlignRight, AlignJustify, ClipboardCheck, Home, SkipForward, Timer } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { T } from "@/lib/i18n"
 
 const LESSON_ID = 14
 const TIME_LIMIT_SEC = 5 * 60
@@ -137,7 +138,7 @@ export default function SkillTestPage() {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col">{header}
         <main className="max-w-xl mx-auto p-8 text-center space-y-4">
-          <p className="text-lg text-slate-600">いまはテストの<Ruby rt="じかん">時間</Ruby>ではありません。<span className="block text-sm">The test is not open now.</span></p>
+          <p className="text-lg text-slate-600">いまはテストの<Ruby rt="じかん">時間</Ruby>ではありません。<span className="block text-sm"><T>The test is not open now.</T></span></p>
           <Link href="/"><Button>ホームへ</Button></Link>
         </main>
       </div>
@@ -148,7 +149,7 @@ export default function SkillTestPage() {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col">{header}
         <main className="max-w-xl mx-auto p-8 text-center space-y-4">
-          <p className="text-lg text-slate-600">テストを<Ruby rt="う">受</Ruby>けるには、ホームで<Ruby rt="がくせきばんごう">学籍番号</Ruby>を<Ruby rt="い">入</Ruby>れてログインしてね。<span className="block text-sm">Please log in with your student ID first.</span></p>
+          <p className="text-lg text-slate-600">テストを<Ruby rt="う">受</Ruby>けるには、ホームで<Ruby rt="がくせきばんごう">学籍番号</Ruby>を<Ruby rt="い">入</Ruby>れてログインしてね。<span className="block text-sm"><T>Please log in with your student ID first.</T></span></p>
           <Link href="/"><Button>ホームへ</Button></Link>
         </main>
       </div>
@@ -161,7 +162,7 @@ export default function SkillTestPage() {
       <main className="max-w-3xl w-full mx-auto p-4 md:p-8 space-y-6">
         {phase === "intro" && student && (
           <>
-            <Character mood="happy" message={<>PC<Ruby rt="そうさ">操作</Ruby>テストだよ。5<Ruby rt="ふんかん">分間</Ruby>で{MAX}<Ruby rt="もん">問</Ruby>。わからない<Ruby rt="もんだい">問題</Ruby>はスキップしてOK！<span className="block text-sm text-muted-foreground mt-1">{MAX} tasks in 5 minutes. You can skip.</span></>} />
+            <Character mood="happy" message={<>PC<Ruby rt="そうさ">操作</Ruby>テストだよ。5<Ruby rt="ふんかん">分間</Ruby>で{MAX}<Ruby rt="もん">問</Ruby>。わからない<Ruby rt="もんだい">問題</Ruby>はスキップしてOK！<span className="block text-sm text-muted-foreground mt-1"><T s="{n} tasks in 5 minutes. You can skip." v={{ n: MAX }} /></span></>} />
             <Card className="text-center space-y-4">
               <p className="text-slate-600"><Ruby rt="がくせきばんごう">学籍番号</Ruby>：<b className="font-mono text-xl text-slate-800">{student.id}</b>{student.name && <>（{student.name}）</>}</p>
               <p className="text-sm text-slate-500">この<Ruby rt="がくせきばんごう">学籍番号</Ruby>で<Ruby rt="きろく">記録</Ruby>されます。ちがうときは、ホームでログアウトしてね。</p>

@@ -15,6 +15,7 @@ import { SKILL_BY_ID, formatKeys } from "@/lib/skills"
 import { sounds } from "@/lib/sounds"
 import { cn } from "@/lib/utils"
 import { Stamp, Lightbulb } from "lucide-react"
+import { T, tx, useTJaEn } from "@/lib/i18n"
 
 export { Ruby }
 
@@ -132,7 +133,7 @@ export function Tip({ children, title }: { children: React.ReactNode; title?: Re
   return (
     <div className="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 text-slate-700 text-sm md:text-base">
       <p className="font-bold text-amber-700 flex items-center gap-1.5 mb-1">
-        <Lightbulb className="w-4 h-4" /> {title ?? <>ポイント / Tip</>}
+        <Lightbulb className="w-4 h-4" /> {title ?? <>ポイント / <T>Tip</T></>}
       </p>
       {children}
     </div>
@@ -141,7 +142,10 @@ export function Tip({ children, title }: { children: React.ReactNode; title?: Re
 
 // 間違いの声かけ（種類ごとに具体的に）
 export function Warn({ children }: { children: React.ReactNode }) {
+  // 「日本語 / English」の文字なら、「/」のあとを生徒の言語にする
+  const tJaEn = useTJaEn()
   if (!children) return null
+  if (typeof children === "string") children = tJaEn(children)
   return (
     <p className="text-sm md:text-base font-bold text-amber-800 bg-amber-50 border-2 border-amber-300 rounded-xl px-4 py-2 animate-fade-in">
       ⚠️ {children}
@@ -156,11 +160,11 @@ export function Card({ children, className }: { children: React.ReactNode; class
 // ===== アプリ共通の5つのルール =====
 
 export const FIVE_RULES: { n: number; title: React.ReactNode; en: string }[] = [
-  { n: 1, title: <>先に<Ruby rt="えら">選</Ruby>んでから、<Ruby rt="そうさ">操作</Ruby>する</>, en: "Select first, then act" },
-  { n: 2, title: <>アイコンは<Ruby rt="かたち">形</Ruby>から<Ruby rt="よそう">予想</Ruby>、マウスを<Ruby rt="の">乗</Ruby>せて<Ruby rt="たし">確</Ruby>かめる</>, en: "Guess from the icon, hover to check" },
-  { n: 3, title: <><Ruby rt="まよ">迷</Ruby>ったら<Ruby rt="みぎ">右</Ruby>クリック</>, en: "When lost, right-click" },
-  { n: 4, title: <>メニューの<Ruby rt="ばしょ">場所</Ruby>はだいたい<Ruby rt="き">決</Ruby>まっている</>, en: "Menus are in the usual places" },
-  { n: 5, title: <><Ruby rt="しっぱい">失敗</Ruby>したら <Keys k="Mod+Z" /></>, en: "Made a mistake? Undo" },
+  { n: 1, title: <>先に<Ruby rt="えら">選</Ruby>んでから、<Ruby rt="そうさ">操作</Ruby>する</>, en: tx("Select first, then act") },
+  { n: 2, title: <>アイコンは<Ruby rt="かたち">形</Ruby>から<Ruby rt="よそう">予想</Ruby>、マウスを<Ruby rt="の">乗</Ruby>せて<Ruby rt="たし">確</Ruby>かめる</>, en: tx("Guess from the icon, hover to check") },
+  { n: 3, title: <><Ruby rt="まよ">迷</Ruby>ったら<Ruby rt="みぎ">右</Ruby>クリック</>, en: tx("When lost, right-click") },
+  { n: 4, title: <>メニューの<Ruby rt="ばしょ">場所</Ruby>はだいたい<Ruby rt="き">決</Ruby>まっている</>, en: tx("Menus are in the usual places") },
+  { n: 5, title: <><Ruby rt="しっぱい">失敗</Ruby>したら <Keys k="Mod+Z" /></>, en: tx("Made a mistake? Undo") },
 ]
 
 export function RuleBadge({ n }: { n: number }) {
@@ -209,8 +213,8 @@ export function SkillStampToast() {
           <Stamp className="w-6 h-6" />
         </div>
         <div>
-          <p className="text-xs font-bold text-amber-600">スタンプGET！ / New stamp</p>
-          <p className="font-bold text-slate-800">{current.label}</p>
+          <p className="text-xs font-bold text-amber-600">スタンプGET！ / <T>New stamp</T></p>
+          <p className="font-bold text-slate-800">{current.label} <span className="text-xs font-normal text-slate-500"><T>{current.en}</T></span></p>
           <p className="text-xs text-slate-500">{formatKeys(current.keys, isMac)}</p>
         </div>
       </div>
@@ -250,7 +254,7 @@ export function ChoiceQuiz({ questions, onDone, columns = 1 }: { questions: Quiz
       <p className="text-sm text-slate-400 text-center">{qi + 1} / {questions.length}</p>
       <div>
         <p className="text-xl font-bold text-slate-800">{q.q}</p>
-        {q.en && <p className="text-sm text-slate-400">{q.en}</p>}
+        {q.en && <p className="text-sm text-slate-400"><T>{q.en}</T></p>}
       </div>
       {q.visual}
       <div className={cn("grid gap-3", columns === 2 && "md:grid-cols-2", columns === 3 && "md:grid-cols-3")}>

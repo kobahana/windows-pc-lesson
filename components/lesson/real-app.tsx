@@ -12,6 +12,7 @@ import { Card, MissionFrame, Ruby, Tip, Warn, useStepFlow } from "@/components/l
 import { useSettings } from "@/components/providers/settings-provider"
 import { ExternalLink } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { T } from "@/lib/i18n"
 
 export interface RealAppConfig {
   lessonId: number
@@ -48,8 +49,8 @@ export function RealAppMission({ config, onComplete }: { config: RealAppConfig; 
   }
 
   const messages: React.ReactNode[] = [
-    <>いよいよ<Ruby rt="ほんもの">本物</Ruby>の{config.appName}で<Ruby rt="つく">作</Ruby>ってみよう！できたら、<Ruby rt="した">下</Ruby>のチェックリストに<Ruby rt="じぶん">自分</Ruby>でチェックしてね。<span className="block text-sm text-muted-foreground mt-1">Now make it in the real {config.appName}. Check each item yourself.</span></>,
-    <><Ruby rt="さいご">最後</Ruby>に<Ruby rt="せんせい">先生</Ruby>に<Ruby rt="ていしゅつ">提出</Ruby>しよう。<Ruby rt="みぎうえ">右上</Ruby>の「<Ruby rt="きょうゆう">共有</Ruby>」ボタンからリンクをコピーして、ここに<Ruby rt="はりつ">貼り付</Ruby>けてね。<span className="block text-sm text-muted-foreground mt-1">Share it: copy the link and paste it here.</span></>,
+    <>いよいよ<Ruby rt="ほんもの">本物</Ruby>の{config.appName}で<Ruby rt="つく">作</Ruby>ってみよう！できたら、<Ruby rt="した">下</Ruby>のチェックリストに<Ruby rt="じぶん">自分</Ruby>でチェックしてね。<span className="block text-sm text-muted-foreground mt-1"><T s="Now make it in the real {app}. Check each item yourself." v={{ app: config.appName }} /></span></>,
+    <><Ruby rt="さいご">最後</Ruby>に<Ruby rt="せんせい">先生</Ruby>に<Ruby rt="ていしゅつ">提出</Ruby>しよう。<Ruby rt="みぎうえ">右上</Ruby>の「<Ruby rt="きょうゆう">共有</Ruby>」ボタンからリンクをコピーして、ここに<Ruby rt="はりつ">貼り付</Ruby>けてね。<span className="block text-sm text-muted-foreground mt-1"><T>Share it: copy the link and paste it here.</T></span></>,
   ]
 
   return (
@@ -78,7 +79,7 @@ export function RealAppMission({ config, onComplete }: { config: RealAppConfig; 
             ))}
             <div className="text-center pt-2">
               <Button size="lg" disabled={!checks.every(Boolean)} onClick={() => setStep(1)}>
-                <Ruby rt="ぜんぶ">全部</Ruby>できた！ / All done
+                <Ruby rt="ぜんぶ">全部</Ruby>できた！ / <T>All done</T>
               </Button>
             </div>
           </Card>
@@ -123,12 +124,12 @@ export function RealAppMission({ config, onComplete }: { config: RealAppConfig; 
               <Input value={link} onChange={(e) => setLink(e.target.value)} placeholder={`${config.linkPrefix}…`} className="h-12 text-base" />
               <Warn>{warn}</Warn>
               <div className="flex flex-wrap gap-3 justify-center">
-                <Button size="lg" onClick={submit} disabled={!link.trim()}><Ruby rt="ていしゅつ">提出</Ruby>する / Submit</Button>
+                <Button size="lg" onClick={submit} disabled={!link.trim()}><Ruby rt="ていしゅつ">提出</Ruby>する / <T>Submit</T></Button>
                 <Button size="lg" variant="ghost" className="text-slate-500" onClick={() => succeed("おつかれさま！")}>
-                  <Ruby rt="せんせい">先生</Ruby>の<Ruby rt="しじ">指示</Ruby>で<Ruby rt="ていしゅつ">提出</Ruby>しない / Skip
+                  <Ruby rt="せんせい">先生</Ruby>の<Ruby rt="しじ">指示</Ruby>で<Ruby rt="ていしゅつ">提出</Ruby>しない / <T>Skip</T>
                 </Button>
               </div>
-              <Tip title={<><Ruby rt="ちゅうい">注意</Ruby> / Be careful</>}>
+              <Tip title={<><Ruby rt="ちゅうい">注意</Ruby> / <T>Be careful</T></>}>
                 「リンクを<Ruby rt="し">知</Ruby>っている<Ruby rt="ぜんいん">全員</Ruby>」にすると、リンクが<Ruby rt="ほか">他</Ruby>の<Ruby rt="ひと">人</Ruby>に<Ruby rt="わた">渡</Ruby>ったら<Ruby rt="だれ">誰</Ruby>でも<Ruby rt="み">見</Ruby>られるよ。<Ruby rt="こじんじょうほう">個人情報</Ruby>が<Ruby rt="はい">入</Ruby>った<Ruby rt="ぶんしょ">文書</Ruby>は、<Ruby rt="あいて">相手</Ruby>のメールアドレスを<Ruby rt="い">入</Ruby>れて<Ruby rt="きょうゆう">共有</Ruby>しよう。
               </Tip>
             </Card>

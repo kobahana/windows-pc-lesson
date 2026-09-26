@@ -10,6 +10,7 @@ import { Sheet } from "./sheet"
 import { type SheetState, evaluate, usesCellRef, usesOnlyNumbers } from "./sheet-engine"
 import { CheckCircle2, Circle } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { T } from "@/lib/i18n"
 
 interface Target {
   cell: string
@@ -89,9 +90,9 @@ export function ArithmeticMission({ onComplete }: { onComplete: () => void }) {
   }
 
   const messages: React.ReactNode[] = [
-    <>スプレッドシートで<Ruby rt="けいさん">計算</Ruby>するときは、<b><Ruby rt="さいしょ">最初</Ruby>に「=」</b>！<Ruby rt="きごう">記号</Ruby>は、ふだんの<Ruby rt="さんすう">算数</Ruby>と<Ruby rt="すこ">少</Ruby>しちがうよ。<span className="block text-sm text-muted-foreground mt-1">Start every formula with =.</span></>,
-    <>まずは<b><Ruby rt="かず">数</Ruby></b>で<Ruby rt="しき">式</Ruby>を<Ruby rt="い">入</Ruby>れよう。<Ruby rt="きいろ">黄色</Ruby>のセルをクリックして、<Ruby rt="う">打</Ruby>って、<Key>Enter</Key>！<span className="block text-sm text-muted-foreground mt-1">Type formulas with numbers in the yellow cells.</span></>,
-    <><Ruby rt="こんど">今度</Ruby>は<b>セル</b>で<Ruby rt="しき">式</Ruby>を<Ruby rt="い">入</Ruby>れよう。「=」を<Ruby rt="う">打</Ruby>ったあと、A2 のセルを<b>クリック</b>すると、セルの<Ruby rt="なまえ">名前</Ruby>が<Ruby rt="しき">式</Ruby>に<Ruby rt="はい">入</Ruby>るよ！<span className="block text-sm text-muted-foreground mt-1">Now use cell names. Click a cell to add it to the formula.</span></>,
+    <>スプレッドシートで<Ruby rt="けいさん">計算</Ruby>するときは、<b><Ruby rt="さいしょ">最初</Ruby>に「=」</b>！<Ruby rt="きごう">記号</Ruby>は、ふだんの<Ruby rt="さんすう">算数</Ruby>と<Ruby rt="すこ">少</Ruby>しちがうよ。<span className="block text-sm text-muted-foreground mt-1"><T>Start every formula with =.</T></span></>,
+    <>まずは<b><Ruby rt="かず">数</Ruby></b>で<Ruby rt="しき">式</Ruby>を<Ruby rt="い">入</Ruby>れよう。<Ruby rt="きいろ">黄色</Ruby>のセルをクリックして、<Ruby rt="う">打</Ruby>って、<Key>Enter</Key>！<span className="block text-sm text-muted-foreground mt-1"><T>Type formulas with numbers in the yellow cells.</T></span></>,
+    <><Ruby rt="こんど">今度</Ruby>は<b>セル</b>で<Ruby rt="しき">式</Ruby>を<Ruby rt="い">入</Ruby>れよう。「=」を<Ruby rt="う">打</Ruby>ったあと、A2 のセルを<b>クリック</b>すると、セルの<Ruby rt="なまえ">名前</Ruby>が<Ruby rt="しき">式</Ruby>に<Ruby rt="はい">入</Ruby>るよ！<span className="block text-sm text-muted-foreground mt-1"><T>Now use cell names. Click a cell to add it to the formula.</T></span></>,
   ]
 
   return (
@@ -118,7 +119,7 @@ export function ArithmeticMission({ onComplete }: { onComplete: () => void }) {
             <p className="mt-1"><Ruby rt="れい">例</Ruby>：<span className="font-mono font-bold">=100*3</span> → <b>300</b></p>
           </Tip>
           <div className="text-center">
-            <Button size="lg" className="text-lg px-10" onClick={() => setStep(1)}>わかった！ / Got it</Button>
+            <Button size="lg" className="text-lg px-10" onClick={() => setStep(1)}>わかった！ / <T>Got it</T></Button>
           </div>
         </div>
       )}
@@ -142,7 +143,7 @@ export function ArithmeticMission({ onComplete }: { onComplete: () => void }) {
           <div className="space-y-3">
             <TargetList state={state} targets={step === 1 ? NUM_TARGETS : CELL_TARGETS} showExample={showExample} />
             {!showExample && (
-              <button className="text-sm text-slate-500 underline" onClick={() => setShowExample(true)}><Ruby rt="こた">答</Ruby>えの<Ruby rt="れい">例</Ruby>を<Ruby rt="み">見</Ruby>る / Show examples</button>
+              <button className="text-sm text-slate-500 underline" onClick={() => setShowExample(true)}><Ruby rt="こた">答</Ruby>えの<Ruby rt="れい">例</Ruby>を<Ruby rt="み">見</Ruby>る / <T>Show examples</T></button>
             )}
           </div>
         </div>
@@ -183,9 +184,9 @@ export function WhyCellsMission({ onComplete }: { onComplete: () => void }) {
   }
 
   const messages: React.ReactNode[] = [
-    <>ノートの<Ruby rt="きんがく">金額</Ruby>を2つの<Ruby rt="ほうほう">方法</Ruby>で<Ruby rt="けいさん">計算</Ruby>してみよう。D2 は<b><Ruby rt="かず">数</Ruby></b>で（=120*3）、E2 は<b>セル</b>で（=B2*C2）！<span className="block text-sm text-muted-foreground mt-1">D2 with numbers, E2 with cells.</span></>,
-    <>たいへん！ノートの<Ruby rt="たんか">単価</Ruby>が <b>150<Ruby rt="えん">円</Ruby></b> に<Ruby rt="あ">上</Ruby>がった！B2 を 150 に<Ruby rt="か">変</Ruby>えてみよう。<span className="block text-sm text-muted-foreground mt-1">The price went up! Change B2 to 150.</span></>,
-    <>D2 と E2、どうなった？<span className="block text-sm text-muted-foreground mt-1">What happened to D2 and E2?</span></>,
+    <>ノートの<Ruby rt="きんがく">金額</Ruby>を2つの<Ruby rt="ほうほう">方法</Ruby>で<Ruby rt="けいさん">計算</Ruby>してみよう。D2 は<b><Ruby rt="かず">数</Ruby></b>で（=120*3）、E2 は<b>セル</b>で（=B2*C2）！<span className="block text-sm text-muted-foreground mt-1"><T>D2 with numbers, E2 with cells.</T></span></>,
+    <>たいへん！ノートの<Ruby rt="たんか">単価</Ruby>が <b>150<Ruby rt="えん">円</Ruby></b> に<Ruby rt="あ">上</Ruby>がった！B2 を 150 に<Ruby rt="か">変</Ruby>えてみよう。<span className="block text-sm text-muted-foreground mt-1"><T>The price went up! Change B2 to 150.</T></span></>,
+    <>D2 と E2、どうなった？<span className="block text-sm text-muted-foreground mt-1"><T>What happened to D2 and E2?</T></span></>,
   ]
 
   return (
@@ -217,7 +218,7 @@ export function WhyCellsMission({ onComplete }: { onComplete: () => void }) {
               <p className="text-red-600 font-bold">D2（<Ruby rt="かず">数</Ruby>）：{String(evaluate(state, "D2"))} のまま… ✕</p>
               <p className="text-success font-bold">E2（セル）：{String(evaluate(state, "E2"))} に<Ruby rt="か">変</Ruby>わった！ ◯</p>
               <p className="text-slate-700 text-sm">セルで<Ruby rt="い">入</Ruby>れると、<Ruby rt="すうじ">数字</Ruby>を<Ruby rt="か">変</Ruby>えたときに<Ruby rt="こた">答</Ruby>えも<Ruby rt="じどう">自動</Ruby>で<Ruby rt="か">変</Ruby>わる。<Ruby rt="しごと">仕事</Ruby>では<b><Ruby rt="かなら">必</Ruby>ずセルで<Ruby rt="い">入</Ruby>れよう</b>！</p>
-              <Button className="w-full" onClick={() => succeed("セルで入れる理由、わかった！")}>わかった！ / Got it</Button>
+              <Button className="w-full" onClick={() => succeed("セルで入れる理由、わかった！")}>わかった！ / <T>Got it</T></Button>
             </div>
           )}
         </Card>

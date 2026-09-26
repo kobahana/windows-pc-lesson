@@ -12,6 +12,7 @@ import { halfWidthProblem, katakanaProblem } from "@/lib/input-check"
 import { usePlatform } from "@/lib/platform"
 import { CheckCircle2 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { T, tx } from "@/lib/i18n"
 
 const LESSON_ID = 7
 
@@ -46,7 +47,7 @@ function PracticeField({
   const problem = !value || ok
     ? null
     : field.kind === "half"
-      ? (composing ? "日本語モードになっているよ。「半角/全角」キーを押して、英語モードにしてね / Switch to English mode" : halfWidthProblem(value))
+      ? (composing ? `日本語モードになっているよ。「半角/全角」キーを押して、英語モードにしてね / ${tx("Switch to English mode")}` : halfWidthProblem(value))
       : (composing ? null : katakanaProblem(value))
   const wrongText = !problem && !composing && value.trim().length >= field.answer.length && !ok
 
@@ -54,7 +55,7 @@ function PracticeField({
     <div className="space-y-1.5">
       <label className="flex items-center justify-between gap-2 font-bold text-slate-700">
         <span>
-          {field.label} <span className="text-xs font-normal text-slate-400">{field.en}</span>
+          {field.label} <span className="text-xs font-normal text-slate-400"><T>{field.en}</T></span>
         </span>
         <span className={cn(
           "text-xs px-2 py-0.5 rounded-full",
@@ -81,7 +82,7 @@ function PracticeField({
         {ok && <CheckCircle2 className="absolute right-3 top-1/2 -translate-y-1/2 w-7 h-7 text-success" />}
       </div>
       <p className="text-sm text-slate-500">お<Ruby rt="てほん">手本</Ruby>：<span className="font-bold text-slate-700 text-lg">{field.hint}</span></p>
-      <Warn>{problem ?? (wrongText ? "お手本とちがうところがあるよ。よく見てね / Check the example" : null)}</Warn>
+      <Warn>{problem ?? (wrongText ? `お手本とちがうところがあるよ。よく見てね / ${tx("Check the example")}` : null)}</Warn>
     </div>
   )
 }
@@ -105,23 +106,23 @@ export function InputModeMission({ onComplete }: { onComplete: () => void }) {
   }
 
   const idField: FieldDef[] = [
-    { key: "id1", label: <><Ruby rt="がくせきばんごう">学籍番号</Ruby></>, en: "Student ID", kind: "half", answer: "2025a123", hint: "2025a123" },
+    { key: "id1", label: <><Ruby rt="がくせきばんごう">学籍番号</Ruby></>, en: tx("Student ID"), kind: "half", answer: "2025a123", hint: "2025a123" },
   ]
   const nameField: FieldDef[] = [
-    { key: "name1", label: <><Ruby rt="なまえ">名前</Ruby></>, en: "Name", kind: "kana", answer: "グエン", hint: <>グエン <span className="text-sm font-normal text-slate-400">（guen → スペース）</span></> },
+    { key: "name1", label: <><Ruby rt="なまえ">名前</Ruby></>, en: tx("Name"), kind: "kana", answer: "グエン", hint: <>グエン <span className="text-sm font-normal text-slate-400">（guen → スペース）</span></> },
   ]
   const formFields: FieldDef[] = [
-    { key: "f-id", label: <><Ruby rt="がくせきばんごう">学籍番号</Ruby></>, en: "Student ID", kind: "half", answer: "2025b045", hint: "2025b045" },
-    { key: "f-name", label: <><Ruby rt="なまえ">名前</Ruby></>, en: "Name", kind: "kana", answer: "マリア", hint: <>マリア <span className="text-sm font-normal text-slate-400">（maria → スペース）</span></> },
-    { key: "f-mail", label: "メールアドレス", en: "Email", kind: "half", answer: "maria@example.com", hint: "maria@example.com" },
-    { key: "f-tel", label: <><Ruby rt="でんわばんごう">電話番号</Ruby></>, en: "Phone", kind: "half", answer: "090-1234-5678", hint: "090-1234-5678" },
+    { key: "f-id", label: <><Ruby rt="がくせきばんごう">学籍番号</Ruby></>, en: tx("Student ID"), kind: "half", answer: "2025b045", hint: "2025b045" },
+    { key: "f-name", label: <><Ruby rt="なまえ">名前</Ruby></>, en: tx("Name"), kind: "kana", answer: "マリア", hint: <>マリア <span className="text-sm font-normal text-slate-400">（maria → スペース）</span></> },
+    { key: "f-mail", label: "メールアドレス", en: tx("Email"), kind: "half", answer: "maria@example.com", hint: "maria@example.com" },
+    { key: "f-tel", label: <><Ruby rt="でんわばんごう">電話番号</Ruby></>, en: tx("Phone"), kind: "half", answer: "090-1234-5678", hint: "090-1234-5678" },
   ]
 
   const messages: React.ReactNode[] = [
-    <>パソコンの<Ruby rt="もじ">文字</Ruby>には「<Ruby rt="はんかく">半角</Ruby>」と「<Ruby rt="ぜんかく">全角</Ruby>」があるよ。<Ruby rt="み">見</Ruby>た<Ruby rt="め">目</Ruby>は<Ruby rt="に">似</Ruby>ているけど、パソコンは<Ruby rt="ちが">違</Ruby>うものだと<Ruby rt="おも">思</Ruby>うんだ！<span className="block text-sm text-muted-foreground mt-1">Half-width and full-width look similar, but they are different.</span></>,
-    <><Ruby rt="がくせきばんごう">学籍番号</Ruby>は<Ruby rt="はんかく">半角</Ruby>で<Ruby rt="い">入</Ruby>れよう。「{imeKey}」キーで<Ruby rt="き">切</Ruby>り<Ruby rt="か">替</Ruby>えてね！<span className="block text-sm text-muted-foreground mt-1">Type your ID in half-width.</span></>,
-    <><Ruby rt="がいこく">外国</Ruby>の<Ruby rt="なまえ">名前</Ruby>はカタカナで<Ruby rt="か">書</Ruby>くよ。ローマ<Ruby rt="じ">字</Ruby>で<Ruby rt="う">打</Ruby>って、<Key>スペース</Key>で<Ruby rt="へんかん">変換</Ruby>！<span className="block text-sm text-muted-foreground mt-1">Type in romaji, then press Space to get katakana.</span></>,
-    <>アルバイトの<Ruby rt="おうぼ">応募</Ruby>フォームだよ。<Ruby rt="らん">欄</Ruby>ごとに<Ruby rt="き">切</Ruby>り<Ruby rt="か">替</Ruby>えが<Ruby rt="ひつよう">必要</Ruby>！<Key>Tab</Key>キーで<Ruby rt="つぎ">次</Ruby>の<Ruby rt="らん">欄</Ruby>へ<Ruby rt="すす">進</Ruby>めるよ。<span className="block text-sm text-muted-foreground mt-1">Switch the mode for each field. Tab moves to the next field.</span></>,
+    <>パソコンの<Ruby rt="もじ">文字</Ruby>には「<Ruby rt="はんかく">半角</Ruby>」と「<Ruby rt="ぜんかく">全角</Ruby>」があるよ。<Ruby rt="み">見</Ruby>た<Ruby rt="め">目</Ruby>は<Ruby rt="に">似</Ruby>ているけど、パソコンは<Ruby rt="ちが">違</Ruby>うものだと<Ruby rt="おも">思</Ruby>うんだ！<span className="block text-sm text-muted-foreground mt-1"><T>Half-width and full-width look similar, but they are different.</T></span></>,
+    <><Ruby rt="がくせきばんごう">学籍番号</Ruby>は<Ruby rt="はんかく">半角</Ruby>で<Ruby rt="い">入</Ruby>れよう。「{imeKey}」キーで<Ruby rt="き">切</Ruby>り<Ruby rt="か">替</Ruby>えてね！<span className="block text-sm text-muted-foreground mt-1"><T>Type your ID in half-width.</T></span></>,
+    <><Ruby rt="がいこく">外国</Ruby>の<Ruby rt="なまえ">名前</Ruby>はカタカナで<Ruby rt="か">書</Ruby>くよ。ローマ<Ruby rt="じ">字</Ruby>で<Ruby rt="う">打</Ruby>って、<Key>スペース</Key>で<Ruby rt="へんかん">変換</Ruby>！<span className="block text-sm text-muted-foreground mt-1"><T>Type in romaji, then press Space to get katakana.</T></span></>,
+    <>アルバイトの<Ruby rt="おうぼ">応募</Ruby>フォームだよ。<Ruby rt="らん">欄</Ruby>ごとに<Ruby rt="き">切</Ruby>り<Ruby rt="か">替</Ruby>えが<Ruby rt="ひつよう">必要</Ruby>！<Key>Tab</Key>キーで<Ruby rt="つぎ">次</Ruby>の<Ruby rt="らん">欄</Ruby>へ<Ruby rt="すす">進</Ruby>めるよ。<span className="block text-sm text-muted-foreground mt-1"><T>Switch the mode for each field. Tab moves to the next field.</T></span></>,
   ]
 
   return (
@@ -156,11 +157,11 @@ export function InputModeMission({ onComplete }: { onComplete: () => void }) {
               <p>{isMac ? "画面の右上" : "画面の右下（時計の近く）"}に、<Ruby rt="いま">今</Ruby>のモード「<b>あ</b>」か「<b>A</b>」が<Ruby rt="で">出</Ruby>ているよ。<Ruby rt="う">打</Ruby>つ<Ruby rt="まえ">前</Ruby>に<Ruby rt="み">見</Ruby>るくせをつけよう！</p>
             </div>
           </Card>
-          <Tip title={<>なぜ<Ruby rt="たいせつ">大切</Ruby>？ / Why?</>}>
+          <Tip title={<>なぜ<Ruby rt="たいせつ">大切</Ruby>？ / <T>Why?</T></>}>
             <Ruby rt="ぜんかく">全角</Ruby>の「２０２５ａ１２３」で<Ruby rt="にゅうりょく">入力</Ruby>すると、パソコンは<Ruby rt="べつ">別</Ruby>の<Ruby rt="ひと">人</Ruby>だと<Ruby rt="おも">思</Ruby>ってしまうよ。ネットの<Ruby rt="もうしこ">申し込</Ruby>みで「<Ruby rt="ただ">正</Ruby>しくありません」と<Ruby rt="で">出</Ruby>る<Ruby rt="げんいん">原因</Ruby>の<Ruby rt="おお">多</Ruby>くはこれ！
           </Tip>
           <div className="text-center">
-            <Button size="lg" className="text-lg px-10" onClick={() => setStep(1)}>わかった！ / Got it</Button>
+            <Button size="lg" className="text-lg px-10" onClick={() => setStep(1)}>わかった！ / <T>Got it</T></Button>
           </div>
         </div>
       )}
@@ -185,7 +186,7 @@ export function InputModeMission({ onComplete }: { onComplete: () => void }) {
 
       {step === 3 && (
         <Card className="max-w-2xl mx-auto space-y-5">
-          <p className="text-center font-bold text-lg text-slate-700">アルバイト<Ruby rt="おうぼ">応募</Ruby>フォーム <span className="text-sm font-normal text-slate-400">Job application</span></p>
+          <p className="text-center font-bold text-lg text-slate-700">アルバイト<Ruby rt="おうぼ">応募</Ruby>フォーム <span className="text-sm font-normal text-slate-400"><T>Job application</T></span></p>
           {formFields.map((f, i) => (
             <PracticeField
               key={f.key}

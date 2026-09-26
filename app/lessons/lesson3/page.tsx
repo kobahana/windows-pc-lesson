@@ -8,6 +8,7 @@ import { ArrowLeft, Star, RotateCcw, Trophy, Clock, Target } from "lucide-react"
 import { LessonHeader } from "@/components/layout/lesson-header"
 import { useSettings } from "@/components/providers/settings-provider"
 import { sounds } from "@/lib/sounds"
+import { T } from "@/lib/i18n"
 
 function cn(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(" ");
@@ -254,7 +255,7 @@ export default function Lesson3() {
                 message={
                   <>
                     ひらがなを見て、下（した）のアルファベットを打（う）とう！
-                    <span className="block text-xs text-slate-400 mt-1">Look at the hiragana and type the letters below!</span>
+                    <span className="block text-xs text-slate-400 mt-1"><T>Look at the hiragana and type the letters below!</T></span>
                   </>
                 }
                 mood="happy"

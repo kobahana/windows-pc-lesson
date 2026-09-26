@@ -16,6 +16,7 @@ import { cn } from "@/lib/utils"
 import {
   type Cell, type CellFmt, type SheetState, colName, display, evaluate, formulaProblem, isError, key, mergeAt, shiftFormula,
 } from "./sheet-engine"
+import { tx } from "@/lib/i18n"
 
 export type SheetTool =
   | "undo" | "redo" | "print" | "currency" | "percent" | "bold" | "bordersAll" | "bordersNone"
@@ -170,7 +171,7 @@ export function Sheet({
     onMessage?.(problem)
     if (!problem && value.trim().startsWith("=")) {
       const v = evaluate(next, activeKey)
-      if (isError(v)) onMessage?.(`計算できないよ（${v.error}）。式をもう一度見てみよう / The formula has an error`)
+      if (isError(v)) onMessage?.(`計算できないよ（${v.error}）。式をもう一度見てみよう / ${tx("The formula has an error")}`)
     }
     const m = mergeAt(next, active.r, active.c)
     if (move === "down") selectCell(Math.min(rows - 1, (m ? m.r1 : active.r) + 1), active.c)
@@ -192,7 +193,7 @@ export function Sheet({
     switch (id) {
       case "undo": {
         const prev = undoRef.current.pop()
-        if (!prev) return onMessage?.("これ以上は戻せないよ / Nothing to undo")
+        if (!prev) return onMessage?.(`これ以上は戻せないよ / ${tx("Nothing to undo")}`)
         redoRef.current.push(stateRef.current)
         infoRef.current = { lastTool: "undo" }
         setState(prev)
@@ -200,7 +201,7 @@ export function Sheet({
       }
       case "redo": {
         const nx = redoRef.current.pop()
-        if (!nx) return onMessage?.("やり直すものがないよ / Nothing to redo")
+        if (!nx) return onMessage?.(`やり直すものがないよ / ${tx("Nothing to redo")}`)
         undoRef.current.push(stateRef.current)
         infoRef.current = { lastTool: "redo" }
         setState(nx)
@@ -222,7 +223,7 @@ export function Sheet({
       case "bordersAll": forEach((k) => { next.borders[k] = true }); break
       case "bordersNone": forEach((k) => { delete next.borders[k] }); break
       case "merge": {
-        if (s.r0 === s.r1 && s.c0 === s.c1) return onMessage?.("結合するセルを、ドラッグで2つ以上選んでね（ルール1） / Select 2+ cells first")
+        if (s.r0 === s.r1 && s.c0 === s.c1) return onMessage?.(`結合するセルを、ドラッグで2つ以上選んでね（ルール1） / ${tx("Select 2+ cells first")}`)
         next.merges = next.merges.filter((m) => m.r1 < s.r0 || m.r0 > s.r1 || m.c1 < s.c0 || m.c0 > s.c1)
         // 左上以外のセルの中身は消える（本物と同じ）
         forEach((k) => { if (k !== key(s.r0, s.c0)) delete next.cells[k] })
@@ -237,12 +238,12 @@ export function Sheet({
       case "average": {
         setEditing("cell")
         setEditValue(`=${id === "sum" ? "SUM" : "AVERAGE"}(`)
-        onMessage?.("続けて、合計したいセルをドラッグで選ぶか、D6:D9 のように入力して、最後に ) と Enter / Select the range, then ) and Enter")
+        onMessage?.(`続けて、合計したいセルをドラッグで選ぶか、D6:D9 のように入力して、最後に ) と Enter / ${tx("Select the range, then ) and Enter")}`)
         focusCell()
         return
       }
       default:
-        return onMessage?.("このボタンは、今回の練習では使わないよ / Not used in this practice")
+        return onMessage?.(`このボタンは、今回の練習では使わないよ / ${tx("Not used in this practice")}`)
     }
     onMessage?.(null)
     commitState(next, { lastTool: id })

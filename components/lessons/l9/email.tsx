@@ -12,6 +12,7 @@ import { Card, ChoiceQuiz, MissionFrame, Ruby, Tip, useStepFlow } from "@/compon
 import { halfWidthProblem } from "@/lib/input-check"
 import { Paperclip, Send, X, File, Reply, ReplyAll, Forward, Mail, Minus, Maximize2 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { T } from "@/lib/i18n"
 
 const TO = "yamada@sakura.example.jp"
 const CC = "sato@gurn.example.jp"
@@ -70,9 +71,9 @@ export function EmailMission({ onComplete }: { onComplete: () => void }) {
   }
 
   const messages: React.ReactNode[] = [
-    <>メールの「<Ruby rt="あてさき">宛先</Ruby>（To）」「CC」「BCC」のちがいを<Ruby rt="おぼ">覚</Ruby>えよう！<span className="block text-sm text-muted-foreground mt-1">Learn To, CC and BCC.</span></>,
-    <><Ruby rt="とりひきさき">取引先</Ruby>に<Ruby rt="せいきゅうしょ">請求書</Ruby>をメールで<Ruby rt="おく">送</Ruby>ろう。<Ruby rt="した">下</Ruby>の<Ruby rt="しじ">指示</Ruby>を<Ruby rt="よ">読</Ruby>んで、メールを<Ruby rt="つく">作</Ruby>ってね。<span className="block text-sm text-muted-foreground mt-1">Write an email with an invoice attached.</span></>,
-    <>「<Ruby rt="へんしん">返信</Ruby>」と「<Ruby rt="ぜんいん">全員</Ruby>に<Ruby rt="へんしん">返信</Ruby>」、どっちを<Ruby rt="つか">使</Ruby>う？<span className="block text-sm text-muted-foreground mt-1">Reply or Reply all?</span></>,
+    <>メールの「<Ruby rt="あてさき">宛先</Ruby>（To）」「CC」「BCC」のちがいを<Ruby rt="おぼ">覚</Ruby>えよう！<span className="block text-sm text-muted-foreground mt-1"><T>Learn To, CC and BCC.</T></span></>,
+    <><Ruby rt="とりひきさき">取引先</Ruby>に<Ruby rt="せいきゅうしょ">請求書</Ruby>をメールで<Ruby rt="おく">送</Ruby>ろう。<Ruby rt="した">下</Ruby>の<Ruby rt="しじ">指示</Ruby>を<Ruby rt="よ">読</Ruby>んで、メールを<Ruby rt="つく">作</Ruby>ってね。<span className="block text-sm text-muted-foreground mt-1"><T>Write an email with an invoice attached.</T></span></>,
+    <>「<Ruby rt="へんしん">返信</Ruby>」と「<Ruby rt="ぜんいん">全員</Ruby>に<Ruby rt="へんしん">返信</Ruby>」、どっちを<Ruby rt="つか">使</Ruby>う？<span className="block text-sm text-muted-foreground mt-1"><T>Reply or Reply all?</T></span></>,
   ]
 
   return (
@@ -106,7 +107,7 @@ export function EmailMission({ onComplete }: { onComplete: () => void }) {
       {step === 1 && (
         <div className="space-y-4">
           <Card className="bg-sky-50 border-sky-200 space-y-1 text-slate-700">
-            <p className="font-bold text-sky-800"><Ruby rt="しじ">指示</Ruby> / Task</p>
+            <p className="font-bold text-sky-800"><Ruby rt="しじ">指示</Ruby> / <T>Task</T></p>
             <p>・さくら<Ruby rt="しょうじ">商事</Ruby>の<Ruby rt="やまだ">山田</Ruby>さん（<span className="font-mono">{TO}</span>）に<Ruby rt="おく">送</Ruby>る</p>
             <p>・<Ruby rt="じょうし">上司</Ruby>の<Ruby rt="さとう">佐藤</Ruby>さん（<span className="font-mono">{CC}</span>）を CC に<Ruby rt="い">入</Ruby>れる</p>
             <p>・<Ruby rt="けんめい">件名</Ruby>：10<Ruby rt="がつぶん">月分</Ruby>の<Ruby rt="せいきゅうしょ">請求書</Ruby>を<Ruby rt="おく">送</Ruby>ることがわかるように</p>
@@ -159,7 +160,7 @@ export function EmailMission({ onComplete }: { onComplete: () => void }) {
                         <File className="w-4 h-4 text-red-600" />{f}
                       </button>
                     ))}
-                    <p className="text-xs text-slate-400 px-3 pt-2">ダブルクリックで<Ruby rt="えら">選</Ruby>ぶ / Double-click to attach</p>
+                    <p className="text-xs text-slate-400 px-3 pt-2">ダブルクリックで<Ruby rt="えら">選</Ruby>ぶ / <T>Double-click to attach</T></p>
                   </div>
                 </div>
               </div>
@@ -186,7 +187,7 @@ export function EmailMission({ onComplete }: { onComplete: () => void }) {
 
           {problems.length > 0 && (
             <div className="bg-amber-50 border-2 border-amber-300 rounded-2xl p-4 text-amber-900 space-y-1">
-              <p className="font-bold">送る前に直そう / Fix before sending</p>
+              <p className="font-bold">送る前に直そう / <T>Fix before sending</T></p>
               {problems.map((p, i) => <p key={i}>・{p}</p>)}
             </div>
           )}

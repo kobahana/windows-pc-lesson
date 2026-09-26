@@ -11,6 +11,7 @@ import { LessonHeader } from "@/components/layout/lesson-header"
 import { useSettings } from "@/components/providers/settings-provider"
 import { useTestEnabled } from "@/lib/test-settings"
 import { STUDENT_ID_EXAMPLE, normalizeStudentId, normalizeStudentName } from "@/lib/input-check"
+import { T, useT } from "@/lib/i18n"
 
 // ※ まとめテストは効果音を一切鳴らさない（テスト中の教室に音が響かないように）
 
@@ -112,6 +113,7 @@ function formatRemaining(sec: number) {
 type Phase = "register" | "confirm" | "intro" | "main" | "bonusOffer" | "bonus" | "done"
 
 export default function TestPage() {
+  const t = useT()
   const { recordEvent, ready, student, login } = useSettings()
   // 先生の切り替えを定期的に確認（テスト開始後は最後まで解けるよう、入口だけを制御する）
   const enabled = useTestEnabled(true)
@@ -302,7 +304,7 @@ export default function TestPage() {
             <div>
               <h2 className="text-2xl font-bold text-slate-800 mb-2">いまはテストの時間じゃないよ</h2>
               <p className="text-slate-500">先生がテストをはじめると、ここでちょうせんできるよ！</p>
-              <p className="text-sm text-slate-400 mt-1">The test is not open right now. Please wait for your teacher.</p>
+              <p className="text-sm text-slate-400 mt-1"><T>The test is not open right now. Please wait for your teacher.</T></p>
             </div>
             <Link href="/">
               <Button className="w-full h-12 text-lg font-bold gap-2 bg-blue-600 hover:bg-blue-700">
@@ -330,9 +332,9 @@ export default function TestPage() {
               message={
                 <>
                   テストの前に、学籍番号と名前を教えてね！この情報で点数が記録されるから、まちがえないでね！
-                  <span className="block text-sm text-muted-foreground mt-1">
+                  <span className="block text-sm text-muted-foreground mt-1"><T>
                     Enter your student ID and name. Your score will be recorded with them!
-                  </span>
+                  </T></span>
                 </>
               }
               mood="happy"
@@ -340,7 +342,7 @@ export default function TestPage() {
             <div className="bg-white rounded-3xl p-8 shadow-lg border-2 border-amber-100 space-y-6">
               <div className="space-y-2">
                 <label className="block font-bold text-slate-700">
-                  学籍番号 <span className="text-sm font-normal text-slate-400">Student ID</span>
+                  学籍番号 <span className="text-sm font-normal text-slate-400"><T>Student ID</T></span>
                 </label>
                 <Input
                   value={studentId}
@@ -353,14 +355,14 @@ export default function TestPage() {
                   autoFocus
                 />
                 <p className="text-xs text-slate-400">
-                  半角（はんかく）で「数字4つ＋ローマ字1つ＋数字3つ」 / Half-width, like {STUDENT_ID_EXAMPLE}
+                  半角（はんかく）で「数字4つ＋ローマ字1つ＋数字3つ」 / <T s="Half-width, like {example}" v={{ example: STUDENT_ID_EXAMPLE }} />
                 </p>
                 {idError && <p className="text-sm text-red-500 font-bold">{idError}</p>}
               </div>
 
               <div className="space-y-2">
                 <label className="block font-bold text-slate-700">
-                  なまえ（カタカナ） <span className="text-sm font-normal text-slate-400">Name in katakana</span>
+                  なまえ（カタカナ） <span className="text-sm font-normal text-slate-400"><T>Name in katakana</T></span>
                 </label>
                 <Input
                   value={studentName}
@@ -374,7 +376,7 @@ export default function TestPage() {
                     nameError && "border-red-400 bg-red-50"
                   )}
                 />
-                <p className="text-xs text-slate-400">カタカナで入力してね / Katakana only</p>
+                <p className="text-xs text-slate-400">カタカナで入力してね / <T>Katakana only</T></p>
                 {nameError && <p className="text-sm text-red-500 font-bold">{nameError}</p>}
               </div>
 
@@ -383,7 +385,7 @@ export default function TestPage() {
                 disabled={!studentId.trim() || !studentName.trim()}
                 className="w-full h-14 text-xl font-bold bg-amber-500 hover:bg-amber-600 shadow-md gap-2"
               >
-                <IdCard className="w-6 h-6" /> つぎへ / Next
+                <IdCard className="w-6 h-6" /> つぎへ / <T>Next</T>
               </Button>
             </div>
           </div>
@@ -407,9 +409,9 @@ export default function TestPage() {
               message={
                 <>
                   この学籍番号と名前で点数が記録されるよ。<strong>まちがいないかな？</strong>
-                  <span className="block text-sm text-muted-foreground mt-1">
+                  <span className="block text-sm text-muted-foreground mt-1"><T>
                     Your score will be recorded with this ID and name. Is it correct?
-                  </span>
+                  </T></span>
                 </>
               }
               mood="neutral"
@@ -417,24 +419,24 @@ export default function TestPage() {
             <div className="bg-white rounded-3xl p-8 shadow-lg border-2 border-amber-100 space-y-6 text-center">
               <div className="bg-slate-50 rounded-2xl p-6 border-2 border-slate-200 space-y-4">
                 <div>
-                  <p className="text-sm font-bold text-slate-400 mb-1">学籍番号 / Student ID</p>
+                  <p className="text-sm font-bold text-slate-400 mb-1">学籍番号 / <T>Student ID</T></p>
                   <p className="text-4xl font-black text-slate-800 tracking-widest">{studentId}</p>
                 </div>
                 <div className="border-t border-slate-200 pt-4">
-                  <p className="text-sm font-bold text-slate-400 mb-1">なまえ / Name</p>
+                  <p className="text-sm font-bold text-slate-400 mb-1">なまえ / <T>Name</T></p>
                   <p className="text-4xl font-black text-slate-800">{studentName}</p>
                 </div>
               </div>
               <div className="flex flex-col gap-3">
                 <Button onClick={handleConfirm} className="w-full h-14 text-xl font-bold bg-green-600 hover:bg-green-700 shadow-md">
-                  まちがいない！つぎへ / Correct!
+                  まちがいない！つぎへ / <T>Correct!</T>
                 </Button>
                 <Button
                   onClick={() => setPhase("register")}
                   variant="outline"
                   className="w-full h-12 text-lg font-bold gap-2"
                 >
-                  <Pencil className="w-5 h-5" /> なおす / Fix it
+                  <Pencil className="w-5 h-5" /> なおす / <T>Fix it</T>
                 </Button>
               </div>
             </div>
@@ -459,64 +461,64 @@ export default function TestPage() {
               message={
                 <>
                   Lesson 1〜5でならったことのテストだよ！5分間で、ひらがなを漢字に変換してどんどんクリアしよう！
-                  <span className="block text-sm text-muted-foreground mt-1">
+                  <span className="block text-sm text-muted-foreground mt-1"><T>
                     Time attack! Convert to kanji — clear as many as you can in 5 minutes.
-                  </span>
+                  </T></span>
                 </>
               }
               mood="happy"
             />
             <div className="bg-white rounded-3xl p-8 shadow-lg border-2 border-amber-100 space-y-5">
               <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                <ClipboardCheck className="w-6 h-6 text-amber-500" /> テストのルール / Rules
+                <ClipboardCheck className="w-6 h-6 text-amber-500" /> テストのルール / <T>Rules</T>
               </h2>
               <ul className="space-y-3 text-slate-700 font-medium">
                 <li className="flex gap-3">
                   <span className="shrink-0 w-7 h-7 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center font-bold text-sm">1</span>
                   <span>
                     せいげん時間は <strong>5分</strong>！時間内にできるだけたくさんクリアしよう
-                    <span className="block text-xs text-slate-400">You have 5 minutes</span>
+                    <span className="block text-xs text-slate-400"><T>You have 5 minutes</T></span>
                   </span>
                 </li>
                 <li className="flex gap-3">
                   <span className="shrink-0 w-7 h-7 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center font-bold text-sm">2</span>
                   <span>
                     ぜんぶで <strong>{MAX_MAIN}問</strong>。1問クリアで <strong>1点</strong>（満点{MAX_MAIN}点）
-                    <span className="block text-xs text-slate-400">{MAX_MAIN} questions, 1 point each</span>
+                    <span className="block text-xs text-slate-400"><T s="{n} questions, 1 point each" v={{ n: MAX_MAIN }} /></span>
                   </span>
                 </li>
                 <li className="flex gap-3">
                   <span className="shrink-0 w-7 h-7 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center font-bold text-sm">3</span>
                   <span>
                     まちがえても<strong>何回でも</strong>チャレンジOK！あきらめずに直そう
-                    <span className="block text-xs text-slate-400">Unlimited tries — just fix and retry</span>
+                    <span className="block text-xs text-slate-400"><T>Unlimited tries — just fix and retry</T></span>
                   </span>
                 </li>
                 <li className="flex gap-3">
                   <span className="shrink-0 w-7 h-7 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center font-bold text-sm">4</span>
                   <span>
                     こまったら「ヒント」を見てもOK。でも、ヒントを見た問題は <strong>1点 → 0.5点</strong> になるよ
-                    <span className="block text-xs text-slate-400">Hints are OK, but cost half a point</span>
+                    <span className="block text-xs text-slate-400"><T>Hints are OK, but cost half a point</T></span>
                   </span>
                 </li>
                 <li className="flex gap-3">
                   <span className="shrink-0 w-7 h-7 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center font-bold text-sm">5</span>
                   <span>
                     せいげん時間以内に{MAX_MAIN}問ぜんぶクリアしたら、<strong>ボーナス{MAX_BONUS}問（+{MAX_BONUS}点）</strong>にちょうせんできる！最高{MAX_SCORE}点！
-                    <span className="block text-xs text-slate-400">Clear all to unlock {MAX_BONUS} bonus questions</span>
+                    <span className="block text-xs text-slate-400"><T s="Clear all to unlock {n} bonus questions" v={{ n: MAX_BONUS }} /></span>
                   </span>
                 </li>
                 <li className="flex gap-3">
                   <span className="shrink-0 w-7 h-7 bg-amber-100 text-amber-700 rounded-full flex items-center justify-center font-bold text-sm">6</span>
                   <span>
                     テストは<strong>1回だけ</strong>。じゅんびができたらスタート！
-                    <span className="block text-xs text-slate-400">You can take the test only once</span>
+                    <span className="block text-xs text-slate-400"><T>You can take the test only once</T></span>
                   </span>
                 </li>
               </ul>
               <Button onClick={start} className="w-full h-16 text-2xl font-bold bg-amber-500 hover:bg-amber-600 shadow-md gap-2">
                 <Timer className="w-7 h-7" />
-                テストをはじめる！ / Start!
+                テストをはじめる！ / <T>Start!</T>
               </Button>
             </div>
           </div>
@@ -545,11 +547,11 @@ export default function TestPage() {
             </h2>
             <p className="text-slate-600 mb-6 font-medium">
               {alreadyTaken
-                ? "べつの学生がうけるときは、ログアウトしてからね / Already taken. Log out for the next student."
-                : "きみの結果はこちら！ / Here are your results!"}
+                ? `べつの学生がうけるときは、ログアウトしてからね / ${t("Already taken. Log out for the next student.")}`
+                : `きみの結果はこちら！ / ${t("Here are your results!")}`}
             </p>
             <div className="bg-amber-50 rounded-2xl p-5 border-2 border-amber-200 mb-6">
-              <p className="text-amber-700 font-bold mb-1">とくてん / Score</p>
+              <p className="text-amber-700 font-bold mb-1">とくてん / <T>Score</T></p>
               <p className="text-5xl font-black text-amber-600">
                 {score}<span className="text-xl font-bold text-amber-400"> / {MAX_SCORE}点</span>
               </p>
@@ -583,7 +585,7 @@ export default function TestPage() {
             </div>
             <p className="text-sm text-slate-500 mb-1">つかった時間：{Math.floor(timeSec / 60)}分{timeSec % 60}秒</p>
             <p className="text-sm text-slate-400 mb-4">
-              ※ テストは1回だけだよ / You can take the test only once.
+              ※ テストは1回だけだよ / <T>You can take the test only once.</T>
             </p>
             <Link href="/">
               <Button size="lg" className="w-full h-14 text-lg rounded-xl gap-2 font-bold bg-blue-600 hover:bg-blue-700">
@@ -620,7 +622,7 @@ export default function TestPage() {
               <h2 className="text-3xl font-bold text-slate-800 mb-2">{MAX_MAIN}問クリア！すごい！</h2>
               <p className="text-slate-600 font-medium">
                 のこり時間で<strong className="text-purple-600">ボーナス{MAX_BONUS}問（+{MAX_BONUS}点）</strong>にちょうせんする？
-                <span className="block text-sm text-slate-400 mt-1">ちょっとむずかしいよ！ / Bonus round — a bit harder!</span>
+                <span className="block text-sm text-slate-400 mt-1">ちょっとむずかしいよ！ / <T>Bonus round — a bit harder!</T></span>
               </p>
             </div>
             <div className="flex flex-col gap-3">
@@ -676,12 +678,12 @@ export default function TestPage() {
                   isBonus ? (
                     <>
                       ボーナス問題！ちょっとむずかしいよ〜！
-                      <span className="block text-xs text-slate-400 mt-1">Bonus round! +1 point each!</span>
+                      <span className="block text-xs text-slate-400 mt-1"><T>Bonus round! +1 point each!</T></span>
                     </>
                   ) : (
                     <>
                       5分間でどこまでいけるかな？まちがえても何回でもチャレンジしてね！
-                      <span className="block text-xs text-slate-400 mt-1">Convert to kanji, then press Enter (or the button)!</span>
+                      <span className="block text-xs text-slate-400 mt-1"><T>Convert to kanji, then press Enter (or the button)!</T></span>
                     </>
                   )
                 }
@@ -730,7 +732,7 @@ export default function TestPage() {
 
                     {wrongFlash && (
                       <div className="w-full mb-3 bg-red-50 border-2 border-red-200 rounded-xl px-4 py-2 text-center font-bold text-red-500">
-                        おしい！なおして もういちど！ / Fix it and try again!
+                        おしい！なおして もういちど！ / <T>Fix it and try again!</T>
                       </div>
                     )}
 

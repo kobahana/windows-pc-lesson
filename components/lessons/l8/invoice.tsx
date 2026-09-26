@@ -10,6 +10,7 @@ import { Sheet } from "./sheet"
 import { type SheetState, evaluate, usesCellRef } from "./sheet-engine"
 import { CheckCircle2, Circle, TableCellsMerge, AlignCenter, Grid3x3, JapaneseYen, Sigma } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { T } from "@/lib/i18n"
 
 const FILE_NAME = "請求書_さくら商事"
 
@@ -69,7 +70,7 @@ export function InvoiceMission({ onComplete }: { onComplete: () => void }) {
   return (
     <MissionFrame
       wide
-      message={<><Ruby rt="せいきゅうしょ">請求書</Ruby>を<Ruby rt="つく">作</Ruby>ろう！<Ruby rt="みぎ">右</Ruby>のチェックリストを<Ruby rt="うえ">上</Ruby>から<Ruby rt="じゅん">順</Ruby>にやってみてね。<Ruby rt="まちが">間違</Ruby>えても <b>Ctrl+Z</b> で<Ruby rt="もど">戻</Ruby>せるよ。<span className="block text-sm text-muted-foreground mt-1">Make an invoice. Follow the checklist.</span></>}
+      message={<><Ruby rt="せいきゅうしょ">請求書</Ruby>を<Ruby rt="つく">作</Ruby>ろう！<Ruby rt="みぎ">右</Ruby>のチェックリストを<Ruby rt="うえ">上</Ruby>から<Ruby rt="じゅん">順</Ruby>にやってみてね。<Ruby rt="まちが">間違</Ruby>えても <b>Ctrl+Z</b> で<Ruby rt="もど">戻</Ruby>せるよ。<span className="block text-sm text-muted-foreground mt-1"><T>Make an invoice. Follow the checklist.</T></span></>}
       step={step}
       total={1}
       showSuccess={showSuccess}

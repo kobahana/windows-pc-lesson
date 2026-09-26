@@ -10,8 +10,10 @@ import {
   markStudentLessonCompleted,
   markStudentSkill,
   setCurrentStudentId,
+  setStudentLang,
   upsertStudent,
 } from "@/lib/student-store"
+import { isLang, type Lang } from "@/lib/i18n/languages"
 import { SKILL_BY_ID } from "@/lib/skills"
 import { buildSheetRow, flushSheetQueue, flushWithBeacon, migrateQueueV1ToV2, queueSheetRow } from "@/lib/sheet-sync"
 
@@ -36,6 +38,9 @@ interface SettingsContextType {
   skills: Record<string, string>;
   // スキル合格を記録する。はじめての合格なら true（スタンプ演出に使う）
   markSkill: (skillId: string, lessonId: number) => boolean;
+  // 補助の言語（日本語の下に出す説明の言語）
+  lang: Lang;
+  setLang: (lang: Lang) => void;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined)
@@ -43,6 +48,8 @@ const SettingsContext = createContext<SettingsContextType | undefined>(undefined
 // 15分間操作がなければ自動ログアウト（次のクラスの生徒に前の生徒のログインが残らないように）
 const INACTIVITY_LIMIT_MS = 15 * 60 * 1000
 const LAST_ACTIVITY_KEY = "pclesson_last_activity_v1"
+// この端末で最後に選ばれた補助の言語（ログイン画面・ゲストで使う）
+const LANG_KEY = "setting_lang"
 // 未ログイン（ゲスト）時のスキル記録
 const GUEST_SKILLS_KEY = "pclesson_guest_skills_v1"
 
@@ -61,6 +68,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
   const [completedLessons, setCompletedLessons] = useState<number[]>([])
   const [student, setStudent] = useState<StudentInfo | null>(null)
   const [skills, setSkills] = useState<Record<string, string>>({})
+  const [lang, setLangState] = useState<Lang>("en")
   const [isMounted, setIsMounted] = useState(false)
 
   // 旧キュー（v1）からの移行 + 前回送信できなかった学習記録があれば再送する
@@ -95,6 +103,9 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     const storedSound = localStorage.getItem("setting_soundEnabled")
     if (storedSound !== null) setSoundEnabled(storedSound === "true")
 
+    const storedLang = localStorage.getItem(LANG_KEY)
+    if (isLang(storedLang)) setLangState(storedLang)
+
     // ログイン中の生徒がいればその生徒の進捗、いなければ従来のグローバル進捗
     const currentId = getCurrentStudentId()
     if (currentId) {
@@ -109,6 +120,7 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
           setStudent({ id: record.id, name: record.name })
           setCompletedLessons(record.completedLessons)
           setSkills(record.skills ?? {})
+          if (isLang(record.lang)) setLangState(record.lang)
           setIsMounted(true)
           return
         }
@@ -169,7 +181,20 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
     setStudent({ id: record.id, name: record.name })
     setCompletedLessons(record.completedLessons)
     setSkills(record.skills ?? {})
-  }, [])
+    // 前に選んだ言語があればそれ、なければログイン画面で選んでいた言語を覚える
+    if (isLang(record.lang)) setLangState(record.lang)
+    else setStudentLang(record.id, lang)
+  }, [lang])
+
+  const setLang = useCallback((next: Lang) => {
+    setLangState(next)
+    try {
+      localStorage.setItem(LANG_KEY, next)
+    } catch {
+      // 保存できなくても続行
+    }
+    if (student) setStudentLang(student.id, next)
+  }, [student])
 
   const logout = useCallback(() => {
     setCurrentStudentId(null)
@@ -260,6 +285,8 @@ export function SettingsProvider({ children }: { children: React.ReactNode }) {
       recordEvent,
       skills,
       markSkill,
+      lang,
+      setLang,
     }}>
       {children}
     </SettingsContext.Provider>

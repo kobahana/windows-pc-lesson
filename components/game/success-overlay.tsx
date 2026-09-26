@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
 import { Sparkles } from "lucide-react"
+import { useTJaEn } from "@/lib/i18n"
 
 interface SuccessOverlayProps {
   show: boolean
@@ -11,6 +12,8 @@ interface SuccessOverlayProps {
 
 export function SuccessOverlay({ show, message = "すごい！" }: SuccessOverlayProps) {
   const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number; delay: number }>>([])
+  // 「日本語 / English」の文字なら、「/」のあとを生徒の言語にする
+  const tJaEn = useTJaEn()
 
   useEffect(() => {
     if (show) {
@@ -51,7 +54,7 @@ export function SuccessOverlay({ show, message = "すごい！" }: SuccessOverla
         <div className="bg-success text-success-foreground px-8 py-4 rounded-2xl shadow-2xl animate-bounce-in">
           <div className="flex items-center gap-3">
             <Sparkles className="w-8 h-8" />
-            <span className="text-2xl font-bold">{message}</span>
+            <span className="text-2xl font-bold">{typeof message === "string" ? tJaEn(message) : message}</span>
             <Sparkles className="w-8 h-8" />
           </div>
         </div>

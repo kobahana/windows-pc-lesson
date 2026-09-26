@@ -11,6 +11,7 @@ import { Card, MissionFrame, RuleBadge, Ruby, Warn, useStepFlow } from "@/compon
 import { HoverIcon } from "@/components/lessons/l6/five-rules"
 import { CalendarDays, Settings, Menu, Bell, Pencil, Trash2, X, Lightbulb, ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { T } from "@/lib/i18n"
 
 const GOALS: { goal: React.ReactNode; rule: number }[] = [
   { goal: <><b><Ruby rt="あした">明日</Ruby></b>の <b>14:00</b> に <b><Ruby rt="かいぎしつ">会議室</Ruby>A</b> を、<Ruby rt="けんめい">件名</Ruby>「<Ruby rt="めんだん">面談</Ruby>」で<Ruby rt="よやく">予約</Ruby>しよう</>, rule: 1 },
@@ -88,7 +89,7 @@ export function BookingAppMission({ onComplete }: { onComplete: () => void }) {
   return (
     <MissionFrame
       wide
-      message={<><Ruby rt="かいぎしつ">会議室</Ruby>の<Ruby rt="よやく">予約</Ruby>アプリだよ。<Ruby rt="はじ">初</Ruby>めてでも、アイコンとルールでわかるはず！<span className="block text-sm text-muted-foreground mt-1">A room booking app. Figure it out with the rules.</span></>}
+      message={<><Ruby rt="かいぎしつ">会議室</Ruby>の<Ruby rt="よやく">予約</Ruby>アプリだよ。<Ruby rt="はじ">初</Ruby>めてでも、アイコンとルールでわかるはず！<span className="block text-sm text-muted-foreground mt-1"><T>A room booking app. Figure it out with the rules.</T></span></>}
       step={step}
       total={GOALS.length}
       showSuccess={showSuccess}

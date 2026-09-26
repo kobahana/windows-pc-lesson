@@ -13,6 +13,7 @@ import { Card, Keys, MissionFrame, Ruby, Tip, Warn, useAward, useStepFlow } from
 import { usePlatform } from "@/lib/platform"
 import { ArrowLeft, ArrowRight, RotateCw, ExternalLink, X, Plus, Search } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { T, tx, useT } from "@/lib/i18n"
 
 const LESSON_ID = 7
 const STEP_KEY = "pclesson_l6_browser_step"
@@ -29,10 +30,10 @@ function loadStep(): number {
 
 // ===== ステップ0：ブラウザの部品クイズ =====
 const PARTS = [
-  { id: "back", q: <><Ruby rt="まえ">前</Ruby>のページに<Ruby rt="もど">戻</Ruby>るボタンはどれ？</>, en: "Which button goes back?" },
-  { id: "reload", q: <>ページを<Ruby rt="あたら">新</Ruby>しくする（リロード）ボタンはどれ？</>, en: "Which button reloads?" },
-  { id: "address", q: <>URL（ページの<Ruby rt="じゅうしょ">住所</Ruby>）が<Ruby rt="か">書</Ruby>いてあるところはどれ？</>, en: "Where is the URL?" },
-  { id: "newtab", q: <><Ruby rt="あたら">新</Ruby>しいタブを<Ruby rt="ひら">開</Ruby>くボタンはどれ？</>, en: "Which button opens a new tab?" },
+  { id: "back", q: <><Ruby rt="まえ">前</Ruby>のページに<Ruby rt="もど">戻</Ruby>るボタンはどれ？</>, en: tx("Which button goes back?") },
+  { id: "reload", q: <>ページを<Ruby rt="あたら">新</Ruby>しくする（リロード）ボタンはどれ？</>, en: tx("Which button reloads?") },
+  { id: "address", q: <>URL（ページの<Ruby rt="じゅうしょ">住所</Ruby>）が<Ruby rt="か">書</Ruby>いてあるところはどれ？</>, en: tx("Where is the URL?") },
+  { id: "newtab", q: <><Ruby rt="あたら">新</Ruby>しいタブを<Ruby rt="ひら">開</Ruby>くボタンはどれ？</>, en: tx("Which button opens a new tab?") },
 ]
 
 function FakeBrowser({ onPick, highlight }: { onPick: (id: string) => void; highlight?: string }) {
@@ -58,7 +59,7 @@ function FakeBrowser({ onPick, highlight }: { onPick: (id: string) => void; high
           https://pc-lesson.example.com/lessons
         </button>
       </div>
-      <div className="h-24 flex items-center justify-center text-slate-300 text-sm">（ページの<Ruby rt="なかみ">中身</Ruby> / page content）</div>
+      <div className="h-24 flex items-center justify-center text-slate-300 text-sm">（ページの<Ruby rt="なかみ">中身</Ruby> / <T>page content</T>）</div>
     </div>
   )
 }
@@ -88,6 +89,7 @@ const RULES = [
 ]
 
 export function BrowserMission({ onComplete }: { onComplete: () => void }) {
+  const t = useT()
   const finish = () => {
     try {
       sessionStorage.removeItem(STEP_KEY)
@@ -126,7 +128,7 @@ export function BrowserMission({ onComplete }: { onComplete: () => void }) {
         else setQuizIndex((i) => i + 1)
       }, 700)
     } else {
-      setWarn(<>ちがうよ。マウスを<Ruby rt="の">乗</Ruby>せて、<Ruby rt="かたち">形</Ruby>をよく<Ruby rt="み">見</Ruby>てね / Try again</>)
+      setWarn(<>ちがうよ。マウスを<Ruby rt="の">乗</Ruby>せて、<Ruby rt="かたち">形</Ruby>をよく<Ruby rt="み">見</Ruby>てね / <T>Try again</T></>)
     }
   }
 
@@ -245,13 +247,13 @@ export function BrowserMission({ onComplete }: { onComplete: () => void }) {
   }
 
   const messages: React.ReactNode[] = [
-    <>ブラウザ（Chrome や Edge）の<Ruby rt="ぶひん">部品</Ruby>を<Ruby rt="おぼ">覚</Ruby>えよう！<Ruby rt="した">下</Ruby>の<Ruby rt="しつもん">質問</Ruby>に<Ruby rt="こた">答</Ruby>えて、<Ruby rt="ただ">正</Ruby>しい<Ruby rt="ぶひん">部品</Ruby>をクリックしてね。<span className="block text-sm text-muted-foreground mt-1">Learn the parts of a browser.</span></>,
-    <>ここからは<b><Ruby rt="ほんもの">本物</Ruby></b>のブラウザを<Ruby rt="つか">使</Ruby>うよ！ページ3まで<Ruby rt="すす">進</Ruby>んだら、ブラウザの <ArrowLeft className="inline w-5 h-5" /> ボタンでページ1まで<Ruby rt="もど">戻</Ruby>ろう。<span className="block text-sm text-muted-foreground mt-1">Use the REAL back button of your browser.</span></>,
+    <>ブラウザ（Chrome や Edge）の<Ruby rt="ぶひん">部品</Ruby>を<Ruby rt="おぼ">覚</Ruby>えよう！<Ruby rt="した">下</Ruby>の<Ruby rt="しつもん">質問</Ruby>に<Ruby rt="こた">答</Ruby>えて、<Ruby rt="ただ">正</Ruby>しい<Ruby rt="ぶひん">部品</Ruby>をクリックしてね。<span className="block text-sm text-muted-foreground mt-1"><T>Learn the parts of a browser.</T></span></>,
+    <>ここからは<b><Ruby rt="ほんもの">本物</Ruby></b>のブラウザを<Ruby rt="つか">使</Ruby>うよ！ページ3まで<Ruby rt="すす">進</Ruby>んだら、ブラウザの <ArrowLeft className="inline w-5 h-5" /> ボタンでページ1まで<Ruby rt="もど">戻</Ruby>ろう。<span className="block text-sm text-muted-foreground mt-1"><T>Use the REAL back button of your browser.</T></span></>,
     reloaded
-      ? <>おかえり！ページが<Ruby rt="あたら">新</Ruby>しくなったね。<Ruby rt="か">書</Ruby>いた<Ruby rt="もじ">文字</Ruby>はどうなった？<span className="block text-sm text-muted-foreground mt-1">The page was reloaded. What happened to your text?</span></>
-      : <>ページが<Ruby rt="うご">動</Ruby>かないときや、<Ruby rt="ふる">古</Ruby>いときは「リロード」！まず<Ruby rt="した">下</Ruby>に<Ruby rt="なまえ">名前</Ruby>を<Ruby rt="か">書</Ruby>いてから、ブラウザの <RotateCw className="inline w-5 h-5" /> を<Ruby rt="お">押</Ruby>してね。<span className="block text-sm text-muted-foreground mt-1">Write your name, then press the reload button.</span></>,
-    <>リンクを<Ruby rt="あたら">新</Ruby>しいタブで<Ruby rt="ひら">開</Ruby>いて、このタブに<Ruby rt="もど">戻</Ruby>ってこよう！<span className="block text-sm text-muted-foreground mt-1">Open a link in a new tab, then come back.</span></>,
-    <><Ruby rt="なが">長</Ruby>いページから<Ruby rt="ことば">言葉</Ruby>を<Ruby rt="さが">探</Ruby>すときは <Keys k="Mod+F" />！アルバイトのルールから<Ruby rt="こた">答</Ruby>えを<Ruby rt="さが">探</Ruby>そう。<span className="block text-sm text-muted-foreground mt-1">Use {isMac ? "⌘" : "Ctrl"}+F to find words on a page.</span></>,
+      ? <>おかえり！ページが<Ruby rt="あたら">新</Ruby>しくなったね。<Ruby rt="か">書</Ruby>いた<Ruby rt="もじ">文字</Ruby>はどうなった？<span className="block text-sm text-muted-foreground mt-1"><T>The page was reloaded. What happened to your text?</T></span></>
+      : <>ページが<Ruby rt="うご">動</Ruby>かないときや、<Ruby rt="ふる">古</Ruby>いときは「リロード」！まず<Ruby rt="した">下</Ruby>に<Ruby rt="なまえ">名前</Ruby>を<Ruby rt="か">書</Ruby>いてから、ブラウザの <RotateCw className="inline w-5 h-5" /> を<Ruby rt="お">押</Ruby>してね。<span className="block text-sm text-muted-foreground mt-1"><T>Write your name, then press the reload button.</T></span></>,
+    <>リンクを<Ruby rt="あたら">新</Ruby>しいタブで<Ruby rt="ひら">開</Ruby>いて、このタブに<Ruby rt="もど">戻</Ruby>ってこよう！<span className="block text-sm text-muted-foreground mt-1"><T>Open a link in a new tab, then come back.</T></span></>,
+    <><Ruby rt="なが">長</Ruby>いページから<Ruby rt="ことば">言葉</Ruby>を<Ruby rt="さが">探</Ruby>すときは <Keys k="Mod+F" />！アルバイトのルールから<Ruby rt="こた">答</Ruby>えを<Ruby rt="さが">探</Ruby>そう。<span className="block text-sm text-muted-foreground mt-1"><T s="Use {key} to find words on a page." v={{ key: `${isMac ? "⌘" : "Ctrl"}+F` }} /></span></>,
   ]
 
   return (
@@ -261,7 +263,7 @@ export function BrowserMission({ onComplete }: { onComplete: () => void }) {
           <Card className="text-center">
             <p className="text-sm text-slate-400">{quizIndex + 1} / {PARTS.length}</p>
             <p className="text-xl font-bold text-slate-800">{PARTS[quizIndex].q}</p>
-            <p className="text-sm text-slate-400">{PARTS[quizIndex].en}</p>
+            <p className="text-sm text-slate-400"><T>{PARTS[quizIndex].en}</T></p>
           </Card>
           <FakeBrowser onPick={pickPart} highlight={quizOk} />
           <Warn>{warn}</Warn>
@@ -271,7 +273,7 @@ export function BrowserMission({ onComplete }: { onComplete: () => void }) {
       {step === 1 && (
         <div className="space-y-4">
           <Card className="text-center space-y-4">
-            <p className="text-sm font-bold text-slate-400">いまのページ / Current page</p>
+            <p className="text-sm font-bold text-slate-400">いまのページ / <T>Current page</T></p>
             <div className="flex justify-center gap-3">
               {[1, 2, 3].map((p) => (
                 <div key={p} className={cn(
@@ -305,22 +307,22 @@ export function BrowserMission({ onComplete }: { onComplete: () => void }) {
             <p className="text-sm text-slate-500">このページを<Ruby rt="ひら">開</Ruby>いた<Ruby rt="じこく">時刻</Ruby>：<span className="font-mono font-bold text-slate-800 text-lg">{loadedAt}</span></p>
             {!reloaded ? (
               <>
-                <Textarea placeholder="名前を書いてね / Write your name" className="text-xl h-24" />
+                <Textarea placeholder={`名前を書いてね / ${t("Write your name")}`} className="text-xl h-24" />
                 <p className="font-bold text-primary">
                   <Ruby rt="か">書</Ruby>いたら、ブラウザの <RotateCw className="inline w-5 h-5" /> を<Ruby rt="お">押</Ruby>そう（<Keys k="Mod+R" /> でもOK）
                 </p>
               </>
             ) : (
               <>
-                <Textarea placeholder="（からっぽ / empty）" className="text-xl h-24" />
+                <Textarea placeholder={`（からっぽ / ${t("empty")}）`} className="text-xl h-24" />
                 <p className="text-lg font-bold text-slate-800">
                   <Ruby rt="じこく">時刻</Ruby>が<Ruby rt="か">変</Ruby>わって、<Ruby rt="か">書</Ruby>いた<Ruby rt="もじ">文字</Ruby>は<Ruby rt="き">消</Ruby>えたね！
                 </p>
-                <Button size="lg" onClick={() => succeed("リロード完璧！")}>わかった！ / Got it</Button>
+                <Button size="lg" onClick={() => succeed("リロード完璧！")}>わかった！ / <T>Got it</T></Button>
               </>
             )}
           </Card>
-          <Tip title={<><Ruby rt="ちゅうい">注意</Ruby> / Be careful</>}>
+          <Tip title={<><Ruby rt="ちゅうい">注意</Ruby> / <T>Be careful</T></>}>
             リロードすると、<Ruby rt="にゅうりょく">入力</Ruby>した<Ruby rt="もじ">文字</Ruby>は<Ruby rt="き">消</Ruby>えてしまうことが<Ruby rt="おお">多</Ruby>いよ。<Ruby rt="もうしこ">申し込</Ruby>みフォームの<Ruby rt="とちゅう">途中</Ruby>ではリロードしないでね。
             ページが<Ruby rt="うご">動</Ruby>かない・<Ruby rt="ひょうじ">表示</Ruby>がおかしいときに<Ruby rt="つか">使</Ruby>おう。
           </Tip>

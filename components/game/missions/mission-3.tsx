@@ -7,6 +7,7 @@ import { SuccessOverlay } from "../success-overlay"
 import { Button } from "@/components/ui/button"
 import { Check } from "lucide-react"
 import { sounds } from "@/lib/sounds"
+import { T } from "@/lib/i18n"
 
 interface Mission3Props {
   onComplete: () => void
@@ -164,7 +165,7 @@ export function Mission3({ onComplete }: Mission3Props) {
         return (
           <>
             <Ruby rt="じっさい">実際</Ruby>に<Ruby rt="にゅうりょく">入力</Ruby>してみよう！「<span className="font-bold text-primary text-xl">{currentChar?.char}</span>」（{currentChar?.description}）を<Ruby rt="う">打</Ruby>ってみて！
-            <span className="block text-xs text-muted-foreground mt-1">Type this symbol: {currentChar?.char}</span>
+            <span className="block text-xs text-muted-foreground mt-1"><T s="Type this symbol: {char}" v={{ char: currentChar?.char }} /></span>
           </>
         )
       case "complete":

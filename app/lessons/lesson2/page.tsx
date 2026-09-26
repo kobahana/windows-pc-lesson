@@ -8,6 +8,7 @@ import { CheckCircle2, RotateCcw, Trophy, Clock, Target } from "lucide-react"
 import { LessonHeader } from "@/components/layout/lesson-header"
 import { useSettings } from "@/components/providers/settings-provider"
 import { sounds } from "@/lib/sounds"
+import { T } from "@/lib/i18n"
 
 function cn(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(" ");
@@ -241,7 +242,7 @@ export default function Lesson2() {
                 message={
                   <>
                     まずは、指（ゆび）をおく場所（ばしょ）をおぼえよう！基本（きほん）がとっても大切だよ。
-                    <span className="block text-xs text-slate-400 mt-1">Learn where to place your fingers — the home position!</span>
+                    <span className="block text-xs text-slate-400 mt-1"><T>Learn where to place your fingers — the home position!</T></span>
                   </>
                 }
                 mood="happy"
@@ -281,7 +282,7 @@ export default function Lesson2() {
                   message={
                     <>
                       光（ひか）っているキーを、同じ色（いろ）の指（ゆび）でおそう！
-                      <span className="block text-xs text-slate-400 mt-1">Press the glowing key with the same-color finger!</span>
+                      <span className="block text-xs text-slate-400 mt-1"><T>Press the glowing key with the same-color finger!</T></span>
                     </>
                   }
                   mood="happy"

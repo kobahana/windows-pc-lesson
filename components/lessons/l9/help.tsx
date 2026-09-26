@@ -11,6 +11,7 @@ import { HoverIcon } from "@/components/lessons/l6/five-rules"
 import { usePlatform } from "@/lib/platform"
 import { Mic, MicOff, Video, VideoOff, ScreenShare, Hand, MessageSquare, PhoneOff, Image as ImageIcon, CheckCircle2, Circle } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { T, tx } from "@/lib/i18n"
 
 const LESSON_ID = 10
 
@@ -35,7 +36,7 @@ export function HelpMission({ onComplete }: { onComplete: () => void }) {
   const onPasteShot = (e: React.ClipboardEvent) => {
     const item = [...e.clipboardData.items].find((i) => i.type.startsWith("image/"))
     if (!item) {
-      setWarn("画像ではないみたい。スクリーンショットを撮ってから貼り付けてね / That is not an image")
+      setWarn(`画像ではないみたい。スクリーンショットを撮ってから貼り付けてね / ${tx("That is not an image")}`)
       return
     }
     const file = item.getAsFile()
@@ -95,11 +96,11 @@ export function HelpMission({ onComplete }: { onComplete: () => void }) {
   }
 
   const messages: React.ReactNode[] = [
-    <><Ruby rt="こま">困</Ruby>ったときは、<Ruby rt="がめん">画面</Ruby>の<Ruby rt="しゃしん">写真</Ruby>（スクリーンショット）を<Ruby rt="と">撮</Ruby>って<Ruby rt="み">見</Ruby>せると、すぐに<Ruby rt="つた">伝</Ruby>わるよ！<Ruby rt="ほんとう">本当</Ruby>に<Ruby rt="と">撮</Ruby>って、<Ruby rt="した">下</Ruby>に<Ruby rt="は">貼</Ruby>り<Ruby rt="つ">付</Ruby>けてみよう。<span className="block text-sm text-muted-foreground mt-1">Take a real screenshot and paste it below.</span></>,
-    <><Ruby rt="せんせい">先生</Ruby>や<Ruby rt="じょうし">上司</Ruby>に<Ruby rt="しつもん">質問</Ruby>するとき、どう<Ruby rt="き">聞</Ruby>けばすぐ<Ruby rt="たす">助</Ruby>けてもらえるかな？<span className="block text-sm text-muted-foreground mt-1">How to ask for help.</span></>,
-    <><Ruby rt="しごと">仕事</Ruby>では、2つのアプリを<Ruby rt="み">見</Ruby>ながら<Ruby rt="さぎょう">作業</Ruby>することが<Ruby rt="おお">多</Ruby>いよ。アプリの<Ruby rt="き">切</Ruby>り<Ruby rt="か">替</Ruby>えと、<Ruby rt="がめん">画面</Ruby>を<Ruby rt="なら">並</Ruby>べる<Ruby rt="ほうほう">方法</Ruby>をやってみよう。<span className="block text-sm text-muted-foreground mt-1">Switch apps and snap windows side by side.</span></>,
-    <>オンライン<Ruby rt="かいぎ">会議</Ruby>（Google Meet・Zoom）のボタンも、アイコンを<Ruby rt="み">見</Ruby>ればわかるよ！<Ruby rt="めんせつ">面接</Ruby>でも<Ruby rt="つか">使</Ruby>うから、<Ruby rt="な">慣</Ruby>れておこう。<span className="block text-sm text-muted-foreground mt-1">Online meeting buttons.</span></>,
-    <><Ruby rt="さいご">最後</Ruby>に、<Ruby rt="しら">調</Ruby>べる<Ruby rt="ちから">力</Ruby>！<Ruby rt="けんさく">検索</Ruby>と<Ruby rt="ほんやく">翻訳</Ruby>ツールの<Ruby rt="じょうず">上手</Ruby>な<Ruby rt="つか">使</Ruby>い<Ruby rt="かた">方</Ruby>だよ。<span className="block text-sm text-muted-foreground mt-1">Searching and translating well.</span></>,
+    <><Ruby rt="こま">困</Ruby>ったときは、<Ruby rt="がめん">画面</Ruby>の<Ruby rt="しゃしん">写真</Ruby>（スクリーンショット）を<Ruby rt="と">撮</Ruby>って<Ruby rt="み">見</Ruby>せると、すぐに<Ruby rt="つた">伝</Ruby>わるよ！<Ruby rt="ほんとう">本当</Ruby>に<Ruby rt="と">撮</Ruby>って、<Ruby rt="した">下</Ruby>に<Ruby rt="は">貼</Ruby>り<Ruby rt="つ">付</Ruby>けてみよう。<span className="block text-sm text-muted-foreground mt-1"><T>Take a real screenshot and paste it below.</T></span></>,
+    <><Ruby rt="せんせい">先生</Ruby>や<Ruby rt="じょうし">上司</Ruby>に<Ruby rt="しつもん">質問</Ruby>するとき、どう<Ruby rt="き">聞</Ruby>けばすぐ<Ruby rt="たす">助</Ruby>けてもらえるかな？<span className="block text-sm text-muted-foreground mt-1"><T>How to ask for help.</T></span></>,
+    <><Ruby rt="しごと">仕事</Ruby>では、2つのアプリを<Ruby rt="み">見</Ruby>ながら<Ruby rt="さぎょう">作業</Ruby>することが<Ruby rt="おお">多</Ruby>いよ。アプリの<Ruby rt="き">切</Ruby>り<Ruby rt="か">替</Ruby>えと、<Ruby rt="がめん">画面</Ruby>を<Ruby rt="なら">並</Ruby>べる<Ruby rt="ほうほう">方法</Ruby>をやってみよう。<span className="block text-sm text-muted-foreground mt-1"><T>Switch apps and snap windows side by side.</T></span></>,
+    <>オンライン<Ruby rt="かいぎ">会議</Ruby>（Google Meet・Zoom）のボタンも、アイコンを<Ruby rt="み">見</Ruby>ればわかるよ！<Ruby rt="めんせつ">面接</Ruby>でも<Ruby rt="つか">使</Ruby>うから、<Ruby rt="な">慣</Ruby>れておこう。<span className="block text-sm text-muted-foreground mt-1"><T>Online meeting buttons.</T></span></>,
+    <><Ruby rt="さいご">最後</Ruby>に、<Ruby rt="しら">調</Ruby>べる<Ruby rt="ちから">力</Ruby>！<Ruby rt="けんさく">検索</Ruby>と<Ruby rt="ほんやく">翻訳</Ruby>ツールの<Ruby rt="じょうず">上手</Ruby>な<Ruby rt="つか">使</Ruby>い<Ruby rt="かた">方</Ruby>だよ。<span className="block text-sm text-muted-foreground mt-1"><T>Searching and translating well.</T></span></>,
   ]
 
   return (
@@ -125,7 +126,7 @@ export function HelpMission({ onComplete }: { onComplete: () => void }) {
           </div>
           <Warn>{warn}</Warn>
           <p className="text-center">
-            <button className="text-sm text-slate-400 underline" onClick={() => succeed("次へ進もう")}>この<Ruby rt="きょうしつ">教室</Ruby>のパソコンでは<Ruby rt="と">撮</Ruby>れない（スキップ） / Skip</button>
+            <button className="text-sm text-slate-400 underline" onClick={() => succeed("次へ進もう")}>この<Ruby rt="きょうしつ">教室</Ruby>のパソコンでは<Ruby rt="と">撮</Ruby>れない（スキップ） / <T>Skip</T></button>
           </p>
         </div>
       )}
@@ -169,7 +170,7 @@ export function HelpMission({ onComplete }: { onComplete: () => void }) {
           </Card>
           <Tip>メールを<Ruby rt="み">見</Ruby>ながら<Ruby rt="せいきゅうしょ">請求書</Ruby>を<Ruby rt="つく">作</Ruby>る、<Ruby rt="しりょう">資料</Ruby>を<Ruby rt="み">見</Ruby>ながらメモする…<Ruby rt="なら">並</Ruby>べると<Ruby rt="さぎょう">作業</Ruby>がとても<Ruby rt="はや">速</Ruby>くなるよ。</Tip>
           <p className="text-center">
-            <button className="text-sm text-slate-400 underline" onClick={() => succeed("次へ進もう")}>このパソコンではできない（スキップ） / Skip</button>
+            <button className="text-sm text-slate-400 underline" onClick={() => succeed("次へ進もう")}>このパソコンではできない（スキップ） / <T>Skip</T></button>
           </p>
         </div>
       )}

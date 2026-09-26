@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Keys, Ruby, Warn } from "@/components/lesson/kit"
 import { halfWidthProblem, katakanaProblem } from "@/lib/input-check"
+import { useT } from "@/lib/i18n"
 
 export interface TaskProps {
   onDone: () => void
@@ -34,6 +35,7 @@ function useModKeys() {
 }
 
 function CopyPaste({ onDone, award }: TaskProps) {
+  const t = useT()
   const [word] = useState(() => ["東京都渋谷区道玄坂1-2-3", "info@sakura.example.jp", "080-9876-5432", "https://example.com/apply"][Math.floor(Math.random() * 4)])
   const keys = useModKeys()
   const [warn, setWarn] = useState("")
@@ -41,7 +43,7 @@ function CopyPaste({ onDone, award }: TaskProps) {
     <div className="space-y-3">
       <p className="text-2xl font-bold bg-slate-50 rounded-xl p-4 select-text">{word}</p>
       <Input
-        placeholder="ここに貼り付け / Paste here"
+        placeholder={`ここに貼り付け / ${t("Paste here")}`}
         className="h-14 text-xl"
         onPaste={(e) => {
           const t = e.clipboardData.getData("text").trim()
@@ -59,6 +61,7 @@ function CopyPaste({ onDone, award }: TaskProps) {
 }
 
 function Cut({ onDone, award }: TaskProps) {
+  const t = useT()
   const [a, setA] = useState("会議室は　3階")
   const [b, setB] = useState("")
   const keys = useModKeys()
@@ -75,7 +78,7 @@ function Cut({ onDone, award }: TaskProps) {
     <div className="space-y-3">
       <p className="text-slate-600">「3<Ruby rt="かい">階</Ruby>」を <Keys k="Mod+X" /> で<Ruby rt="き">切</Ruby>り<Ruby rt="と">取</Ruby>って、<Ruby rt="した">下</Ruby>の<Ruby rt="らん">欄</Ruby>へ <Keys k="Mod+V" /></p>
       <Input value={a} onChange={(e) => setA(e.target.value)} className="h-14 text-xl" />
-      <Input value={b} onChange={(e) => setB(e.target.value)} placeholder="ここへ移動 / Move here" className="h-14 text-xl" />
+      <Input value={b} onChange={(e) => setB(e.target.value)} placeholder={`ここへ移動 / ${t("Move here")}`} className="h-14 text-xl" />
     </div>
   )
 }
@@ -191,6 +194,7 @@ function Print({ onDone, award }: TaskProps) {
 }
 
 function TabFields({ onDone, award }: TaskProps) {
+  const t = useT()
   const [vals, setVals] = useState(["", "", ""])
   const usedTab = useRef(0)
   const answers = ["3", "12", "2026"]
@@ -206,7 +210,7 @@ function TabFields({ onDone, award }: TaskProps) {
     <div className="space-y-3">
       <p className="text-slate-600">マウスを<Ruby rt="つか">使</Ruby>わずに、<Keys k="Tab" /> で<Ruby rt="つぎ">次</Ruby>の<Ruby rt="らん">欄</Ruby>へ<Ruby rt="い">移</Ruby>ろう：<b>3 → 12 → 2026</b></p>
       <div className="flex gap-3">
-        {["月 / Month", "日 / Day", "年 / Year"].map((ph, i) => (
+        {[`月 / ${t("Month")}`, `日 / ${t("Day")}`, `年 / ${t("Year")}`].map((ph, i) => (
           <Input key={i} autoFocus={i === 0} placeholder={ph} value={vals[i]} onChange={(e) => set(i, e.target.value)} onKeyDown={(e) => { if (e.key === "Tab") usedTab.current++ }} className="h-14 text-xl text-center" />
         ))}
       </div>

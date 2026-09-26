@@ -8,6 +8,7 @@ import { Card, MissionFrame, Ruby, Tip, Warn, useStepFlow } from "@/components/l
 import { DEFAULT_SIZE, DocEditor, hasAnyFmt, isAllBold, makePara, type Para } from "./doc-editor"
 import { CheckCircle2, Circle, AlignRight, AlignCenter, Bold, Plus, List } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { T } from "@/lib/i18n"
 
 const INITIAL: Para[] = [
   makePara("2026年10月1日"),
@@ -85,7 +86,7 @@ export function BusinessDocMission({ onComplete }: { onComplete: () => void }) {
   return (
     <MissionFrame
       wide
-      message={<>ビジネス<Ruby rt="ぶんしょ">文書</Ruby>を<Ruby rt="ととの">整</Ruby>えよう！<Ruby rt="もじ">文字</Ruby>は<Ruby rt="う">打</Ruby>たなくていいよ。<b><Ruby rt="えら">選</Ruby>んでから → ボタン</b>で、<Ruby rt="みぎ">右</Ruby>のチェックリストを<Ruby rt="ぜんぶ">全部</Ruby>クリアしよう。<span className="block text-sm text-muted-foreground mt-1">Format the letter with the toolbar buttons. Complete the checklist.</span></>}
+      message={<>ビジネス<Ruby rt="ぶんしょ">文書</Ruby>を<Ruby rt="ととの">整</Ruby>えよう！<Ruby rt="もじ">文字</Ruby>は<Ruby rt="う">打</Ruby>たなくていいよ。<b><Ruby rt="えら">選</Ruby>んでから → ボタン</b>で、<Ruby rt="みぎ">右</Ruby>のチェックリストを<Ruby rt="ぜんぶ">全部</Ruby>クリアしよう。<span className="block text-sm text-muted-foreground mt-1"><T>Format the letter with the toolbar buttons. Complete the checklist.</T></span></>}
       step={step}
       total={1}
       showSuccess={showSuccess}
