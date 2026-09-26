@@ -454,7 +454,6 @@ const dict: Record<string, string> = {
   "Student ID, email, phone number, password": "Talaba ID, email, telefon raqami, parol",
   "Japanese sentences, names (katakana)": "Yaponcha gaplar, ismlar (katakana)",
   "Each time you press the {key} key, it switches between あ (Japanese) and A (English, half-width).": "{key} tugmasini har bosganda あ (yaponcha) va A (inglizcha, half-width) almashadi.",
-  "The current mode (あ or A) is shown at the corner of the screen. Always check it before you type!": "Joriy rejim (あ yoki A) ekran burchagida ko‘rsatiladi. Yozishdan oldin doim tekshiring!",
   "If you type your ID in full-width, the computer thinks it is a different person. This is a common reason for \"not correct\" errors in online forms!": "ID’ni full-width’da yozsangiz, kompyuter uni boshqa odam deb o‘ylaydi. Onlayn shakllardagi \"noto‘g‘ri\" xatolarining keng tarqalgan sababi shu!",
   "① Switch to あ mode → ② Type guen → ③ Press Space and choose グエン → ④ Press Enter": "① あ rejimiga o‘ting → ② guen deb yozing → ③ Space bosib, グエン ni tanlang → ④ Enter bosing",
   "For difficult sounds like 「ゲ」 or 「ヴ」, press Space a few times and choose from the list.": "「ゲ」 yoki 「ヴ」 kabi qiyin tovushlar uchun Space’ni bir necha marta bosib, ro‘yxatdan tanlang.",
@@ -704,6 +703,11 @@ const dict: Record<string, string> = {
   "Wrong format. Type 4 numbers + 1 letter + 3 numbers in half-width, like the example": "Format noto‘g‘ri. Namunadagidek half-width’da 4 raqam + 1 harf + 3 raqam yozing",
   "Half-width katakana can't be used. Use full-width katakana": "Half-width katakanadan foydalanib bo‘lmaydi. Full-width katakanadan foydalaning",
   "Type your name in full-width katakana": "Ismingizni full-width katakanada yozing",
+  "The current mode (あ or A) is shown at the top right of the screen. Always check it before you type!": "Joriy rejim (あ yoki A) ekranning yuqori o‘ng qismida ko‘rsatiladi. Yozishdan oldin doim tekshiring!",
+  "The current mode (あ or A) is shown at the bottom right of the screen, near the clock. Always check it before you type!": "Joriy rejim (あ yoki A) ekranning pastki o‘ng qismida, soat yonida ko‘rsatiladi. Yozishdan oldin doim tekshiring!",
+  "On both sides of the Space key": "Space tugmasining ikki tomonida",
+  "Top left of the keyboard": "Klaviaturaning yuqori chap qismi",
+  "This is not the URL of this page. Look at the very top of the browser.": "Bu shu sahifaning URL’i emas. Brauzerning eng tepasiga qarang.",
 }
 
 export default dict

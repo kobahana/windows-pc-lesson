@@ -260,7 +260,7 @@ export function ClipboardMission({ onComplete }: { onComplete: () => void }) {
               onPaste={(e) => {
                 const t = pasted(e).trim()
                 if (t.startsWith(window.location.origin) || t.startsWith(window.location.host)) succeed("URLのコピー、完璧！")
-                else setWarn(<>このページの URL ではないみたい。{isMac ? "画面" : "ブラウザ"}のいちばん<Ruby rt="うえ">上</Ruby>をよく<Ruby rt="み">見</Ruby>てね<span className="block text-sm font-normal"><T>This is not the URL of this page. Look at the very top of the screen.</T></span></>)
+                else setWarn(<>このページの URL ではないみたい。{isMac ? "画面" : "ブラウザ"}のいちばん<Ruby rt="うえ">上</Ruby>をよく<Ruby rt="み">見</Ruby>てね<span className="block text-sm font-normal">{isMac ? <T>This is not the URL of this page. Look at the very top of the screen.</T> : <T>This is not the URL of this page. Look at the very top of the browser.</T>}</span></>)
               }}
             />
             <Warn>{warn}</Warn>

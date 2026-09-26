@@ -454,7 +454,6 @@ const dict: Record<string, string> = {
   "Student ID, email, phone number, password": "Namba ya mwanafunzi, barua pepe, namba ya simu, nenosiri",
   "Japanese sentences, names (katakana)": "Sentensi za Kijapani, majina (katakana)",
   "Each time you press the {key} key, it switches between あ (Japanese) and A (English, half-width).": "Kila unapobonyeza kitufe cha {key}, inabadilika kati ya あ (Kijapani) na A (Kiingereza, half-width).",
-  "The current mode (あ or A) is shown at the corner of the screen. Always check it before you type!": "Hali ya sasa (あ au A) inaonyeshwa kwenye kona ya skrini. Iangalie kila mara kabla ya kuandika!",
   "If you type your ID in full-width, the computer thinks it is a different person. This is a common reason for \"not correct\" errors in online forms!": "Ukiandika namba yako kwa full-width, kompyuta inadhani ni mtu mwingine. Hii ni sababu ya kawaida ya makosa ya \"si sahihi\" kwenye fomu za mtandaoni!",
   "① Switch to あ mode → ② Type guen → ③ Press Space and choose グエン → ④ Press Enter": "① Badilisha kwenda hali ya あ → ② Andika guen → ③ Bonyeza Space na uchague グエン → ④ Bonyeza Enter",
   "For difficult sounds like 「ゲ」 or 「ヴ」, press Space a few times and choose from the list.": "Kwa sauti ngumu kama 「ゲ」 au 「ヴ」, bonyeza Space mara chache na uchague kwenye orodha.",
@@ -704,6 +703,11 @@ const dict: Record<string, string> = {
   "Wrong format. Type 4 numbers + 1 letter + 3 numbers in half-width, like the example": "Muundo si sahihi. Andika namba 4 + herufi 1 + namba 3 kwa half-width, kama mfano",
   "Half-width katakana can't be used. Use full-width katakana": "Katakana ya half-width haiwezi kutumika. Tumia katakana ya full-width",
   "Type your name in full-width katakana": "Andika jina lako kwa katakana ya full-width",
+  "The current mode (あ or A) is shown at the top right of the screen. Always check it before you type!": "Hali ya sasa (あ au A) inaonyeshwa juu kulia mwa skrini. Iangalie kila mara kabla ya kuandika!",
+  "The current mode (あ or A) is shown at the bottom right of the screen, near the clock. Always check it before you type!": "Hali ya sasa (あ au A) inaonyeshwa chini kulia mwa skrini, karibu na saa. Iangalie kila mara kabla ya kuandika!",
+  "On both sides of the Space key": "Pande zote mbili za kitufe cha Space",
+  "Top left of the keyboard": "Juu kushoto mwa kibodi",
+  "This is not the URL of this page. Look at the very top of the browser.": "Hii si URL ya ukurasa huu. Angalia juu kabisa ya kivinjari.",
 }
 
 export default dict

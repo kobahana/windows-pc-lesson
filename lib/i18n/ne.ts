@@ -454,7 +454,6 @@ const dict: Record<string, string> = {
   "Student ID, email, phone number, password": "विद्यार्थी ID, इमेल, फोन नम्बर, पासवर्ड",
   "Japanese sentences, names (katakana)": "जापानी वाक्य, नाम (काताकाना)",
   "Each time you press the {key} key, it switches between あ (Japanese) and A (English, half-width).": "{key} कुञ्जी थिच्दा पिच्छे あ (जापानी) र A (अङ्ग्रेजी, हाफ-विड्थ) बीच बदलिन्छ।",
-  "The current mode (あ or A) is shown at the corner of the screen. Always check it before you type!": "हालको मोड (あ वा A) स्क्रिनको कुनामा देखिन्छ। टाइप गर्नुअघि सधैं हेर्नुहोस्!",
   "If you type your ID in full-width, the computer thinks it is a different person. This is a common reason for \"not correct\" errors in online forms!": "ID फुल-विड्थमा टाइप गरे कम्प्युटरले अर्कै व्यक्ति ठान्छ। अनलाइन फारममा \"सही छैन\" त्रुटिको मुख्य कारण यही हो!",
   "① Switch to あ mode → ② Type guen → ③ Press Space and choose グエン → ④ Press Enter": "① あ मोडमा जानुहोस् → ② guen टाइप गर्नुहोस् → ③ Space थिचेर グエン छान्नुहोस् → ④ Enter थिच्नुहोस्",
   "For difficult sounds like 「ゲ」 or 「ヴ」, press Space a few times and choose from the list.": "「ゲ」 वा 「ヴ」 जस्ता गाह्रो आवाजका लागि केही पटक Space थिचेर सूचीबाट छान्नुहोस्।",
@@ -704,6 +703,11 @@ const dict: Record<string, string> = {
   "Wrong format. Type 4 numbers + 1 letter + 3 numbers in half-width, like the example": "ढाँचा गलत छ। उदाहरणजस्तै हाफ-विड्थमा ४ अङ्क + १ अक्षर + ३ अङ्क टाइप गर्नुहोस्",
   "Half-width katakana can't be used. Use full-width katakana": "हाफ-विड्थ काताकाना प्रयोग गर्न मिल्दैन। फुल-विड्थ काताकाना प्रयोग गर्नुहोस्",
   "Type your name in full-width katakana": "आफ्नो नाम फुल-विड्थ काताकानामा टाइप गर्नुहोस्",
+  "The current mode (あ or A) is shown at the top right of the screen. Always check it before you type!": "हालको मोड (あ वा A) स्क्रिनको माथि-दायाँमा देखिन्छ। टाइप गर्नुअघि सधैं हेर्नुहोस्!",
+  "The current mode (あ or A) is shown at the bottom right of the screen, near the clock. Always check it before you type!": "हालको मोड (あ वा A) स्क्रिनको तल-दायाँमा, घडीको नजिक देखिन्छ। टाइप गर्नुअघि सधैं हेर्नुहोस्!",
+  "On both sides of the Space key": "Space कुञ्जीको दुवैतिर",
+  "Top left of the keyboard": "किबोर्डको माथि-बायाँ",
+  "This is not the URL of this page. Look at the very top of the browser.": "यो यस पेजको URL होइन। ब्राउजरको सबैभन्दा माथि हेर्नुहोस्।",
 }
 
 export default dict

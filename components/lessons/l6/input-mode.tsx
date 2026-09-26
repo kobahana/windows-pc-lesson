@@ -150,11 +150,11 @@ export function InputModeMission({ onComplete }: { onComplete: () => void }) {
                 <span className="w-12 h-12 rounded-md bg-slate-600 text-white text-sm flex items-center justify-center">1</span>
                 <span className="w-12 h-12 rounded-md bg-slate-600 text-white text-sm flex items-center justify-center">2</span>
               </div>
-              <p className="text-xs text-slate-500 mt-1">{isMac ? "スペースの左右" : "キーボードの左上"}</p>
+              <p className="text-xs text-slate-500 mt-1">{isMac ? "スペースの左右" : "キーボードの左上"}<span className="block">{isMac ? <T>On both sides of the Space key</T> : <T>Top left of the keyboard</T>}</span></p>
             </div>
             <div className="space-y-2 text-slate-700">
               <p>「<b>{imeKey}</b>」キーを<Ruby rt="お">押</Ruby>すたびに、<b>あ</b>（<Ruby rt="にほんご">日本語</Ruby>）と <b>A</b>（<Ruby rt="えいご">英語</Ruby>・<Ruby rt="はんかく">半角</Ruby>）が<Ruby rt="き">切</Ruby>り<Ruby rt="か">替</Ruby>わるよ。<span className="block text-sm text-slate-500 mt-1"><T s="Each time you press the {key} key, it switches between あ (Japanese) and A (English, half-width)." v={{ key: imeKey }} /></span></p>
-              <p>{isMac ? "画面の右上" : "画面の右下（時計の近く）"}に、<Ruby rt="いま">今</Ruby>のモード「<b>あ</b>」か「<b>A</b>」が<Ruby rt="で">出</Ruby>ているよ。<Ruby rt="う">打</Ruby>つ<Ruby rt="まえ">前</Ruby>に<Ruby rt="み">見</Ruby>るくせをつけよう！<span className="block text-sm text-slate-500 mt-1"><T>The current mode (あ or A) is shown at the corner of the screen. Always check it before you type!</T></span></p>
+              <p>{isMac ? "画面の右上" : "画面の右下（時計の近く）"}に、<Ruby rt="いま">今</Ruby>のモード「<b>あ</b>」か「<b>A</b>」が<Ruby rt="で">出</Ruby>ているよ。<Ruby rt="う">打</Ruby>つ<Ruby rt="まえ">前</Ruby>に<Ruby rt="み">見</Ruby>るくせをつけよう！<span className="block text-sm text-slate-500 mt-1">{isMac ? <T>The current mode (あ or A) is shown at the top right of the screen. Always check it before you type!</T> : <T>The current mode (あ or A) is shown at the bottom right of the screen, near the clock. Always check it before you type!</T>}</span></p>
             </div>
           </Card>
           <Tip title={<>なぜ<Ruby rt="たいせつ">大切</Ruby>？ / <T>Why?</T></>}>

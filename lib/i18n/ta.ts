@@ -454,7 +454,6 @@ const dict: Record<string, string> = {
   "Student ID, email, phone number, password": "மாணவர் எண், மின்னஞ்சல், தொலைபேசி எண், கடவுச்சொல்",
   "Japanese sentences, names (katakana)": "ஜப்பானிய வாக்கியங்கள், பெயர்கள் (கதகானா)",
   "Each time you press the {key} key, it switches between あ (Japanese) and A (English, half-width).": "{key} விசையை அழுத்தும் ஒவ்வொரு முறையும் あ (ஜப்பானியம்) மற்றும் A (ஆங்கிலம், half-width) இடையே மாறும்.",
-  "The current mode (あ or A) is shown at the corner of the screen. Always check it before you type!": "தற்போதைய பயன்முறை (あ அல்லது A) திரையின் மூலையில் காட்டப்படும். தட்டச்சு செய்யும் முன் எப்போதும் பாருங்கள்!",
   "If you type your ID in full-width, the computer thinks it is a different person. This is a common reason for \"not correct\" errors in online forms!": "உங்கள் எண்ணை full-width இல் தட்டச்சு செய்தால், கணினி அதை வேறொருவர் என நினைக்கும். இணையப் படிவங்களில் \"சரியில்லை\" பிழைக்கு இது பொதுவான காரணம்!",
   "① Switch to あ mode → ② Type guen → ③ Press Space and choose グエン → ④ Press Enter": "① あ பயன்முறைக்கு மாறுங்கள் → ② guen எனத் தட்டச்சு செய்யுங்கள் → ③ Space அழுத்தி グエン தேர்ந்தெடுங்கள் → ④ Enter அழுத்துங்கள்",
   "For difficult sounds like 「ゲ」 or 「ヴ」, press Space a few times and choose from the list.": "「ゲ」 அல்லது 「ヴ」 போன்ற கடினமான ஒலிகளுக்கு, Space ஐ சில முறை அழுத்திப் பட்டியலிலிருந்து தேர்ந்தெடுங்கள்.",
@@ -704,6 +703,11 @@ const dict: Record<string, string> = {
   "Wrong format. Type 4 numbers + 1 letter + 3 numbers in half-width, like the example": "வடிவம் தவறு. உதாரணம் போல half-width இல் 4 எண்கள் + 1 எழுத்து + 3 எண்கள் தட்டச்சு செய்யுங்கள்",
   "Half-width katakana can't be used. Use full-width katakana": "half-width கதகானாவைப் பயன்படுத்த முடியாது. full-width கதகானாவைப் பயன்படுத்துங்கள்",
   "Type your name in full-width katakana": "உங்கள் பெயரை full-width கதகானாவில் தட்டச்சு செய்யுங்கள்",
+  "The current mode (あ or A) is shown at the top right of the screen. Always check it before you type!": "தற்போதைய பயன்முறை (あ அல்லது A) திரையின் மேல்-வலதில் காட்டப்படும். தட்டச்சு செய்யும் முன் எப்போதும் பாருங்கள்!",
+  "The current mode (あ or A) is shown at the bottom right of the screen, near the clock. Always check it before you type!": "தற்போதைய பயன்முறை (あ அல்லது A) திரையின் கீழ்-வலதில், கடிகாரத்தின் அருகே காட்டப்படும். தட்டச்சு செய்யும் முன் எப்போதும் பாருங்கள்!",
+  "On both sides of the Space key": "Space விசையின் இருபுறமும்",
+  "Top left of the keyboard": "விசைப்பலகையின் மேல்-இடது",
+  "This is not the URL of this page. Look at the very top of the browser.": "இது இந்தப் பக்கத்தின் URL அல்ல. உலாவியின் மேல்பகுதியைப் பாருங்கள்.",
 }
 
 export default dict

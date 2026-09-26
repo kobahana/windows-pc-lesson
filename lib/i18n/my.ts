@@ -454,7 +454,6 @@ const dict: Record<string, string> = {
   "Student ID, email, phone number, password": "ကျောင်းသား ID၊ email၊ ဖုန်းနံပါတ်၊ စကားဝှက်",
   "Japanese sentences, names (katakana)": "ဂျပန် ဝါကျများ၊ အမည် (katakana)",
   "Each time you press the {key} key, it switches between あ (Japanese) and A (English, half-width).": "{key} ခလုတ်ကို နှိပ်တိုင်း あ (ဂျပန်) နှင့် A (အင်္ဂလိပ်၊ half-width) ကြား ပြောင်းသည်။",
-  "The current mode (あ or A) is shown at the corner of the screen. Always check it before you type!": "လက်ရှိ mode (あ သို့မဟုတ် A) ကို မျက်နှာပြင်ထောင့်တွင် ပြထားသည်။ မရိုက်မီ အမြဲ စစ်ဆေးပါ!",
   "If you type your ID in full-width, the computer thinks it is a different person. This is a common reason for \"not correct\" errors in online forms!": "ID ကို full-width ဖြင့် ရိုက်လျှင် ကွန်ပျူတာက တခြားလူဟု ထင်သည်။ အွန်လိုင်းပုံစံများတွင် \"မမှန်ပါ\" error ဖြစ်ရသည့် အဖြစ်များသော အကြောင်းရင်းဖြစ်သည်!",
   "① Switch to あ mode → ② Type guen → ③ Press Space and choose グエン → ④ Press Enter": "① あ mode သို့ ပြောင်းပါ → ② guen ရိုက်ပါ → ③ Space နှိပ်ပြီး グエン ရွေးပါ → ④ Enter နှိပ်ပါ",
   "For difficult sounds like 「ゲ」 or 「ヴ」, press Space a few times and choose from the list.": "「ゲ」 သို့မဟုတ် 「ヴ」 ကဲ့သို့ ခက်သော အသံများအတွက် Space ကို အကြိမ်အနည်းငယ် နှိပ်ပြီး စာရင်းမှ ရွေးပါ။",
@@ -704,6 +703,11 @@ const dict: Record<string, string> = {
   "Wrong format. Type 4 numbers + 1 letter + 3 numbers in half-width, like the example": "ပုံစံ မှားနေသည်။ ဥပမာအတိုင်း half-width ဖြင့် နံပါတ် ၄ လုံး + စာလုံး ၁ လုံး + နံပါတ် ၃ လုံး ရိုက်ပါ",
   "Half-width katakana can't be used. Use full-width katakana": "half-width katakana ကို သုံး၍ မရပါ။ full-width katakana ကို သုံးပါ",
   "Type your name in full-width katakana": "သင့်အမည်ကို full-width katakana ဖြင့် ရိုက်ပါ",
+  "The current mode (あ or A) is shown at the top right of the screen. Always check it before you type!": "လက်ရှိ mode (あ သို့မဟုတ် A) ကို မျက်နှာပြင်၏ ညာဘက်အပေါ်တွင် ပြထားသည်။ မရိုက်မီ အမြဲ စစ်ဆေးပါ!",
+  "The current mode (あ or A) is shown at the bottom right of the screen, near the clock. Always check it before you type!": "လက်ရှိ mode (あ သို့မဟုတ် A) ကို မျက်နှာပြင်၏ ညာဘက်အောက်၊ နာရီအနီးတွင် ပြထားသည်။ မရိုက်မီ အမြဲ စစ်ဆေးပါ!",
+  "On both sides of the Space key": "Space ခလုတ်၏ ဘယ်ညာ နှစ်ဖက်",
+  "Top left of the keyboard": "ကီးဘုတ်၏ ဘယ်ဘက်အပေါ်",
+  "This is not the URL of this page. Look at the very top of the browser.": "ဤသည် ဤစာမျက်နှာ၏ URL မဟုတ်ပါ။ browser ၏ အပေါ်ဆုံးကို ကြည့်ပါ။",
 }
 
 export default dict

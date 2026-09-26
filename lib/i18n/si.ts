@@ -454,7 +454,6 @@ const dict: Record<string, string> = {
   "Student ID, email, phone number, password": "ශිෂ්‍ය අංකය, ඊමේල්, දුරකථන අංකය, මුරපදය",
   "Japanese sentences, names (katakana)": "ජපන් වාක්‍ය, නම් (katakana)",
   "Each time you press the {key} key, it switches between あ (Japanese) and A (English, half-width).": "{key} යතුර ඔබන සෑම වරම, あ (ජපන්) සහ A (ඉංග්‍රීසි, half-width) අතර මාරු වේ.",
-  "The current mode (あ or A) is shown at the corner of the screen. Always check it before you type!": "වත්මන් මාදිලිය (あ හෝ A) තිරයේ කොනේ පෙන්වයි. ටයිප් කිරීමට පෙර සෑම විටම පරීක්ෂා කරන්න!",
   "If you type your ID in full-width, the computer thinks it is a different person. This is a common reason for \"not correct\" errors in online forms!": "ඔබේ අංකය full-width ලෙස ටයිප් කළොත්, පරිගණකය එය වෙනත් පුද්ගලයෙකු යැයි සිතයි. සබැඳි පෝරමවල \"නිවැරදි නැත\" දෝෂයට පොදු හේතුවක් මෙයයි!",
   "① Switch to あ mode → ② Type guen → ③ Press Space and choose グエン → ④ Press Enter": "① あ මාදිලියට මාරු වන්න → ② guen ටයිප් කරන්න → ③ Space ඔබා グエン තෝරන්න → ④ Enter ඔබන්න",
   "For difficult sounds like 「ゲ」 or 「ヴ」, press Space a few times and choose from the list.": "「ゲ」 හෝ 「ヴ」 වැනි අමාරු ශබ්ද සඳහා, Space කිහිප වතාවක් ඔබා ලැයිස්තුවෙන් තෝරන්න.",
@@ -704,6 +703,11 @@ const dict: Record<string, string> = {
   "Wrong format. Type 4 numbers + 1 letter + 3 numbers in half-width, like the example": "ආකෘතිය වැරදියි. උදාහරණයේ මෙන් half-width ලෙස ඉලක්කම් 4 + අකුර 1 + ඉලක්කම් 3 ටයිප් කරන්න",
   "Half-width katakana can't be used. Use full-width katakana": "half-width katakana භාවිත කළ නොහැක. full-width katakana භාවිත කරන්න",
   "Type your name in full-width katakana": "ඔබේ නම full-width katakana වලින් ටයිප් කරන්න",
+  "The current mode (あ or A) is shown at the top right of the screen. Always check it before you type!": "වත්මන් මාදිලිය (あ හෝ A) තිරයේ ඉහළ දකුණේ පෙන්වයි. ටයිප් කිරීමට පෙර සෑම විටම පරීක්ෂා කරන්න!",
+  "The current mode (あ or A) is shown at the bottom right of the screen, near the clock. Always check it before you type!": "වත්මන් මාදිලිය (あ හෝ A) තිරයේ පහළ දකුණේ, ඔරලෝසුව අසල පෙන්වයි. ටයිප් කිරීමට පෙර සෑම විටම පරීක්ෂා කරන්න!",
+  "On both sides of the Space key": "Space යතුරේ දෙපැත්තේ",
+  "Top left of the keyboard": "යතුරු පුවරුවේ ඉහළ වම",
+  "This is not the URL of this page. Look at the very top of the browser.": "මෙය මෙම පිටුවේ URL එක නොවේ. බ්‍රව්සරයේ ඉහළම කොටස බලන්න.",
 }
 
 export default dict

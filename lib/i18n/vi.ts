@@ -454,7 +454,6 @@ const dict: Record<string, string> = {
   "Student ID, email, phone number, password": "Mã số sinh viên, email, số điện thoại, mật khẩu",
   "Japanese sentences, names (katakana)": "Câu tiếng Nhật, tên (katakana)",
   "Each time you press the {key} key, it switches between あ (Japanese) and A (English, half-width).": "Mỗi lần nhấn phím {key}, chế độ chuyển giữa あ (tiếng Nhật) và A (tiếng Anh, nửa độ rộng).",
-  "The current mode (あ or A) is shown at the corner of the screen. Always check it before you type!": "Chế độ hiện tại (あ hoặc A) hiển thị ở góc màn hình. Luôn kiểm tra trước khi gõ!",
   "If you type your ID in full-width, the computer thinks it is a different person. This is a common reason for \"not correct\" errors in online forms!": "Nếu gõ mã số ở dạng toàn độ rộng, máy tính sẽ nghĩ đó là người khác. Đây là lý do thường gặp của lỗi \"không đúng\" trong biểu mẫu trực tuyến!",
   "① Switch to あ mode → ② Type guen → ③ Press Space and choose グエン → ④ Press Enter": "① Chuyển sang chế độ あ → ② Gõ guen → ③ Nhấn Space và chọn グエン → ④ Nhấn Enter",
   "For difficult sounds like 「ゲ」 or 「ヴ」, press Space a few times and choose from the list.": "Với âm khó như 「ゲ」 hay 「ヴ」, nhấn Space vài lần và chọn trong danh sách.",
@@ -704,6 +703,11 @@ const dict: Record<string, string> = {
   "Wrong format. Type 4 numbers + 1 letter + 3 numbers in half-width, like the example": "Sai định dạng. Hãy nhập 4 số + 1 chữ cái + 3 số ở dạng nửa độ rộng, giống ví dụ",
   "Half-width katakana can't be used. Use full-width katakana": "Không dùng được katakana nửa độ rộng. Hãy dùng katakana toàn độ rộng",
   "Type your name in full-width katakana": "Hãy nhập tên bằng katakana toàn độ rộng",
+  "The current mode (あ or A) is shown at the top right of the screen. Always check it before you type!": "Chế độ hiện tại (あ hoặc A) hiển thị ở góc trên bên phải màn hình. Luôn kiểm tra trước khi gõ!",
+  "The current mode (あ or A) is shown at the bottom right of the screen, near the clock. Always check it before you type!": "Chế độ hiện tại (あ hoặc A) hiển thị ở góc dưới bên phải màn hình, gần đồng hồ. Luôn kiểm tra trước khi gõ!",
+  "On both sides of the Space key": "Ở hai bên phím Space",
+  "Top left of the keyboard": "Góc trên bên trái bàn phím",
+  "This is not the URL of this page. Look at the very top of the browser.": "Đây không phải URL của trang này. Hãy nhìn phía trên cùng của trình duyệt.",
 }
 
 export default dict
