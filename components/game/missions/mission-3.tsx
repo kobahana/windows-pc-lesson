@@ -109,6 +109,7 @@ export function Mission3({ onComplete }: Mission3Props) {
         return (
           <>
             キーボードの<Ruby rt="きごう">記号</Ruby>の<Ruby rt="だ">出</Ruby>し<Ruby rt="かた">方</Ruby>、<Ruby rt="むずか">難</Ruby>しいよね。<Ruby rt="ぼく">僕</Ruby>がルールを<Ruby rt="おし">教</Ruby>えるよ！
+            <span className="block text-xs text-muted-foreground mt-1"><T>Typing symbols on the keyboard is hard, right? I'll teach you the rules!</T></span>
           </>
         )
       case "tutorial-shift":
@@ -116,6 +117,7 @@ export function Mission3({ onComplete }: Mission3Props) {
           <div className="space-y-2">
             <p className="font-bold text-primary">【Shiftキーの<Ruby rt="つか">使</Ruby>い<Ruby rt="かた">方</Ruby>】</p>
             <p>キーに<Ruby rt="きごう">記号</Ruby>が2つあるとき、<span className="font-bold text-primary">Shiftを<Ruby rt="お">押</Ruby>しながら</span><Ruby rt="お">押</Ruby>すと「<Ruby rt="ひだりうえ">左上</Ruby>」の<Ruby rt="きごう">記号</Ruby>が<Ruby rt="で">出</Ruby>るんだ！</p>
+            <p className="text-xs text-muted-foreground"><T>When a key has 2 symbols, hold Shift and press it to get the top-left symbol!</T></p>
             <div className="mt-4 flex justify-center items-center gap-4">
               <div className="relative bg-gray-800 text-white w-12 h-12 rounded flex items-center justify-center">
                 <span className="absolute top-1 left-2 text-[10px] text-yellow-400">＠</span>
@@ -137,6 +139,7 @@ export function Mission3({ onComplete }: Mission3Props) {
           <div className="space-y-2">
             <p className="font-bold text-primary">【よく<Ruby rt="つか">使</Ruby>う<Ruby rt="きごう">記号</Ruby>】</p>
             <p><Ruby rt="にほんご">日本語</Ruby>でよく<Ruby rt="つか">使</Ruby>う<Ruby rt="きごう">記号</Ruby>の<Ruby rt="ばしょ">場所</Ruby>を<Ruby rt="おぼ">覚</Ruby>えよう！</p>
+            <p className="text-xs text-muted-foreground"><T>Learn where the symbols often used in Japanese are!</T></p>
             <div className="mt-3 grid grid-cols-5 gap-2 text-center">
               <div className="bg-gray-100 rounded p-2">
                 <span className="text-lg">「」</span>
@@ -169,7 +172,7 @@ export function Mission3({ onComplete }: Mission3Props) {
           </>
         )
       case "complete":
-        return <>ミッション3クリア！キーボードの<Ruby rt="きごう">記号</Ruby>をマスターしたね！</>
+        return <>ミッション3クリア！キーボードの<Ruby rt="きごう">記号</Ruby>をマスターしたね！<span className="block text-xs text-muted-foreground mt-1"><T>Mission 3 clear! You mastered keyboard symbols!</T></span></>
       default:
         return ""
     }
@@ -269,7 +272,7 @@ export function Mission3({ onComplete }: Mission3Props) {
               {/* Completed characters list */}
               <div className="mt-4">
                 <p className="text-xs text-muted-foreground text-center mb-2">
-                  クリアした<Ruby rt="きごう">記号</Ruby>：
+                  クリアした<Ruby rt="きごう">記号</Ruby>： <T>Symbols done:</T>
                 </p>
                 <div className="flex justify-center gap-2 flex-wrap">
                   {practiceCharacters.map((char, index) => (

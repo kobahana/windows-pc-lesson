@@ -9,7 +9,7 @@ import { Sheet } from "@/components/lessons/l8/sheet"
 import { type SheetState, evaluate, usesCellRef } from "@/components/lessons/l8/sheet-engine"
 import { CheckCircle2, Circle } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { T } from "@/lib/i18n"
+import { T, tx } from "@/lib/i18n"
 
 const INITIAL: SheetState = {
   cells: {
@@ -27,11 +27,11 @@ const INITIAL: SheetState = {
 }
 const TOTAL = 420 + 380 + 520 + 1100 + 460
 
-const GOALS: { label: React.ReactNode; done: (s: SheetState) => boolean }[] = [
-  { label: <>C9 に<Ruby rt="ごうけい">合計</Ruby>を<Ruby rt="しき">式</Ruby>で<Ruby rt="だ">出</Ruby>す</>, done: (s) => usesCellRef(s.cells.C9?.raw ?? "") && evaluate(s, "C9") === TOTAL },
-  { label: <>タイトル（A1）を A1〜C1 の<Ruby rt="まん">真ん</Ruby><Ruby rt="なか">中</Ruby>にする</>, done: (s) => s.merges.some((m) => m.r0 === 0 && m.c0 === 0 && m.r1 === 0 && m.c1 >= 2) && s.cells.A1?.fmt?.align === "center" },
-  { label: <><Ruby rt="ひょう">表</Ruby>（A3〜C9）に<Ruby rt="けいせん">罫線</Ruby></>, done: (s) => [3, 4, 5, 6, 7, 8, 9].every((r) => ["A", "B", "C"].every((c) => s.borders[`${c}${r}`])) },
-  { label: <><Ruby rt="きんがく">金額</Ruby>（C4〜C9）を ¥ の<Ruby rt="ひょうじ">表示</Ruby>に</>, done: (s) => [4, 5, 6, 7, 8, 9].every((r) => s.cells[`C${r}`]?.fmt?.currency) },
+const GOALS: { label: React.ReactNode; en: string; done: (s: SheetState) => boolean }[] = [
+  { label: <>C9 に<Ruby rt="ごうけい">合計</Ruby>を<Ruby rt="しき">式</Ruby>で<Ruby rt="だ">出</Ruby>す</>, en: tx("Get the total in C9 with a formula"), done: (s) => usesCellRef(s.cells.C9?.raw ?? "") && evaluate(s, "C9") === TOTAL },
+  { label: <>タイトル（A1）を A1〜C1 の<Ruby rt="まん">真ん</Ruby><Ruby rt="なか">中</Ruby>にする</>, en: tx("Put the title (A1) in the center of A1 to C1"), done: (s) => s.merges.some((m) => m.r0 === 0 && m.c0 === 0 && m.r1 === 0 && m.c1 >= 2) && s.cells.A1?.fmt?.align === "center" },
+  { label: <><Ruby rt="ひょう">表</Ruby>（A3〜C9）に<Ruby rt="けいせん">罫線</Ruby></>, en: tx("Add borders to the table (A3 to C9)"), done: (s) => [3, 4, 5, 6, 7, 8, 9].every((r) => ["A", "B", "C"].every((c) => s.borders[`${c}${r}`])) },
+  { label: <><Ruby rt="きんがく">金額</Ruby>（C4〜C9）を ¥ の<Ruby rt="ひょうじ">表示</Ruby>に</>, en: tx("Show the amounts (C4 to C9) in ¥"), done: (s) => [4, 5, 6, 7, 8, 9].every((r) => s.cells[`C${r}`]?.fmt?.currency) },
 ]
 
 export function ExcelChallengeMission({ onComplete }: { onComplete: () => void }) {
@@ -63,11 +63,11 @@ export function ExcelChallengeMission({ onComplete }: { onComplete: () => void }
             {GOALS.map((g, i) => (
               <p key={i} className={cn("flex gap-2 items-start text-sm", status[i] ? "text-success" : "text-slate-700")}>
                 {status[i] ? <CheckCircle2 className="w-5 h-5 shrink-0" /> : <Circle className="w-5 h-5 shrink-0 text-slate-300" />}
-                <span>{g.label}</span>
+                <span>{g.label}<span className="block text-xs text-slate-400"><T>{g.en}</T></span></span>
               </p>
             ))}
           </Card>
-          <Tip title="ヒント">アイコンにマウスを<Ruby rt="の">乗</Ruby>せてみよう。<Ruby rt="かたち">形</Ruby>はGoogleスプレッドシートとほとんど<Ruby rt="おな">同</Ruby>じだよ。</Tip>
+          <Tip title="ヒント">アイコンにマウスを<Ruby rt="の">乗</Ruby>せてみよう。<Ruby rt="かたち">形</Ruby>はGoogleスプレッドシートとほとんど<Ruby rt="おな">同</Ruby>じだよ。<span className="block text-sm text-slate-500 mt-1"><T>Put the mouse on the icons. The shapes are almost the same as Google Sheets.</T></span></Tip>
         </div>
       </div>
     </MissionFrame>

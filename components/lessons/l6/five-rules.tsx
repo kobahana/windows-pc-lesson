@@ -95,7 +95,7 @@ export function FiveRulesMission({ onComplete }: { onComplete: () => void }) {
       sel.removeAllRanges()
       succeed("選んでから操作！")
     } else {
-      setWarn(<>「<Ruby rt="たいせつ">大切</Ruby>」だけを<Ruby rt="えら">選</Ruby>んでね（<Ruby rt="いま">今</Ruby>：「{text}」）</>)
+      setWarn(<>「<Ruby rt="たいせつ">大切</Ruby>」だけを<Ruby rt="えら">選</Ruby>んでね（<Ruby rt="いま">今</Ruby>：「{text}」）<span className="block text-sm font-normal"><T s="Select only 「大切」 (now: 「{text}」)" v={{ text }} /></span></>)
     }
   }
 
@@ -107,7 +107,7 @@ export function FiveRulesMission({ onComplete }: { onComplete: () => void }) {
       if (quizIndex + 1 >= ICON_QUIZ.length) succeed("アイコン名人！")
       else setQuizIndex((i) => i + 1)
     } else {
-      setWarn(<>それは「{name}」だよ。マウスを<Ruby rt="の">乗</Ruby>せると<Ruby rt="なまえ">名前</Ruby>が<Ruby rt="で">出</Ruby>るよ</>)
+      setWarn(<>それは「{name}」だよ。マウスを<Ruby rt="の">乗</Ruby>せると<Ruby rt="なまえ">名前</Ruby>が<Ruby rt="で">出</Ruby>るよ<span className="block text-sm font-normal"><T s="That is 「{name}」. Put the mouse on an icon to see its name." v={{ name }} /></span></>)
     }
   }
 
@@ -121,9 +121,9 @@ export function FiveRulesMission({ onComplete }: { onComplete: () => void }) {
   const [openMenu, setOpenMenu] = useState<string | null>(null)
   const [menuTask, setMenuTask] = useState(0)
   const MENU_TASKS = [
-    { q: <>「<Ruby rt="いんさつ">印刷</Ruby>」はどのメニューにある？<Ruby rt="さが">探</Ruby>してクリックしよう</>, answer: "印刷" },
-    { q: <>「<Ruby rt="なまえ">名前</Ruby>を<Ruby rt="つ">付</Ruby>けて<Ruby rt="ほぞん">保存</Ruby>」を<Ruby rt="さが">探</Ruby>そう</>, answer: "名前を付けて保存" },
-    { q: <><Ruby rt="みぎうえ">右上</Ruby>の <MoreVertical className="inline w-4 h-4" />（<Ruby rt="てん">点</Ruby>3つ）の<Ruby rt="なか">中</Ruby>から「ヘルプ」を<Ruby rt="さが">探</Ruby>そう</>, answer: "ヘルプ" },
+    { q: <>「<Ruby rt="いんさつ">印刷</Ruby>」はどのメニューにある？<Ruby rt="さが">探</Ruby>してクリックしよう<span className="block text-sm font-normal text-slate-400"><T>Which menu has 「印刷」 (Print)? Find it and click.</T></span></>, answer: "印刷" },
+    { q: <>「<Ruby rt="なまえ">名前</Ruby>を<Ruby rt="つ">付</Ruby>けて<Ruby rt="ほぞん">保存</Ruby>」を<Ruby rt="さが">探</Ruby>そう<span className="block text-sm font-normal text-slate-400"><T>Find 「名前を付けて保存」 (Save as).</T></span></>, answer: "名前を付けて保存" },
+    { q: <><Ruby rt="みぎうえ">右上</Ruby>の <MoreVertical className="inline w-4 h-4" />（<Ruby rt="てん">点</Ruby>3つ）の<Ruby rt="なか">中</Ruby>から「ヘルプ」を<Ruby rt="さが">探</Ruby>そう<span className="block text-sm font-normal text-slate-400"><T>Find 「ヘルプ」 (Help) in the ⋮ (three dots) menu at the top right.</T></span></>, answer: "ヘルプ" },
   ]
   const MENUS: Record<string, string[]> = {
     ファイル: ["新規作成", "開く", "名前を付けて保存", "印刷", "閉じる"],
@@ -138,7 +138,7 @@ export function FiveRulesMission({ onComplete }: { onComplete: () => void }) {
       if (menuTask + 1 >= MENU_TASKS.length) succeed("メニュー名人！")
       else setMenuTask((t) => t + 1)
     } else {
-      setWarn(<>それは「{item}」。ほかのメニューも<Ruby rt="ひら">開</Ruby>いてみよう</>)
+      setWarn(<>それは「{item}」。ほかのメニューも<Ruby rt="ひら">開</Ruby>いてみよう<span className="block text-sm font-normal"><T s="That is 「{item}」. Try opening the other menus too." v={{ item }} /></span></>)
     }
   }
   // Ctrl+P でもOK（印刷のタスク）
@@ -214,7 +214,7 @@ export function FiveRulesMission({ onComplete }: { onComplete: () => void }) {
       {step === 1 && (
         <Card className="space-y-4">
           <RuleBadge n={1} />
-          <p className="font-bold text-slate-600">「<Ruby rt="たいせつ">大切</Ruby>」を<Ruby rt="ふとじ">太字</Ruby>にしよう。① マウスでなぞって<Ruby rt="えら">選</Ruby>ぶ → ② <Bold className="inline w-4 h-4" /> ボタン</p>
+          <p className="font-bold text-slate-600">「<Ruby rt="たいせつ">大切</Ruby>」を<Ruby rt="ふとじ">太字</Ruby>にしよう。① マウスでなぞって<Ruby rt="えら">選</Ruby>ぶ → ② <Bold className="inline w-4 h-4" /> ボタン<span className="block text-sm font-normal text-slate-500"><T>Make 「大切」 bold. ① Select it with the mouse → ② Click the B button</T></span></p>
           <div className="border-2 border-slate-200 rounded-xl overflow-hidden">
             <div className="bg-slate-50 border-b border-slate-200 px-2 py-1">
               <HoverIcon icon={<Bold className="w-5 h-5" />} name="太字" onClick={clickBold} />
@@ -244,14 +244,14 @@ export function FiveRulesMission({ onComplete }: { onComplete: () => void }) {
       {step === 3 && (
         <Card className="space-y-4" >
           <RuleBadge n={3} />
-          <p className="font-bold text-slate-600">ファイルの<Ruby rt="なまえ">名前</Ruby>を「<b>報告書_完成</b>」に<Ruby rt="か">変</Ruby>えよう。ボタンはないよ…どうする？</p>
+          <p className="font-bold text-slate-600">ファイルの<Ruby rt="なまえ">名前</Ruby>を「<b>報告書_完成</b>」に<Ruby rt="か">変</Ruby>えよう。ボタンはないよ…どうする？<span className="block text-sm font-normal text-slate-500"><T>Rename the file to 「報告書_完成」. There is no button... What do you do?</T></span></p>
           <div className="relative bg-slate-50 rounded-xl p-8 min-h-48" onClick={() => setMenu(null)}>
             <div
               className="inline-flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-blue-50 cursor-default select-none"
               onClick={(e) => {
                 e.stopPropagation()
                 setLeftClicks((n) => n + 1)
-                if (leftClicks >= 1) setWarn(<><Ruby rt="ひだり">左</Ruby>クリックでは<Ruby rt="なに">何</Ruby>も<Ruby rt="で">出</Ruby>ないね。ルール3を<Ruby rt="おも">思</Ruby>い<Ruby rt="だ">出</Ruby>して！</>)
+                if (leftClicks >= 1) setWarn(<><Ruby rt="ひだり">左</Ruby>クリックでは<Ruby rt="なに">何</Ruby>も<Ruby rt="で">出</Ruby>ないね。ルール3を<Ruby rt="おも">思</Ruby>い<Ruby rt="だ">出</Ruby>して！<span className="block text-sm font-normal"><T>Left-click shows nothing. Remember Rule 3!</T></span></>)
               }}
               onContextMenu={(e) => {
                 e.preventDefault()
@@ -276,7 +276,7 @@ export function FiveRulesMission({ onComplete }: { onComplete: () => void }) {
                       setRenaming(false)
                       succeed("右クリック名人！")
                     } else {
-                      setWarn(<>「報告書_完成」と<Ruby rt="い">入</Ruby>れてね。「_」は <Keys k="Shift+ろ" /> だよ</>)
+                      setWarn(<>「報告書_完成」と<Ruby rt="い">入</Ruby>れてね。「_」は <Keys k="Shift+ろ" /> だよ<span className="block text-sm font-normal"><T>Type 「報告書_完成」. For 「_」, press Shift + ろ.</T></span></>)
                     }
                   }}
                   className="h-9 w-40 text-center"
@@ -298,7 +298,7 @@ export function FiveRulesMission({ onComplete }: { onComplete: () => void }) {
                     onClick={() => {
                       setMenu(null)
                       if (item === "名前の変更") setRenaming(true)
-                      else setWarn(<>「{item}」ではないよ。<Ruby rt="なまえ">名前</Ruby>を<Ruby rt="か">変</Ruby>えるのはどれかな？</>)
+                      else setWarn(<>「{item}」ではないよ。<Ruby rt="なまえ">名前</Ruby>を<Ruby rt="か">変</Ruby>えるのはどれかな？<span className="block text-sm font-normal"><T s="Not 「{item}」. Which one changes the name?" v={{ item }} /></span></>)
                     }}
                   >
                     {item}
@@ -349,7 +349,7 @@ export function FiveRulesMission({ onComplete }: { onComplete: () => void }) {
             <div className="h-28 p-4 text-slate-300">（<Ruby rt="ぶんしょ">文書</Ruby>の<Ruby rt="なかみ">中身</Ruby> / <T>document</T>）</div>
           </div>
           <Warn>{warn}</Warn>
-          {menuTask === 0 && <p className="text-sm text-slate-500"><Keys k="Mod+P" /> でも<Ruby rt="いんさつ">印刷</Ruby>できるよ。</p>}
+          {menuTask === 0 && <p className="text-sm text-slate-500"><Keys k="Mod+P" /> でも<Ruby rt="いんさつ">印刷</Ruby>できるよ。<span className="block text-xs"><T s="You can also print with {key}." v={{ key: <Keys k="Mod+P" /> }} /></span></p>}
         </Card>
       )}
 
@@ -358,13 +358,13 @@ export function FiveRulesMission({ onComplete }: { onComplete: () => void }) {
           <RuleBadge n={5} />
           <p className="font-bold text-slate-600">
             {erased
-              ? <>ぜんぶ<Ruby rt="き">消</Ruby>えちゃった！<Keys k="Mod+Z" /> で<Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>そう</>
-              : <>① <Ruby rt="ぶんしょう">文章</Ruby>をクリック → ② <Keys k="Mod+A" /> で<Ruby rt="ぜんぶ">全部</Ruby><Ruby rt="えら">選</Ruby>ぶ → ③ <Keys k="Delete" /> で<Ruby rt="け">消</Ruby>してみよう</>}
+              ? <>ぜんぶ<Ruby rt="き">消</Ruby>えちゃった！<Keys k="Mod+Z" /> で<Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>そう<span className="block text-sm font-normal text-slate-500"><T>It's all gone! Undo it.</T></span></>
+              : <>① <Ruby rt="ぶんしょう">文章</Ruby>をクリック → ② <Keys k="Mod+A" /> で<Ruby rt="ぜんぶ">全部</Ruby><Ruby rt="えら">選</Ruby>ぶ → ③ <Keys k="Delete" /> で<Ruby rt="け">消</Ruby>してみよう<span className="block text-sm font-normal text-slate-500"><T>① Click the text → ② Select all → ③ Delete it</T></span></>}
           </p>
           <Textarea value={undoText} onChange={(e) => onUndoChange(e.target.value)} className="text-xl h-32" />
-          <p className="text-sm text-slate-500"><Keys k="Mod+Y" /> で「やり<Ruby rt="なお">直</Ruby>し」（<Ruby rt="もど">戻</Ruby>しすぎたとき）</p>
+          <p className="text-sm text-slate-500"><Keys k="Mod+Y" /> で「やり<Ruby rt="なお">直</Ruby>し」（<Ruby rt="もど">戻</Ruby>しすぎたとき）<span className="block text-xs"><T>Redo (when you undid too much)</T></span></p>
           <Tip>
-            <Ruby rt="き">消</Ruby>えても<Ruby rt="あわ">慌</Ruby>てない！<Keys k="Mod+Z" /> はWord・Excel・Googleドキュメント・メールなど、ほとんどのアプリで<Ruby rt="つか">使</Ruby>えるよ。
+            <Ruby rt="き">消</Ruby>えても<Ruby rt="あわ">慌</Ruby>てない！<Keys k="Mod+Z" /> はWord・Excel・Googleドキュメント・メールなど、ほとんどのアプリで<Ruby rt="つか">使</Ruby>えるよ。<span className="block text-sm text-slate-500 mt-1"><T>Don't panic if it disappears! Undo works in Word, Excel, Google Docs, email and almost every app.</T></span>
           </Tip>
         </Card>
       )}

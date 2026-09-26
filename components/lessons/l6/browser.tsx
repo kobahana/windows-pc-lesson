@@ -128,7 +128,7 @@ export function BrowserMission({ onComplete }: { onComplete: () => void }) {
         else setQuizIndex((i) => i + 1)
       }, 700)
     } else {
-      setWarn(<>ちがうよ。マウスを<Ruby rt="の">乗</Ruby>せて、<Ruby rt="かたち">形</Ruby>をよく<Ruby rt="み">見</Ruby>てね / <T>Try again</T></>)
+      setWarn(<>ちがうよ。マウスを<Ruby rt="の">乗</Ruby>せて、<Ruby rt="かたち">形</Ruby>をよく<Ruby rt="み">見</Ruby>てね / <T>Try again. Put the mouse on it and look at the shape.</T></>)
     }
   }
 
@@ -235,11 +235,11 @@ export function BrowserMission({ onComplete }: { onComplete: () => void }) {
   }, [step])
   const answerFind = (a: string) => {
     if (a !== "7日前") {
-      setWarn(<>ちがうよ。<Keys k="Mod+F" /> で「<Ruby rt="ゆうきゅう">有給</Ruby>」と<Ruby rt="けんさく">検索</Ruby>してみよう</>)
+      setWarn(<>ちがうよ。<Keys k="Mod+F" /> で「<Ruby rt="ゆうきゅう">有給</Ruby>」と<Ruby rt="けんさく">検索</Ruby>してみよう<span className="block text-sm font-normal"><T s="No. Use {key} and search for 「有給」." v={{ key: `${isMac ? "⌘" : "Ctrl"}+F` }} /></span></>)
       return
     }
     if (!usedFindRef.current) {
-      setWarn(<><Ruby rt="せいかい">正解</Ruby>！でも <Keys k="Mod+F" /> を<Ruby rt="つか">使</Ruby>って<Ruby rt="さが">探</Ruby>してみよう。<Ruby rt="なが">長</Ruby>いページで<Ruby rt="やく">役</Ruby>に<Ruby rt="た">立</Ruby>つよ</>)
+      setWarn(<><Ruby rt="せいかい">正解</Ruby>！でも <Keys k="Mod+F" /> を<Ruby rt="つか">使</Ruby>って<Ruby rt="さが">探</Ruby>してみよう。<Ruby rt="なが">長</Ruby>いページで<Ruby rt="やく">役</Ruby>に<Ruby rt="た">立</Ruby>つよ<span className="block text-sm font-normal"><T s="Right! But try finding it with {key}. It helps on long pages." v={{ key: `${isMac ? "⌘" : "Ctrl"}+F` }} /></span></>)
       return
     }
     award("find")
@@ -290,13 +290,13 @@ export function BrowserMission({ onComplete }: { onComplete: () => void }) {
               </Button>
             ) : (
               <p className="text-xl font-bold text-primary animate-pulse-gentle">
-                ブラウザの<Ruby rt="ひだりうえ">左上</Ruby>にある <ArrowLeft className="inline w-6 h-6" /> を2<Ruby rt="かい">回</Ruby><Ruby rt="お">押</Ruby>そう！
+                ブラウザの<Ruby rt="ひだりうえ">左上</Ruby>にある <ArrowLeft className="inline w-6 h-6" /> を2<Ruby rt="かい">回</Ruby><Ruby rt="お">押</Ruby>そう！<span className="block text-sm font-normal"><T>Press the back button at the top left of the browser two times!</T></span>
               </p>
             )}
           </Card>
           <Tip>
-            <Ruby rt="もど">戻</Ruby>るボタンは、ブラウザのいちばん<Ruby rt="うえ">上</Ruby>・<Ruby rt="ひだり">左</Ruby>にあるよ。キーなら <Keys k={isMac ? "Mod+[" : "Alt+←"} /> でも<Ruby rt="もど">戻</Ruby>れる。
-            <span className="block mt-1 text-slate-500">※ <Ruby rt="がめん">画面</Ruby>の<Ruby rt="なか">中</Ruby>の「もどる」ボタンとは<Ruby rt="べつ">別</Ruby>のものだよ。</span>
+            <Ruby rt="もど">戻</Ruby>るボタンは、ブラウザのいちばん<Ruby rt="うえ">上</Ruby>・<Ruby rt="ひだり">左</Ruby>にあるよ。キーなら <Keys k={isMac ? "Mod+[" : "Alt+←"} /> でも<Ruby rt="もど">戻</Ruby>れる。<span className="block text-sm text-slate-500 mt-1"><T>The back button is at the very top left of the browser. You can also use the keys.</T></span>
+            <span className="block mt-1 text-slate-500">※ <Ruby rt="がめん">画面</Ruby>の<Ruby rt="なか">中</Ruby>の「もどる」ボタンとは<Ruby rt="べつ">別</Ruby>のものだよ。<span className="block text-sm"><T>This is different from a 「もどる」 button inside the page.</T></span></span>
           </Tip>
         </div>
       )}
@@ -309,7 +309,7 @@ export function BrowserMission({ onComplete }: { onComplete: () => void }) {
               <>
                 <Textarea placeholder={`名前を書いてね / ${t("Write your name")}`} className="text-xl h-24" />
                 <p className="font-bold text-primary">
-                  <Ruby rt="か">書</Ruby>いたら、ブラウザの <RotateCw className="inline w-5 h-5" /> を<Ruby rt="お">押</Ruby>そう（<Keys k="Mod+R" /> でもOK）
+                  <Ruby rt="か">書</Ruby>いたら、ブラウザの <RotateCw className="inline w-5 h-5" /> を<Ruby rt="お">押</Ruby>そう（<Keys k="Mod+R" /> でもOK）<span className="block text-sm font-normal text-slate-500"><T>When you finish writing, press the browser's reload button.</T></span>
                 </p>
               </>
             ) : (
@@ -317,6 +317,7 @@ export function BrowserMission({ onComplete }: { onComplete: () => void }) {
                 <Textarea placeholder={`（からっぽ / ${t("empty")}）`} className="text-xl h-24" />
                 <p className="text-lg font-bold text-slate-800">
                   <Ruby rt="じこく">時刻</Ruby>が<Ruby rt="か">変</Ruby>わって、<Ruby rt="か">書</Ruby>いた<Ruby rt="もじ">文字</Ruby>は<Ruby rt="き">消</Ruby>えたね！
+                  <span className="block text-sm font-normal text-slate-500"><T>The time changed, and your text is gone!</T></span>
                 </p>
                 <Button size="lg" onClick={() => succeed("リロード完璧！")}>わかった！ / <T>Got it</T></Button>
               </>
@@ -325,6 +326,7 @@ export function BrowserMission({ onComplete }: { onComplete: () => void }) {
           <Tip title={<><Ruby rt="ちゅうい">注意</Ruby> / <T>Be careful</T></>}>
             リロードすると、<Ruby rt="にゅうりょく">入力</Ruby>した<Ruby rt="もじ">文字</Ruby>は<Ruby rt="き">消</Ruby>えてしまうことが<Ruby rt="おお">多</Ruby>いよ。<Ruby rt="もうしこ">申し込</Ruby>みフォームの<Ruby rt="とちゅう">途中</Ruby>ではリロードしないでね。
             ページが<Ruby rt="うご">動</Ruby>かない・<Ruby rt="ひょうじ">表示</Ruby>がおかしいときに<Ruby rt="つか">使</Ruby>おう。
+            <span className="block text-sm text-slate-500 mt-1"><T>Reloading often deletes the text you typed. Don't reload in the middle of an application form. Use it when a page doesn't move or looks wrong.</T></span>
           </Tip>
         </div>
       )}
@@ -342,14 +344,14 @@ export function BrowserMission({ onComplete }: { onComplete: () => void }) {
             </a>
             <p className="text-slate-600">
               {leftTab
-                ? <><Ruby rt="あたら">新</Ruby>しいタブが<Ruby rt="ひら">開</Ruby>いたね！<Ruby rt="うえ">上</Ruby>の「パソコンレッスン」のタブをクリックして<Ruby rt="もど">戻</Ruby>ってきて。</>
-                : <>① リンクをクリック → ② <Ruby rt="あたら">新</Ruby>しいタブが<Ruby rt="ひら">開</Ruby>く → ③ このタブに<Ruby rt="もど">戻</Ruby>る</>}
+                ? <><Ruby rt="あたら">新</Ruby>しいタブが<Ruby rt="ひら">開</Ruby>いたね！<Ruby rt="うえ">上</Ruby>の「パソコンレッスン」のタブをクリックして<Ruby rt="もど">戻</Ruby>ってきて。<span className="block text-sm text-slate-400"><T>A new tab opened! Click the 「パソコンレッスン」 tab at the top to come back.</T></span></>
+                : <>① リンクをクリック → ② <Ruby rt="あたら">新</Ruby>しいタブが<Ruby rt="ひら">開</Ruby>く → ③ このタブに<Ruby rt="もど">戻</Ruby>る<span className="block text-sm text-slate-400"><T>① Click the link → ② A new tab opens → ③ Come back to this tab</T></span></>}
             </p>
           </Card>
           <Tip>
-            <p>タブは<Ruby rt="ほん">本</Ruby>の「しおり」のようなもの。いくつも<Ruby rt="ひら">開</Ruby>いて<Ruby rt="き">切</Ruby>り<Ruby rt="か">替</Ruby>えられるよ。</p>
+            <p>タブは<Ruby rt="ほん">本</Ruby>の「しおり」のようなもの。いくつも<Ruby rt="ひら">開</Ruby>いて<Ruby rt="き">切</Ruby>り<Ruby rt="か">替</Ruby>えられるよ。<span className="block text-sm text-slate-500 mt-1"><T>Tabs are like bookmarks in a book. You can open many and switch between them.</T></span></p>
             <p className="mt-1">
-              <Keys k="Mod+T" /> <Ruby rt="あたら">新</Ruby>しいタブ ／ <Keys k="Mod+W" /> タブを<Ruby rt="と">閉</Ruby>じる
+              <Keys k="Mod+T" /> <Ruby rt="あたら">新</Ruby>しいタブ ／ <Keys k="Mod+W" /> タブを<Ruby rt="と">閉</Ruby>じる<span className="block text-sm text-slate-500"><T>New tab / Close tab</T></span>
             </p>
           </Tip>
         </div>
@@ -360,7 +362,7 @@ export function BrowserMission({ onComplete }: { onComplete: () => void }) {
           <Card className="space-y-3">
             <p className="text-lg font-bold text-slate-800 flex items-center gap-2">
               <Search className="w-5 h-5 text-primary" />
-              <Ruby rt="しつもん">質問</Ruby>：<Ruby rt="ゆうきゅうきゅうか">有給休暇</Ruby>の<Ruby rt="しんせい">申請</Ruby>は、<Ruby rt="なんにちまえ">何日前</Ruby>までにする？
+              <Ruby rt="しつもん">質問</Ruby>：<Ruby rt="ゆうきゅうきゅうか">有給休暇</Ruby>の<Ruby rt="しんせい">申請</Ruby>は、<Ruby rt="なんにちまえ">何日前</Ruby>までにする？<span className="block text-sm font-normal text-slate-400"><T>How many days before do you need to ask for paid leave?</T></span>
             </p>
             <div className="flex gap-3 flex-wrap">
               {["1日前", "3日前", "7日前", "30日前"].map((a) => (

@@ -13,6 +13,7 @@ import { LessonHeader } from "@/components/layout/lesson-header"
 import { useSettings } from "../providers/settings-provider"
 import { sounds } from "@/lib/sounds"
 import Link from "next/link"
+import { T } from "@/lib/i18n"
 
 export function GameContainer() {
   const [currentMission, setCurrentMission] = useState(1)
@@ -87,26 +88,27 @@ export function GameContainer() {
               <Ruby rt="ぜん">全</Ruby>てのミッションをクリアしました！
               <br />
               パソコンの<Ruby rt="きほん">基本</Ruby>をマスターしたね！
+              <span className="block text-base mt-2"><T>You cleared all the missions! You learned the basics of the computer.</T></span>
             </p>
             <div className="space-y-4">
               <div className="bg-card rounded-xl p-6 shadow-lg border border-border">
                 <h2 className="font-bold text-lg mb-4 text-card-foreground"><Ruby rt="まな">学</Ruby>んだこと：</h2>
                 <ul className="text-left space-y-2 text-muted-foreground">
-                  <li className="flex items-center gap-2">
-                    <span className="w-6 h-6 bg-success rounded-full flex items-center justify-center text-success-foreground text-sm">✓</span>
-                    タッチパッドの<Ruby rt="つか">使</Ruby>い<Ruby rt="かた">方</Ruby>
+                  <li className="flex items-start gap-2">
+                    <span className="w-6 h-6 bg-success rounded-full flex items-center justify-center text-success-foreground text-sm shrink-0">✓</span>
+                    <span>タッチパッドの<Ruby rt="つか">使</Ruby>い<Ruby rt="かた">方</Ruby><span className="block text-sm"><T>How to use the touchpad</T></span></span>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-6 h-6 bg-success rounded-full flex items-center justify-center text-success-foreground text-sm">✓</span>
-                    <Ruby rt="にほんご">日本語</Ruby><Ruby rt="にゅうりょく">入力</Ruby>と<Ruby rt="へんかん">変換</Ruby>
+                  <li className="flex items-start gap-2">
+                    <span className="w-6 h-6 bg-success rounded-full flex items-center justify-center text-success-foreground text-sm shrink-0">✓</span>
+                    <span><Ruby rt="にほんご">日本語</Ruby><Ruby rt="にゅうりょく">入力</Ruby>と<Ruby rt="へんかん">変換</Ruby><span className="block text-sm"><T>Typing Japanese and converting to kanji</T></span></span>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-6 h-6 bg-success rounded-full flex items-center justify-center text-success-foreground text-sm">✓</span>
-                    キーボードの<Ruby rt="きごう">記号</Ruby><Ruby rt="にゅうりょく">入力</Ruby>
+                  <li className="flex items-start gap-2">
+                    <span className="w-6 h-6 bg-success rounded-full flex items-center justify-center text-success-foreground text-sm shrink-0">✓</span>
+                    <span>キーボードの<Ruby rt="きごう">記号</Ruby><Ruby rt="にゅうりょく">入力</Ruby><span className="block text-sm"><T>Typing symbols on the keyboard</T></span></span>
                   </li>
-                  <li className="flex items-center gap-2">
-                    <span className="w-6 h-6 bg-success rounded-full flex items-center justify-center text-success-foreground text-sm">✓</span>
-                    Wi-Fi<Ruby rt="せつぞく">接続</Ruby>と<Ruby rt="ほぞん">保存</Ruby>
+                  <li className="flex items-start gap-2">
+                    <span className="w-6 h-6 bg-success rounded-full flex items-center justify-center text-success-foreground text-sm shrink-0">✓</span>
+                    <span>Wi-Fi<Ruby rt="せつぞく">接続</Ruby>と<Ruby rt="ほぞん">保存</Ruby><span className="block text-sm"><T>Connecting to Wi-Fi and saving</T></span></span>
                   </li>
                 </ul>
               </div>

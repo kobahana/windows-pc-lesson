@@ -133,12 +133,12 @@ export function InputModeMission({ onComplete }: { onComplete: () => void }) {
             <Card className="text-center border-sky-300">
               <p className="font-bold text-sky-700 mb-2"><Ruby rt="はんかく">半角</Ruby>（はんかく）</p>
               <p className="text-4xl font-mono tracking-wider">2025a123</p>
-              <p className="text-sm text-slate-500 mt-2"><Ruby rt="がくせきばんごう">学籍番号</Ruby>・メール・<Ruby rt="でんわばんごう">電話番号</Ruby>・パスワード</p>
+              <p className="text-sm text-slate-500 mt-2"><Ruby rt="がくせきばんごう">学籍番号</Ruby>・メール・<Ruby rt="でんわばんごう">電話番号</Ruby>・パスワード<span className="block text-xs text-slate-400"><T>Student ID, email, phone number, password</T></span></p>
             </Card>
             <Card className="text-center border-pink-300">
               <p className="font-bold text-pink-700 mb-2"><Ruby rt="ぜんかく">全角</Ruby>（ぜんかく）</p>
               <p className="text-4xl tracking-wider">２０２５ａ１２３</p>
-              <p className="text-sm text-slate-500 mt-2"><Ruby rt="にほんご">日本語</Ruby>の<Ruby rt="ぶんしょう">文章</Ruby>・<Ruby rt="なまえ">名前</Ruby>（カタカナ）</p>
+              <p className="text-sm text-slate-500 mt-2"><Ruby rt="にほんご">日本語</Ruby>の<Ruby rt="ぶんしょう">文章</Ruby>・<Ruby rt="なまえ">名前</Ruby>（カタカナ）<span className="block text-xs text-slate-400"><T>Japanese sentences, names (katakana)</T></span></p>
             </Card>
           </div>
           <Card className="flex flex-col md:flex-row items-center gap-5">
@@ -153,12 +153,12 @@ export function InputModeMission({ onComplete }: { onComplete: () => void }) {
               <p className="text-xs text-slate-500 mt-1">{isMac ? "スペースの左右" : "キーボードの左上"}</p>
             </div>
             <div className="space-y-2 text-slate-700">
-              <p>「<b>{imeKey}</b>」キーを<Ruby rt="お">押</Ruby>すたびに、<b>あ</b>（<Ruby rt="にほんご">日本語</Ruby>）と <b>A</b>（<Ruby rt="えいご">英語</Ruby>・<Ruby rt="はんかく">半角</Ruby>）が<Ruby rt="き">切</Ruby>り<Ruby rt="か">替</Ruby>わるよ。</p>
-              <p>{isMac ? "画面の右上" : "画面の右下（時計の近く）"}に、<Ruby rt="いま">今</Ruby>のモード「<b>あ</b>」か「<b>A</b>」が<Ruby rt="で">出</Ruby>ているよ。<Ruby rt="う">打</Ruby>つ<Ruby rt="まえ">前</Ruby>に<Ruby rt="み">見</Ruby>るくせをつけよう！</p>
+              <p>「<b>{imeKey}</b>」キーを<Ruby rt="お">押</Ruby>すたびに、<b>あ</b>（<Ruby rt="にほんご">日本語</Ruby>）と <b>A</b>（<Ruby rt="えいご">英語</Ruby>・<Ruby rt="はんかく">半角</Ruby>）が<Ruby rt="き">切</Ruby>り<Ruby rt="か">替</Ruby>わるよ。<span className="block text-sm text-slate-500 mt-1"><T s="Each time you press the {key} key, it switches between あ (Japanese) and A (English, half-width)." v={{ key: imeKey }} /></span></p>
+              <p>{isMac ? "画面の右上" : "画面の右下（時計の近く）"}に、<Ruby rt="いま">今</Ruby>のモード「<b>あ</b>」か「<b>A</b>」が<Ruby rt="で">出</Ruby>ているよ。<Ruby rt="う">打</Ruby>つ<Ruby rt="まえ">前</Ruby>に<Ruby rt="み">見</Ruby>るくせをつけよう！<span className="block text-sm text-slate-500 mt-1"><T>The current mode (あ or A) is shown at the corner of the screen. Always check it before you type!</T></span></p>
             </div>
           </Card>
           <Tip title={<>なぜ<Ruby rt="たいせつ">大切</Ruby>？ / <T>Why?</T></>}>
-            <Ruby rt="ぜんかく">全角</Ruby>の「２０２５ａ１２３」で<Ruby rt="にゅうりょく">入力</Ruby>すると、パソコンは<Ruby rt="べつ">別</Ruby>の<Ruby rt="ひと">人</Ruby>だと<Ruby rt="おも">思</Ruby>ってしまうよ。ネットの<Ruby rt="もうしこ">申し込</Ruby>みで「<Ruby rt="ただ">正</Ruby>しくありません」と<Ruby rt="で">出</Ruby>る<Ruby rt="げんいん">原因</Ruby>の<Ruby rt="おお">多</Ruby>くはこれ！
+            <Ruby rt="ぜんかく">全角</Ruby>の「２０２５ａ１２３」で<Ruby rt="にゅうりょく">入力</Ruby>すると、パソコンは<Ruby rt="べつ">別</Ruby>の<Ruby rt="ひと">人</Ruby>だと<Ruby rt="おも">思</Ruby>ってしまうよ。ネットの<Ruby rt="もうしこ">申し込</Ruby>みで「<Ruby rt="ただ">正</Ruby>しくありません」と<Ruby rt="で">出</Ruby>る<Ruby rt="げんいん">原因</Ruby>の<Ruby rt="おお">多</Ruby>くはこれ！<span className="block text-sm text-slate-500 mt-1"><T>If you type your ID in full-width, the computer thinks it is a different person. This is a common reason for "not correct" errors in online forms!</T></span>
           </Tip>
           <div className="text-center">
             <Button size="lg" className="text-lg px-10" onClick={() => setStep(1)}>わかった！ / <T>Got it</T></Button>
@@ -178,8 +178,8 @@ export function InputModeMission({ onComplete }: { onComplete: () => void }) {
             <PracticeField field={nameField[0]} value={values.name1 ?? ""} onChange={(v) => setValue("name1", v, nameField)} autoFocus />
           </Card>
           <Tip>
-            <p>① 「あ」モードにする → ② <b>guen</b> と<Ruby rt="う">打</Ruby>つ（ぐえん） → ③ <Key>スペース</Key>で「グエン」を<Ruby rt="えら">選</Ruby>ぶ → ④ <Key>Enter</Key>で<Ruby rt="かくてい">確定</Ruby></p>
-            <p className="text-xs text-slate-500 mt-1">「ゲ」「ヴ」など<Ruby rt="むずか">難</Ruby>しい<Ruby rt="おと">音</Ruby>は、<Key>スペース</Key>を<Ruby rt="なんかい">何回</Ruby>か<Ruby rt="お">押</Ruby>して<Ruby rt="こうほ">候補</Ruby>から<Ruby rt="えら">選</Ruby>ぼう。</p>
+            <p>① 「あ」モードにする → ② <b>guen</b> と<Ruby rt="う">打</Ruby>つ（ぐえん） → ③ <Key>スペース</Key>で「グエン」を<Ruby rt="えら">選</Ruby>ぶ → ④ <Key>Enter</Key>で<Ruby rt="かくてい">確定</Ruby></p><span className="block text-sm text-slate-500 mt-1"><T>① Switch to あ mode → ② Type guen → ③ Press Space and choose グエン → ④ Press Enter</T></span>
+            <p className="text-xs text-slate-500 mt-1">「ゲ」「ヴ」など<Ruby rt="むずか">難</Ruby>しい<Ruby rt="おと">音</Ruby>は、<Key>スペース</Key>を<Ruby rt="なんかい">何回</Ruby>か<Ruby rt="お">押</Ruby>して<Ruby rt="こうほ">候補</Ruby>から<Ruby rt="えら">選</Ruby>ぼう。<span className="block"><T>For difficult sounds like 「ゲ」 or 「ヴ」, press Space a few times and choose from the list.</T></span></p>
           </Tip>
         </div>
       )}
@@ -199,6 +199,7 @@ export function InputModeMission({ onComplete }: { onComplete: () => void }) {
           ))}
           <p className="text-sm text-center text-slate-500">
             <Keys k="Tab" /> で<Ruby rt="つぎ">次</Ruby>の<Ruby rt="らん">欄</Ruby>へ ／ <Keys k="Shift+Tab" /> で<Ruby rt="まえ">前</Ruby>の<Ruby rt="らん">欄</Ruby>へ
+            <span className="block text-xs text-slate-400"><T>Tab: next field / Shift+Tab: previous field</T></span>
           </p>
         </Card>
       )}

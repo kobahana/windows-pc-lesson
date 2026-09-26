@@ -174,6 +174,7 @@ export function Mission1({ onComplete }: Mission1Props) {
         return (
           <>
             やあ！<Ruby rt="きょう">今日</Ruby>から<Ruby rt="いっしょ">一緒</Ruby>にパソコンの<Ruby rt="つか">使</Ruby>い<Ruby rt="かた">方</Ruby>を<Ruby rt="れんしゅう">練習</Ruby>しよう！まずは<Ruby rt="がめん">画面</Ruby>を<Ruby rt="うご">動</Ruby>かす<Ruby rt="れんしゅう">練習</Ruby>からだ。
+            <span className="block text-xs text-muted-foreground mt-1"><T>Hi! From today, let's practice using the computer together! First, let's practice moving things on the screen.</T></span>
           </>
         )
       case "tutorial-click":
@@ -204,7 +205,7 @@ export function Mission1({ onComplete }: Mission1Props) {
                 </div>
               </div>
             </div>
-            <p className="text-sm text-muted-foreground text-center">タンタン！と<Ruby rt="すばや">素早</Ruby>くね！</p>
+            <p className="text-sm text-muted-foreground text-center">タンタン！と<Ruby rt="すばや">素早</Ruby>くね！<span className="block text-xs"><T>Tap-tap! Quickly!</T></span></p>
           </div>
         )
       case "tutorial-rightclick":
@@ -212,7 +213,7 @@ export function Mission1({ onComplete }: Mission1Props) {
           <div className="space-y-2">
             <p className="font-bold text-primary">【<Ruby rt="みぎ">右</Ruby>クリックの<Ruby rt="やりかた">やり方</Ruby> / <T>Right click</T>】</p>
             <p>タッチパッドを<span className="font-bold text-primary">2<Ruby rt="ほん">本</Ruby>の<Ruby rt="ゆび">指</Ruby>で1<Ruby rt="かい">回</Ruby>タップ</span>するよ！</p>
-            <p className="text-sm text-muted-foreground">（または、<Ruby rt="みぎした">右下</Ruby>のコーナーを<Ruby rt="お">押</Ruby>す）</p>
+            <p className="text-sm text-muted-foreground">（または、<Ruby rt="みぎした">右下</Ruby>のコーナーを<Ruby rt="お">押</Ruby>す） <T>(or press the bottom-right corner)</T></p>
             <p className="text-xs text-muted-foreground"><T>Tap with 2 fingers.</T></p>
             <div className="mt-4 flex justify-center">
               <div className="bg-gray-200 rounded-xl p-4 w-32 h-20 flex items-center justify-center relative gap-2">
@@ -245,7 +246,7 @@ export function Mission1({ onComplete }: Mission1Props) {
           <div className="space-y-2">
             <p className="font-bold text-primary">【ドラッグの<Ruby rt="やりかた">やり方</Ruby> / <T>Drag</T>】</p>
             <p><span className="font-bold text-primary">クリックしたまま<Ruby rt="ゆび">指</Ruby>を<Ruby rt="うご">動</Ruby>かす</span>と、ものを<Ruby rt="うご">動</Ruby>かせるよ！</p>
-            <p className="text-sm text-muted-foreground">（タッチパッドを<Ruby rt="お">押</Ruby>しながらスライド）</p>
+            <p className="text-sm text-muted-foreground">（タッチパッドを<Ruby rt="お">押</Ruby>しながらスライド） <T>(slide while pressing the touchpad)</T></p>
             <p className="text-xs text-muted-foreground"><T>Press and hold, then move your finger.</T></p>
             <div className="mt-4 flex justify-center items-center gap-4">
               <div className="bg-gray-200 rounded-xl p-4 w-32 h-20 flex items-center justify-center relative">
@@ -300,12 +301,12 @@ export function Mission1({ onComplete }: Mission1Props) {
         )
       case "window":
         return windowClosed 
-          ? <>ありがとう！<Ruby rt="がめん">画面</Ruby>がスッキリしたね！</> 
+          ? <>ありがとう！<Ruby rt="がめん">画面</Ruby>がスッキリしたね！<span className="block text-xs text-muted-foreground mt-1"><T>Thank you! The screen is clean now!</T></span></> 
           : windowMaximized 
-            ? <>よし！<Ruby rt="おお">大</Ruby>きくなったね！<Ruby rt="つぎ">次</Ruby>は「×」で<Ruby rt="と">閉</Ruby>じてみて！</> 
-            : <>このウィンドウ、ちょっと<Ruby rt="じゃま">邪魔</Ruby>だな…。<Ruby rt="みぎうえ">右上</Ruby>の「×」で<Ruby rt="と">閉</Ruby>じてくれる？</>
+            ? <>よし！<Ruby rt="おお">大</Ruby>きくなったね！<Ruby rt="つぎ">次</Ruby>は「×」で<Ruby rt="と">閉</Ruby>じてみて！<span className="block text-xs text-muted-foreground mt-1"><T>Good! It got bigger! Next, close it with the ×.</T></span></> 
+            : <>このウィンドウ、ちょっと<Ruby rt="じゃま">邪魔</Ruby>だな…。<Ruby rt="みぎうえ">右上</Ruby>の「×」で<Ruby rt="と">閉</Ruby>じてくれる？<span className="block text-xs text-muted-foreground mt-1"><T>This window is in the way... Can you close it with the × at the top right?</T></span></>
       case "complete":
-        return <>ミッション1クリア！<Ruby rt="つぎ">次</Ruby>のミッションに<Ruby rt="すす">進</Ruby>もう！</>
+        return <>ミッション1クリア！<Ruby rt="つぎ">次</Ruby>のミッションに<Ruby rt="すす">進</Ruby>もう！<span className="block text-xs text-muted-foreground mt-1"><T>Mission 1 clear! Let's go to the next mission!</T></span></>
       default:
         return ""
     }
@@ -478,7 +479,7 @@ export function Mission1({ onComplete }: Mission1Props) {
                     className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-white/30 scrollbar-track-transparent"
                   >
                     <div className="p-4 space-y-4" style={{ minHeight: "200%" }}>
-                      <p className="text-white text-center py-8">↓ <ruby>下<rt>した</rt></ruby>にスクロールしてりんごを<ruby>探<rt>さが</rt></ruby>そう！ ↓</p>
+                      <p className="text-white text-center py-8">↓ <ruby>下<rt>した</rt></ruby>にスクロールしてりんごを<ruby>探<rt>さが</rt></ruby>そう！ ↓<span className="block text-xs text-white/80"><T>Scroll down to find the apple!</T></span></p>
                       <div className="h-32" />
                       <div className="h-32" />
                       <div className="flex justify-center">
@@ -496,7 +497,7 @@ export function Mission1({ onComplete }: Mission1Props) {
                         </div>
                       </div>
                       <p className="text-white text-center mt-4">
-                        ↑ りんごをカゴにドラッグ！
+                        ↑ りんごをカゴにドラッグ！ <T>Drag the apple to the basket!</T>
                         <span className="block text-xs text-white/70"><T>Drag the apple to the basket!</T></span>
                       </p>
                     </div>
@@ -562,7 +563,7 @@ export function Mission1({ onComplete }: Mission1Props) {
                     </div>
                   </div>
                   <div className="p-4 text-gray-800">
-                    <p>このウィンドウを<ruby>操作<rt>そうさ</rt></ruby>してね！</p>
+                    <p>このウィンドウを<ruby>操作<rt>そうさ</rt></ruby>してね！<span className="block text-xs"><T>Try using this window!</T></span></p>
                   </div>
                 </div>
               )}

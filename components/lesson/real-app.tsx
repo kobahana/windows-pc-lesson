@@ -12,7 +12,7 @@ import { Card, MissionFrame, Ruby, Tip, Warn, useStepFlow } from "@/components/l
 import { useSettings } from "@/components/providers/settings-provider"
 import { ExternalLink } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { T } from "@/lib/i18n"
+import { T, tx } from "@/lib/i18n"
 
 export interface RealAppConfig {
   lessonId: number
@@ -20,13 +20,14 @@ export interface RealAppConfig {
   openUrl: string // 例: https://docs.new
   linkPrefix: string // 共有リンクの先頭（例: https://docs.google.com/document/）
   checklist: React.ReactNode[]
+  checklistEn?: string[] // checklist の英語（tx で）
   extra?: React.ReactNode // 手順の図解など
 }
 
 const SHARE_CHOICES = [
-  { label: "閲覧者", ruby: "えつらんしゃ", note: "見るだけ。書き換えられない", ok: true },
-  { label: "閲覧者（コメント可）", ruby: "えつらんしゃ（コメントか）", note: "見る＋コメントを書ける", ok: true },
-  { label: "編集者", ruby: "へんしゅうしゃ", note: "だれでも書き換えられる！", ok: false },
+  { label: "閲覧者", ruby: "えつらんしゃ", note: "見るだけ。書き換えられない", en: tx("View only. Can't change it."), ok: true },
+  { label: "閲覧者（コメント可）", ruby: "えつらんしゃ（コメントか）", note: "見る＋コメントを書ける", en: tx("View and write comments."), ok: true },
+  { label: "編集者", ruby: "へんしゅうしゃ", note: "だれでも書き換えられる！", en: tx("Anyone can change it!"), ok: false },
 ]
 
 export function RealAppMission({ config, onComplete }: { config: RealAppConfig; onComplete: () => void }) {
@@ -41,7 +42,7 @@ export function RealAppMission({ config, onComplete }: { config: RealAppConfig; 
   const submit = () => {
     const url = link.trim()
     if (!url.startsWith(config.linkPrefix)) {
-      setWarn(<>{config.appName}の<Ruby rt="きょうゆう">共有</Ruby>リンクではないみたい。「{config.linkPrefix}…」で<Ruby rt="はじ">始</Ruby>まるリンクをコピーしてね</>)
+      setWarn(<>{config.appName}の<Ruby rt="きょうゆう">共有</Ruby>リンクではないみたい。「{config.linkPrefix}…」で<Ruby rt="はじ">始</Ruby>まるリンクをコピーしてね<span className="block text-sm text-muted-foreground mt-1"><T s="This is not a {app} share link. Copy the link that starts with {prefix}" v={{ app: config.appName, prefix: `${config.linkPrefix}…` }} /></span></>)
       return
     }
     recordEvent(config.lessonId, "stage_clear", `提出リンク：${url}`)
@@ -63,7 +64,7 @@ export function RealAppMission({ config, onComplete }: { config: RealAppConfig; 
                 {config.appName}を<Ruby rt="ひら">開</Ruby>く <ExternalLink className="w-5 h-5" />
               </Button>
             </a>
-            <p className="text-sm text-slate-500"><Ruby rt="あたら">新</Ruby>しいタブで<Ruby rt="ひら">開</Ruby>くよ。このタブと<Ruby rt="き">切</Ruby>り<Ruby rt="か">替</Ruby>えながら<Ruby rt="すす">進</Ruby>めよう（<Ruby rt="がめん">画面</Ruby>を<Ruby rt="さゆう">左右</Ruby>に<Ruby rt="なら">並</Ruby>べると<Ruby rt="らく">楽</Ruby>！）</p>
+            <p className="text-sm text-slate-500"><Ruby rt="あたら">新</Ruby>しいタブで<Ruby rt="ひら">開</Ruby>くよ。このタブと<Ruby rt="き">切</Ruby>り<Ruby rt="か">替</Ruby>えながら<Ruby rt="すす">進</Ruby>めよう（<Ruby rt="がめん">画面</Ruby>を<Ruby rt="さゆう">左右</Ruby>に<Ruby rt="なら">並</Ruby>べると<Ruby rt="らく">楽</Ruby>！）<span className="block"><T>It opens in a new tab. Switch between the tabs (putting the windows side by side is easier!).</T></span></p>
           </Card>
           <Card className="space-y-2">
             <p className="font-bold text-slate-800">チェックリスト</p>
@@ -74,7 +75,10 @@ export function RealAppMission({ config, onComplete }: { config: RealAppConfig; 
                   onCheckedChange={(v) => setChecks(checks.map((c, j) => (j === i ? v === true : c)))}
                   className="mt-0.5 w-5 h-5"
                 />
-                <span>{item}</span>
+                <span>
+                  {item}
+                  {config.checklistEn?.[i] && <span className="block text-sm text-slate-500"><T>{config.checklistEn[i]}</T></span>}
+                </span>
               </label>
             ))}
             <div className="text-center pt-2">
@@ -90,7 +94,7 @@ export function RealAppMission({ config, onComplete }: { config: RealAppConfig; 
       {step === 1 && (
         <div className="space-y-4">
           <Card className="space-y-3">
-            <p className="font-bold text-slate-800">Q. <Ruby rt="せんせい">先生</Ruby>に<Ruby rt="み">見</Ruby>てもらうだけ（<Ruby rt="か">書</Ruby>き<Ruby rt="か">換</Ruby>えられたくない）。どの<Ruby rt="けんげん">権限</Ruby>にする？</p>
+            <p className="font-bold text-slate-800">Q. <Ruby rt="せんせい">先生</Ruby>に<Ruby rt="み">見</Ruby>てもらうだけ（<Ruby rt="か">書</Ruby>き<Ruby rt="か">換</Ruby>えられたくない）。どの<Ruby rt="けんげん">権限</Ruby>にする？<span className="block text-sm font-normal text-slate-500"><T>The teacher only needs to look (you don't want changes). Which permission?</T></span></p>
             <div className="grid md:grid-cols-3 gap-3">
               {SHARE_CHOICES.map((c, i) => (
                 <button
@@ -103,23 +107,24 @@ export function RealAppMission({ config, onComplete }: { config: RealAppConfig; 
                 >
                   <p className="font-bold"><Ruby rt={c.ruby}>{c.label}</Ruby></p>
                   <p className="text-sm text-slate-500">{c.note}</p>
+                  <p className="text-xs text-slate-400"><T>{c.en}</T></p>
                 </button>
               ))}
             </div>
             {sharePick !== null && (
               <p className={cn("font-bold", SHARE_CHOICES[sharePick].ok ? "text-success" : "text-red-600")}>
                 {SHARE_CHOICES[sharePick].ok
-                  ? "正解！見てもらうだけなら「閲覧者」でOK。"
-                  : "あぶない！「編集者」にすると、リンクを知っている人がだれでも書き換えられるよ。"}
+                  ? <>正解！見てもらうだけなら「閲覧者」でOK。<span className="block text-sm font-normal"><T>Right! To let someone just look, "Viewer" is enough.</T></span></>
+                  : <>あぶない！「編集者」にすると、リンクを知っている人がだれでも書き換えられるよ。<span className="block text-sm font-normal"><T>Careful! With "Editor", anyone with the link can change it.</T></span></>}
               </p>
             )}
           </Card>
           {sharePick !== null && SHARE_CHOICES[sharePick].ok && (
             <Card className="space-y-3 animate-fade-in">
               <ol className="list-decimal pl-6 space-y-1 text-slate-700">
-                <li><Ruby rt="みぎうえ">右上</Ruby>の「<Ruby rt="きょうゆう">共有</Ruby>」ボタンを<Ruby rt="お">押</Ruby>す</li>
-                <li>「<Ruby rt="いっぱん">一般</Ruby>的なアクセス」を「リンクを<Ruby rt="し">知</Ruby>っている<Ruby rt="ぜんいん">全員</Ruby>」にして、<Ruby rt="けんげん">権限</Ruby>を「<Ruby rt="えつらんしゃ">閲覧者</Ruby>」にする</li>
-                <li>「リンクをコピー」を<Ruby rt="お">押</Ruby>す → <Ruby rt="した">下</Ruby>に <b>Ctrl+V</b></li>
+                <li><Ruby rt="みぎうえ">右上</Ruby>の「<Ruby rt="きょうゆう">共有</Ruby>」ボタンを<Ruby rt="お">押</Ruby>す<span className="block text-sm text-slate-500"><T>Click the "Share" button at the top right.</T></span></li>
+                <li>「<Ruby rt="いっぱん">一般</Ruby>的なアクセス」を「リンクを<Ruby rt="し">知</Ruby>っている<Ruby rt="ぜんいん">全員</Ruby>」にして、<Ruby rt="けんげん">権限</Ruby>を「<Ruby rt="えつらんしゃ">閲覧者</Ruby>」にする<span className="block text-sm text-slate-500"><T>Set "General access" to "Anyone with the link" and the role to "Viewer".</T></span></li>
+                <li>「リンクをコピー」を<Ruby rt="お">押</Ruby>す → <Ruby rt="した">下</Ruby>に <b>Ctrl+V</b><span className="block text-sm text-slate-500"><T>Click "Copy link", then press Ctrl+V below.</T></span></li>
               </ol>
               <Input value={link} onChange={(e) => setLink(e.target.value)} placeholder={`${config.linkPrefix}…`} className="h-12 text-base" />
               <Warn>{warn}</Warn>
@@ -131,6 +136,7 @@ export function RealAppMission({ config, onComplete }: { config: RealAppConfig; 
               </div>
               <Tip title={<><Ruby rt="ちゅうい">注意</Ruby> / <T>Be careful</T></>}>
                 「リンクを<Ruby rt="し">知</Ruby>っている<Ruby rt="ぜんいん">全員</Ruby>」にすると、リンクが<Ruby rt="ほか">他</Ruby>の<Ruby rt="ひと">人</Ruby>に<Ruby rt="わた">渡</Ruby>ったら<Ruby rt="だれ">誰</Ruby>でも<Ruby rt="み">見</Ruby>られるよ。<Ruby rt="こじんじょうほう">個人情報</Ruby>が<Ruby rt="はい">入</Ruby>った<Ruby rt="ぶんしょ">文書</Ruby>は、<Ruby rt="あいて">相手</Ruby>のメールアドレスを<Ruby rt="い">入</Ruby>れて<Ruby rt="きょうゆう">共有</Ruby>しよう。
+                <span className="block text-sm text-slate-500 mt-1"><T>With "Anyone with the link", anyone who gets the link can see it. For documents with personal information, share by entering the person's email address.</T></span>
               </Tip>
             </Card>
           )}

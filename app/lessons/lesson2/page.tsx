@@ -8,7 +8,7 @@ import { CheckCircle2, RotateCcw, Trophy, Clock, Target } from "lucide-react"
 import { LessonHeader } from "@/components/layout/lesson-header"
 import { useSettings } from "@/components/providers/settings-provider"
 import { sounds } from "@/lib/sounds"
-import { T } from "@/lib/i18n"
+import { T, tx } from "@/lib/i18n"
 
 function cn(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(" ");
@@ -173,8 +173,9 @@ export default function Lesson2() {
 
   if (showSuccess) {
     let evaluationMessage = "すばらしい！かんぺきなタイピングです！";
-    if (missCount > 5) evaluationMessage = "よくがんばりました！次はノーミスをめざそう！";
-    if (missCount > 15) evaluationMessage = "最後までやりきりました！くりかえし練習しよう！";
+    let evaluationEn = tx("Excellent! Perfect typing!");
+    if (missCount > 5) { evaluationMessage = "よくがんばりました！次はノーミスをめざそう！"; evaluationEn = tx("Good job! Next time, aim for no mistakes!"); }
+    if (missCount > 15) { evaluationMessage = "最後までやりきりました！くりかえし練習しよう！"; evaluationEn = tx("You finished! Keep practicing!"); }
 
     return (
       <div className="h-screen bg-slate-50 flex flex-col">
@@ -187,7 +188,7 @@ export default function Lesson2() {
             </div>
 
             <h2 className="text-3xl font-bold text-slate-800 mb-2">クリアおめでとう！</h2>
-            <p className="text-slate-600 mb-8 font-medium">{evaluationMessage}</p>
+            <p className="text-slate-600 mb-8 font-medium">{evaluationMessage}<span className="block text-sm font-normal text-slate-400"><T>{evaluationEn}</T></span></p>
 
             <div className="grid grid-cols-2 gap-4 mb-8">
               <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
@@ -257,12 +258,12 @@ export default function Lesson2() {
                   <div className="p-8 bg-blue-50 rounded-3xl border-2 border-blue-100 shadow-inner">
                     <div className="w-20 h-20 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-4xl font-bold mx-auto border-b-8 border-blue-800 mb-4 shadow-xl">F</div>
                     <p className="font-bold text-lg text-blue-800">ひだり手 の 人差し指</p>
-                    <p className="text-sm text-slate-600 mt-2">「F」にある<span className="text-red-500 font-bold underline">でっぱり</span>を、指（ゆび）でさがしてね！</p>
+                    <p className="text-sm text-slate-600 mt-2">「F」にある<span className="text-red-500 font-bold underline">でっぱり</span>を、指（ゆび）でさがしてね！<span className="block text-xs text-slate-400 mt-1"><T>Left index finger: find the bump on 「F」 with your finger!</T></span></p>
                   </div>
                   <div className="p-8 bg-blue-50 rounded-3xl border-2 border-blue-100 shadow-inner">
                     <div className="w-20 h-20 bg-blue-600 text-white rounded-2xl flex items-center justify-center text-4xl font-bold mx-auto border-b-8 border-blue-800 mb-4 shadow-xl">J</div>
                     <p className="font-bold text-lg text-blue-800">みぎ手 の 人差し指</p>
-                    <p className="text-sm text-slate-600 mt-2">「J」にも<span className="text-red-500 font-bold underline">でっぱり</span>があるよ。そこに指をおこう！</p>
+                    <p className="text-sm text-slate-600 mt-2">「J」にも<span className="text-red-500 font-bold underline">でっぱり</span>があるよ。そこに指をおこう！<span className="block text-xs text-slate-400 mt-1"><T>Right index finger: 「J」 also has a bump. Put your finger there!</T></span></p>
                   </div>
                 </div>
 

@@ -13,11 +13,13 @@ import { Button } from "@/components/ui/button"
 import { Ruby } from "@/components/game/character"
 import { sounds } from "@/lib/sounds"
 import { Home, RotateCcw, Trophy } from "lucide-react"
+import { T } from "@/lib/i18n"
 
 export interface MissionDef {
   title: string // 短い名前（スマホ表示用）
   titleFull: React.ReactNode
   learned: React.ReactNode // 完了画面の「学んだこと」
+  learnedEn?: string // learned の英語（tx で）
   render: (onComplete: () => void) => React.ReactNode
 }
 
@@ -126,7 +128,10 @@ export function MissionLesson({ lessonId, missions }: { lessonId: number; missio
                 {missions.map((m, i) => (
                   <li key={i} className="flex items-start gap-2">
                     <span className="w-6 h-6 bg-success rounded-full flex items-center justify-center text-success-foreground text-sm shrink-0">✓</span>
-                    <span>{m.learned}</span>
+                    <span>
+                      {m.learned}
+                      {m.learnedEn && <span className="block text-sm"><T>{m.learnedEn}</T></span>}
+                    </span>
                   </li>
                 ))}
               </ul>

@@ -10,7 +10,7 @@ import {
   Monitor, Download, FileText, Image as ImageIcon, Folder, FolderPlus, FileSpreadsheet, FileArchive, File, ChevronRight, HardDrive,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { T } from "@/lib/i18n"
+import { T, tx } from "@/lib/i18n"
 
 const LESSON_ID = 10
 
@@ -81,7 +81,7 @@ export function FilesMission({ onComplete }: { onComplete: () => void }) {
   // ステップ0：ダウンロードしたファイルを探す
   const openFile = (name: string) => {
     if (name === "時間割.pdf") succeed("見つけた！")
-    else setWarn(<>それは「{name}」だよ。「<Ruby rt="じかんわり">時間割</Ruby>.pdf」を<Ruby rt="さが">探</Ruby>してね</>)
+    else setWarn(<>それは「{name}」だよ。「<Ruby rt="じかんわり">時間割</Ruby>.pdf」を<Ruby rt="さが">探</Ruby>してね<span className="block text-sm font-normal"><T s="That is 「{name}」. Look for 「時間割.pdf」." v={{ name }} /></span></>)
   }
 
   // ステップ2：フォルダを作って整理
@@ -100,7 +100,7 @@ export function FilesMission({ onComplete }: { onComplete: () => void }) {
     setFiles((f) => f.filter((x) => x !== name))
     const items = [...folder.items, name]
     setFolder({ ...folder, items })
-    if (name === "日本語の作文.docx") setWarn(<>「<Ruby rt="にほんご">日本語</Ruby>の<Ruby rt="さくぶん">作文</Ruby>」はアルバイトのファイルじゃないね。<Ruby rt="まちが">間違</Ruby>えたら <b>Ctrl+Z</b>…ここでは<Ruby rt="した">下</Ruby>の「<Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>す」で<Ruby rt="もど">戻</Ruby>そう</>)
+    if (name === "日本語の作文.docx") setWarn(<>「<Ruby rt="にほんご">日本語</Ruby>の<Ruby rt="さくぶん">作文</Ruby>」はアルバイトのファイルじゃないね。<Ruby rt="まちが">間違</Ruby>えたら <b>Ctrl+Z</b>…ここでは<Ruby rt="した">下</Ruby>の「<Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>す」で<Ruby rt="もど">戻</Ruby>そう<span className="block text-sm font-normal"><T>「日本語の作文」 is not a work file. If you make a mistake, press Ctrl+Z... here, use the 「元に戻す」 button below.</T></span></>)
     else if (items.includes("シフト表.xlsx") && items.includes("給料明細_10月.pdf") && !items.includes("日本語の作文.docx")) succeed("整理できた！")
   }
   const undoMove = () => {
@@ -140,7 +140,7 @@ export function FilesMission({ onComplete }: { onComplete: () => void }) {
             {place !== "downloads" && <p className="text-sm text-slate-400 mt-6 text-center">ここにはないみたい… / <T>Not here</T></p>}
           </ExplorerFrame>
           <Warn>{warn}</Warn>
-          <Tip>インターネットからダウンロードしたファイルは、ほとんど「<b>ダウンロード</b>」フォルダに<Ruby rt="はい">入</Ruby>るよ。「ファイルがない！」と<Ruby rt="おも">思</Ruby>ったら、まずここを<Ruby rt="み">見</Ruby>よう。</Tip>
+          <Tip>インターネットからダウンロードしたファイルは、ほとんど「<b>ダウンロード</b>」フォルダに<Ruby rt="はい">入</Ruby>るよ。「ファイルがない！」と<Ruby rt="おも">思</Ruby>ったら、まずここを<Ruby rt="み">見</Ruby>よう。<span className="block text-sm text-slate-500 mt-1"><T>Files you download from the internet usually go to the 「ダウンロード」 (Downloads) folder. If you can't find a file, look here first.</T></span></Tip>
         </div>
       )}
 
@@ -168,20 +168,20 @@ export function FilesMission({ onComplete }: { onComplete: () => void }) {
             onDone={() => succeed("拡張子マスター！")}
             columns={3}
             questions={[
-              { q: <><Ruby rt="じょうし">上司</Ruby>に「Excelのファイルを<Ruby rt="おく">送</Ruby>って」と<Ruby rt="い">言</Ruby>われた。どれ？</>, choices: [
-                { label: "売上.docx", ok: false, why: ".docx は Word（文書）のファイルだよ" },
-                { label: "売上.xlsx", ok: true, why: ".xlsx が Excel。Googleスプレッドシートからもこの形でダウンロードできるよ" },
-                { label: "売上.pdf", ok: false, why: ".pdf は PDF。表の数字は書き換えられないよ" },
+              { q: <><Ruby rt="じょうし">上司</Ruby>に「Excelのファイルを<Ruby rt="おく">送</Ruby>って」と<Ruby rt="い">言</Ruby>われた。どれ？</>, en: tx("Your boss says \"Send me the Excel file.\" Which one?"), choices: [
+                { label: "売上.docx", ok: false, why: ".docx は Word（文書）のファイルだよ", whyEn: tx(".docx is a Word (document) file") },
+                { label: "売上.xlsx", ok: true, why: ".xlsx が Excel。Googleスプレッドシートからもこの形でダウンロードできるよ", whyEn: tx(".xlsx is Excel. You can also download Google Sheets in this format") },
+                { label: "売上.pdf", ok: false, why: ".pdf は PDF。表の数字は書き換えられないよ", whyEn: tx(".pdf is PDF. You can't change the numbers in the table") },
               ] },
-              { q: <>「<Ruby rt="か">書</Ruby>き<Ruby rt="か">換</Ruby>えられない<Ruby rt="かたち">形</Ruby>で<Ruby rt="おく">送</Ruby>って」と<Ruby rt="い">言</Ruby>われた。どれ？</>, choices: [
-                { label: "見積書.xlsx", ok: false, why: "Excel は相手が書き換えられるよ" },
-                { label: "見積書.zip", ok: false, why: ".zip はファイルをまとめたもの。中身の形は変わらないよ" },
-                { label: "見積書.pdf", ok: true, why: "PDF は見た目が変わらず、書き換えにくい。請求書や見積書はPDFで送ることが多いよ" },
+              { q: <>「<Ruby rt="か">書</Ruby>き<Ruby rt="か">換</Ruby>えられない<Ruby rt="かたち">形</Ruby>で<Ruby rt="おく">送</Ruby>って」と<Ruby rt="い">言</Ruby>われた。どれ？</>, en: tx("You are asked to \"send it in a form that can't be changed.\" Which one?"), choices: [
+                { label: "見積書.xlsx", ok: false, why: "Excel は相手が書き換えられるよ", whyEn: tx("The other person can change an Excel file") },
+                { label: "見積書.zip", ok: false, why: ".zip はファイルをまとめたもの。中身の形は変わらないよ", whyEn: tx(".zip is several files put together. It does not change the files inside") },
+                { label: "見積書.pdf", ok: true, why: "PDF は見た目が変わらず、書き換えにくい。請求書や見積書はPDFで送ることが多いよ", whyEn: tx("A PDF looks the same and is hard to change. Invoices and quotes are often sent as PDF") },
               ] },
-              { q: <><Ruby rt="しゃしん">写真</Ruby>のファイルはどれ？</>, choices: [
-                { label: "IMG_2031.jpg", ok: true, why: ".jpg（.jpeg）や .png は画像のファイルだよ" },
-                { label: "IMG_2031.docx", ok: false, why: ".docx は文書だよ" },
-                { label: "IMG_2031.zip", ok: false, why: ".zip はまとめたファイルだよ" },
+              { q: <><Ruby rt="しゃしん">写真</Ruby>のファイルはどれ？</>, en: tx("Which one is a photo file?"), choices: [
+                { label: "IMG_2031.jpg", ok: true, why: ".jpg（.jpeg）や .png は画像のファイルだよ", whyEn: tx(".jpg (.jpeg) and .png are image files") },
+                { label: "IMG_2031.docx", ok: false, why: ".docx は文書だよ", whyEn: tx(".docx is a document") },
+                { label: "IMG_2031.zip", ok: false, why: ".zip はまとめたファイルだよ", whyEn: tx(".zip is several files put together") },
               ] },
             ]}
           />
@@ -190,12 +190,12 @@ export function FilesMission({ onComplete }: { onComplete: () => void }) {
 
       {step === 2 && (
         <div className="space-y-3">
-          <ExplorerFrame place="documents" onPlace={() => setWarn("このステップは「ドキュメント」の中で作業しよう")} path={["PC", "ドキュメント"]}>
+          <ExplorerFrame place="documents" onPlace={() => setWarn(`このステップは「ドキュメント」の中で作業しよう / ${tx("Work inside 「ドキュメント」 in this step")}`)} path={["PC", "ドキュメント"]}>
             <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-100">
               <button onClick={makeFolder} className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded hover:bg-slate-100 border border-slate-200">
                 <FolderPlus className="w-4 h-4 text-yellow-600" /> <Ruby rt="あたら">新</Ruby>しいフォルダー
               </button>
-              <span className="text-xs text-slate-400">または、<Ruby rt="なに">何</Ruby>もないところを<Ruby rt="みぎ">右</Ruby>クリック</span>
+              <span className="text-xs text-slate-400">または、<Ruby rt="なに">何</Ruby>もないところを<Ruby rt="みぎ">右</Ruby>クリック <T>or right-click an empty space</T></span>
             </div>
             <div
               className="relative grid grid-cols-3 md:grid-cols-4 gap-2 min-h-40 content-start"
@@ -225,7 +225,7 @@ export function FilesMission({ onComplete }: { onComplete: () => void }) {
                         if (folder.name.trim() === FOLDER_NAME) {
                           setFolder({ ...folder, name: FOLDER_NAME, naming: false })
                           setWarn(null)
-                        } else setWarn(<>「{FOLDER_NAME}」と<Ruby rt="い">入</Ruby>れてね（<Ruby rt="すうじ">数字</Ruby>と「_」は<Ruby rt="はんかく">半角</Ruby>）</>)
+                        } else setWarn(<>「{FOLDER_NAME}」と<Ruby rt="い">入</Ruby>れてね（<Ruby rt="すうじ">数字</Ruby>と「_」は<Ruby rt="はんかく">半角</Ruby>）<span className="block text-sm font-normal"><T s="Type 「{name}」 (numbers and 「_」 in half-width)" v={{ name: FOLDER_NAME }} /></span></>)
                       }}
                       className="h-8 text-xs text-center w-36"
                     />
@@ -259,7 +259,7 @@ export function FilesMission({ onComplete }: { onComplete: () => void }) {
             <button onClick={undoMove} className="text-sm font-bold text-primary underline">「日本語の作文」を元に戻す</button>
           )}
           <Warn>{warn}</Warn>
-          <Tip>ファイルをマウスで<b><Ruby rt="お">押</Ruby>したまま</b><Ruby rt="うご">動</Ruby>かして、フォルダの<Ruby rt="うえ">上</Ruby>で<Ruby rt="はな">離</Ruby>す（ドラッグ＆ドロップ）</Tip>
+          <Tip>ファイルをマウスで<b><Ruby rt="お">押</Ruby>したまま</b><Ruby rt="うご">動</Ruby>かして、フォルダの<Ruby rt="うえ">上</Ruby>で<Ruby rt="はな">離</Ruby>す（ドラッグ＆ドロップ）<span className="block text-sm text-slate-500 mt-1"><T>Hold down the mouse on a file, move it, and let go over the folder (drag and drop)</T></span></Tip>
         </div>
       )}
 
@@ -270,21 +270,21 @@ export function FilesMission({ onComplete }: { onComplete: () => void }) {
               key="naming"
               onDone={() => setNameQuizDone(true)}
               questions={[
-                { q: <>さくら<Ruby rt="しょうじ">商事</Ruby>への10<Ruby rt="がつ">月</Ruby>の<Ruby rt="せいきゅうしょ">請求書</Ruby>。いちばんいいファイル<Ruby rt="めい">名</Ruby>は？</>, choices: [
-                  { label: "新しいファイル(3).xlsx", ok: false, why: "中身がわからないね。あとで探せなくなるよ" },
-                  { label: "20261031_請求書_さくら商事.xlsx", ok: true, why: "日付・内容・相手がわかる！日付を先頭にすると、古い順に並ぶよ" },
-                  { label: "請求書.xlsx", ok: false, why: "請求書が何枚もあったら、どれかわからないね" },
+                { q: <>さくら<Ruby rt="しょうじ">商事</Ruby>への10<Ruby rt="がつ">月</Ruby>の<Ruby rt="せいきゅうしょ">請求書</Ruby>。いちばんいいファイル<Ruby rt="めい">名</Ruby>は？</>, en: tx("An October invoice for さくら商事. Which file name is best?"), choices: [
+                  { label: "新しいファイル(3).xlsx", ok: false, why: "中身がわからないね。あとで探せなくなるよ", whyEn: tx("You can't tell what is inside. You won't find it later") },
+                  { label: "20261031_請求書_さくら商事.xlsx", ok: true, why: "日付・内容・相手がわかる！日付を先頭にすると、古い順に並ぶよ", whyEn: tx("You can see the date, content and partner! With the date first, files line up from oldest") },
+                  { label: "請求書.xlsx", ok: false, why: "請求書が何枚もあったら、どれかわからないね", whyEn: tx("If there are many invoices, you can't tell which is which") },
                 ] },
-                { q: <>ファイルを<Ruby rt="なお">直</Ruby>した。<Ruby rt="まえ">前</Ruby>のファイルも<Ruby rt="のこ">残</Ruby>したい。<Ruby rt="あたら">新</Ruby>しいファイルの<Ruby rt="なまえ">名前</Ruby>は？</>, choices: [
-                  { label: "報告書_最新_本当に最新.docx", ok: false, why: "「最新」はすぐ最新じゃなくなるよ" },
-                  { label: "報告書_v2.docx", ok: true, why: "v1, v2, v3…と番号をつけると、順番がわかるよ（日付でもOK）" },
-                  { label: "報告書 (1).docx", ok: false, why: "(1) は自動でつく名前。何が変わったかわからないね" },
+                { q: <>ファイルを<Ruby rt="なお">直</Ruby>した。<Ruby rt="まえ">前</Ruby>のファイルも<Ruby rt="のこ">残</Ruby>したい。<Ruby rt="あたら">新</Ruby>しいファイルの<Ruby rt="なまえ">名前</Ruby>は？</>, en: tx("You fixed a file and want to keep the old one too. What is the name of the new file?"), choices: [
+                  { label: "報告書_最新_本当に最新.docx", ok: false, why: "「最新」はすぐ最新じゃなくなるよ", whyEn: tx("\"Latest\" soon stops being the latest") },
+                  { label: "報告書_v2.docx", ok: true, why: "v1, v2, v3…と番号をつけると、順番がわかるよ（日付でもOK）", whyEn: tx("Numbers like v1, v2, v3... show the order (a date is OK too)") },
+                  { label: "報告書 (1).docx", ok: false, why: "(1) は自動でつく名前。何が変わったかわからないね", whyEn: tx("(1) is added automatically. You can't tell what changed") },
                 ] },
               ]}
             />
           ) : (
             <Card className="space-y-3">
-              <p className="text-lg font-bold text-slate-800">11<Ruby rt="がつ">月</Ruby>5<Ruby rt="にち">日</Ruby>に<Ruby rt="ていしゅつ">提出</Ruby>する「<Ruby rt="にほんご">日本語</Ruby>の<Ruby rt="さくぶん">作文</Ruby>」。ファイル<Ruby rt="めい">名</Ruby>をつけよう（<Ruby rt="かくちょうし">拡張子</Ruby>はいらないよ）</p>
+              <p className="text-lg font-bold text-slate-800">11<Ruby rt="がつ">月</Ruby>5<Ruby rt="にち">日</Ruby>に<Ruby rt="ていしゅつ">提出</Ruby>する「<Ruby rt="にほんご">日本語</Ruby>の<Ruby rt="さくぶん">作文</Ruby>」。ファイル<Ruby rt="めい">名</Ruby>をつけよう（<Ruby rt="かくちょうし">拡張子</Ruby>はいらないよ）<span className="block text-sm font-normal text-slate-500"><T>A 「日本語の作文」 (Japanese essay) to hand in on November 5. Give it a file name (no extension needed).</T></span></p>
               <Input value={myName} onChange={(e) => { setMyName(e.target.value); setNameChecked(false) }} placeholder="例：日付_内容" className="h-12 text-lg" />
               <div className="flex gap-3 items-center">
                 <button
@@ -295,7 +295,7 @@ export function FilesMission({ onComplete }: { onComplete: () => void }) {
                 </button>
                 {nameChecked && !nameOk && (
                   <span className="text-amber-700 font-bold text-sm">
-                    {/\s/.test(myName.trim()) ? "スペースではなく「_」でつなごう" : "日付（1105 など）と「作文」を入れよう"}
+                    {/\s/.test(myName.trim()) ? <>スペースではなく「_」でつなごう <T>Join with 「_」, not spaces</T></> : <>日付（1105 など）と「作文」を入れよう <T>Put in the date (like 1105) and 「作文」</T></>}
                   </span>
                 )}
               </div>

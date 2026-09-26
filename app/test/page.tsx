@@ -772,13 +772,13 @@ export default function TestPage() {
 
                     <div className="text-lg text-slate-600 text-center">
                       こたえは {question.k.length}文字
-                      {hintUsed && <span className="ml-2 text-amber-600 font-bold">（ヒント使用中：この問題は0.5点）</span>}
+                      {hintUsed && <span className="ml-2 text-amber-600 font-bold">（ヒント使用中：この問題は0.5点） <T>Hint used: this question is 0.5 points</T></span>}
                     </div>
                   </div>
 
                   {showHint && (
                     <div className="w-full md:w-64 shrink-0 bg-amber-50 border-2 border-amber-200 rounded-xl px-4 py-3 shadow-sm text-left">
-                      <p className="text-base font-bold text-amber-800 mb-2">ヒント（かたまりで変換）:</p>
+                      <p className="text-base font-bold text-amber-800 mb-2">ヒント（かたまりで変換）: <span className="font-normal text-sm"><T>Hint: convert in chunks</T></span></p>
                       <div className="space-y-1">
                         {question.chunks.map((chunk, i) => (
                           <p key={i} className="text-sm font-medium text-amber-700">

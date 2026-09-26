@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Card, MissionFrame, Ruby, Tip, Warn, useStepFlow } from "@/components/lesson/kit"
 import { CheckCircle2 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { T, tx } from "@/lib/i18n"
+import { T, tx, useTJaEn } from "@/lib/i18n"
 
 // ===== ステップ1：大事な言葉を選ぶ =====
 type KeyKind = "when" | "where" | "bring"
@@ -42,21 +42,22 @@ const WRITE_FIELDS: { key: string; label: string; check: (v: string) => boolean;
 ]
 
 function styleProblem(v: string): string | null {
-  if (/(です|ます|ください)。?$/.test(v.trim())) return "「です・ます・ください」は取って、短くしよう"
-  if (v.trim().length > 20) return "もっと短くしよう（20文字まで）"
+  if (/(です|ます|ください)。?$/.test(v.trim())) return `「です・ます・ください」は取って、短くしよう / ${tx("Remove です, ます and ください to make it short")}`
+  if (v.trim().length > 20) return `もっと短くしよう（20文字まで） / ${tx("Make it shorter (up to 20 characters)")}`
   return null
 }
 
 export function SummarizeMission({ onComplete }: { onComplete: () => void }) {
   const { step, setStep, succeed, showSuccess, successMsg } = useStepFlow(4, onComplete)
   const [warn, setWarn] = useState<React.ReactNode>(null)
+  const tJaEn = useTJaEn()
   useEffect(() => { setWarn(null) }, [step])
 
   // ステップ1
   const [found, setFound] = useState<KeyKind[]>([])
   const pickSeg = (seg: Exclude<Seg, string>) => {
     if (!seg.k) {
-      setWarn(<>「{seg.t}」は、なくても<Ruby rt="い">意</Ruby><Ruby rt="み">味</Ruby>がわかるね。<Ruby rt="いつ">いつ</Ruby>・どこ・<Ruby rt="なに">何</Ruby>を<Ruby rt="も">持</Ruby>つ？を<Ruby rt="さが">探</Ruby>そう</>)
+      setWarn(<>「{seg.t}」は、なくても<Ruby rt="い">意</Ruby><Ruby rt="み">味</Ruby>がわかるね。<Ruby rt="いつ">いつ</Ruby>・どこ・<Ruby rt="なに">何</Ruby>を<Ruby rt="も">持</Ruby>つ？を<Ruby rt="さが">探</Ruby>そう<span className="block text-sm font-normal"><T s="You can understand it without 「{seg}」. Look for when, where and what to bring." v={{ seg: seg.t }} /></span></>)
       return
     }
     setWarn(null)
@@ -73,7 +74,7 @@ export function SummarizeMission({ onComplete }: { onComplete: () => void }) {
     if (mPicked !== null) return
     setMPicked(i)
     if (i !== MATCH[mi].answer) {
-      setWarn("おしい！ラベル＋短い言葉になっているのはどれかな？")
+      setWarn(`おしい！ラベル＋短い言葉になっているのはどれかな？ / ${tx("Close! Which one is a label + short words?")}`)
       setTimeout(() => { setMPicked(null) }, 1200)
       return
     }
@@ -126,12 +127,12 @@ export function SummarizeMission({ onComplete }: { onComplete: () => void }) {
             </Card>
           </div>
           <Card className="space-y-2">
-            <p className="font-bold text-slate-800"><Ruby rt="かじょうが">箇条書</Ruby>きの<Ruby rt="かた">型</Ruby>（4つのルール）</p>
+            <p className="font-bold text-slate-800"><Ruby rt="かじょうが">箇条書</Ruby>きの<Ruby rt="かた">型</Ruby>（4つのルール） <span className="text-sm font-normal text-slate-400"><T>4 rules for bullet points</T></span></p>
             <ol className="list-decimal pl-6 space-y-1 text-slate-700">
-              <li>1<Ruby rt="ぎょう">行</Ruby>に1つだけ<Ruby rt="か">書</Ruby>く</li>
-              <li>「<b>日時：</b>」「<b>場所：</b>」のように<b>ラベル</b>をつける</li>
-              <li>「です・ます・ください」は<Ruby rt="と">取</Ruby>る（<Ruby rt="めいし">名詞</Ruby>で<Ruby rt="お">終</Ruby>わる）</li>
-              <li><Ruby rt="すうじ">数字</Ruby>は<Ruby rt="みじか">短</Ruby>く（<Ruby rt="ごご">午後</Ruby>3<Ruby rt="じ">時</Ruby> → 15:00）</li>
+              <li>1<Ruby rt="ぎょう">行</Ruby>に1つだけ<Ruby rt="か">書</Ruby>く<span className="block text-sm text-slate-500"><T>Write only one thing per line</T></span></li>
+              <li>「<b>日時：</b>」「<b>場所：</b>」のように<b>ラベル</b>をつける<span className="block text-sm text-slate-500"><T>Add a label like 「日時：」 (date and time) or 「場所：」 (place)</T></span></li>
+              <li>「です・ます・ください」は<Ruby rt="と">取</Ruby>る（<Ruby rt="めいし">名詞</Ruby>で<Ruby rt="お">終</Ruby>わる）<span className="block text-sm text-slate-500"><T>Remove です, ます and ください (end with a noun)</T></span></li>
+              <li><Ruby rt="すうじ">数字</Ruby>は<Ruby rt="みじか">短</Ruby>く（<Ruby rt="ごご">午後</Ruby>3<Ruby rt="じ">時</Ruby> → 15:00）<span className="block text-sm text-slate-500"><T>Write numbers short (午後3時 → 15:00)</T></span></li>
             </ol>
           </Card>
           <div className="text-center">
@@ -217,8 +218,8 @@ export function SummarizeMission({ onComplete }: { onComplete: () => void }) {
                     placeholder={f.hint}
                     className={cn("h-12 text-lg", checked && !ok && "border-red-400 bg-red-50", ok && "border-success")}
                   />
-                  {checked && style && <p className="text-sm text-red-600 font-bold">{style}</p>}
-                  {checked && !ok && !style && v && <p className="text-sm text-red-600 font-bold">お知らせをもう一度読んでみよう</p>}
+                  {checked && style && <p className="text-sm text-red-600 font-bold">{tJaEn(style)}</p>}
+                  {checked && !ok && !style && v && <p className="text-sm text-red-600 font-bold">お知らせをもう一度読んでみよう / <T>Read the notice again</T></p>}
                 </div>
                 {ok && <CheckCircle2 className="w-6 h-6 text-success shrink-0" />}
               </div>
@@ -232,7 +233,7 @@ export function SummarizeMission({ onComplete }: { onComplete: () => void }) {
             showModel ? (
               <Tip>
                 <Ruby rt="こた">答</Ruby>えの<Ruby rt="れい">例</Ruby>：{WRITE_FIELDS.map((f) => `${f.label}：${f.model}`).join(" ／ ")}
-                <span className="block text-xs text-slate-500 mt-1">（<Ruby rt="ことば">言葉</Ruby>はちがってもOK）</span>
+                <span className="block text-xs text-slate-500 mt-1">（<Ruby rt="ことば">言葉</Ruby>はちがってもOK） <T>Different words are OK.</T></span>
               </Tip>
             ) : (
               <p className="text-center">

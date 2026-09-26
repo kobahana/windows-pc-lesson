@@ -338,6 +338,7 @@ export function Mission2({ onComplete }: Mission2Props) {
         return (
           <>
             <Ruby rt="つぎ">次</Ruby>は<Ruby rt="もじ">文字</Ruby><Ruby rt="にゅうりょく">入力</Ruby>の<Ruby rt="れんしゅう">練習</Ruby>だ！<Ruby rt="にほん">日本</Ruby>のキーボードには<Ruby rt="ひみつ">秘密</Ruby>があるよ。
+            <span className="block text-xs text-muted-foreground mt-1"><T>Next is typing practice! The Japanese keyboard has a secret.</T></span>
           </>
         )
       case "tutorial-ime":
@@ -353,13 +354,13 @@ export function Mission2({ onComplete }: Mission2Props) {
       case "tutorial-romaji":
         return (
           <div className="space-y-2">
-            <p className="font-bold text-primary">【ローマ<Ruby rt="じ">字</Ruby><Ruby rt="にゅうりょく">入力</Ruby>のキホン】</p>
+            <p className="font-bold text-primary">【ローマ<Ruby rt="じ">字</Ruby><Ruby rt="にゅうりょく">入力</Ruby>のキホン】 <span className="font-normal text-sm"><T>Romaji basics</T></span></p>
             <p><Ruby rt="にほんご">日本語</Ruby>は<span className="font-bold text-primary">ローマ<Ruby rt="じ">字</Ruby></span>（アルファベット）で<Ruby rt="う">打</Ruby>つよ！</p>
             <p className="text-xs text-muted-foreground"><T>Type Japanese using romaji (alphabet keys)!</T></p>
             <div className="mt-3 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-4 border border-indigo-200">
               {/* 母音 */}
               <p className="text-xs font-bold text-indigo-700 mb-2">
-                まずは<Ruby rt="ぼいん">母音</Ruby>（5つの<Ruby rt="おと">音</Ruby>）：
+                まずは<Ruby rt="ぼいん">母音</Ruby>（5つの<Ruby rt="おと">音</Ruby>）： <T>First, the 5 vowels:</T>
               </p>
               <div className="flex justify-center gap-2 mb-3">
                 {[
@@ -378,7 +379,7 @@ export function Mission2({ onComplete }: Mission2Props) {
               </div>
               {/* 子音 + 母音 */}
               <p className="text-xs font-bold text-indigo-700 mb-2">
-                <Ruby rt="しいん">子音</Ruby> + <Ruby rt="ぼいん">母音</Ruby> で<Ruby rt="つく">作</Ruby>る：
+                <Ruby rt="しいん">子音</Ruby> + <Ruby rt="ぼいん">母音</Ruby> で<Ruby rt="つく">作</Ruby>る： <T>Consonant + vowel:</T>
               </p>
               <div className="grid grid-cols-5 gap-1 text-center text-sm">
                 {[
@@ -417,7 +418,7 @@ export function Mission2({ onComplete }: Mission2Props) {
               {/* よく使う特殊ルール */}
               <div className="mt-3 bg-white rounded-lg p-2 border border-indigo-100">
                 <p className="text-xs font-bold text-indigo-700 mb-1">
-                  💡 <Ruby rt="とくべつ">特別</Ruby>ルール：
+                  💡 <Ruby rt="とくべつ">特別</Ruby>ルール： <T>Special rules:</T>
                 </p>
                 <div className="grid grid-cols-2 gap-1 text-xs">
                   <div className="flex items-center gap-1">
@@ -433,7 +434,7 @@ export function Mission2({ onComplete }: Mission2Props) {
                   <div className="flex items-center gap-1">
                     <span className="text-primary font-bold">っ</span>
                     <span className="text-gray-400">=</span>
-                    <span className="font-mono bg-gray-100 px-1 rounded">次の子音を2回</span>
+                    <span className="font-mono bg-gray-100 px-1 rounded">次の子音を2回 <T>(double the next consonant)</T></span>
                   </div>
                   <div className="flex items-center gap-1">
                     <span className="text-primary font-bold">ー</span>
@@ -466,11 +467,11 @@ export function Mission2({ onComplete }: Mission2Props) {
           <div className="space-y-2">
             <p className="font-bold text-primary">【Backspaceと<Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>す / <T>Delete & Undo</T>】</p>
             <p><span className="font-bold text-primary">Backspace（←）</span>で1<Ruby rt="もじ">文字</Ruby><Ruby rt="け">消</Ruby>せるよ！</p>
-            <p className="text-xs text-muted-foreground">キーボードの<Ruby rt="みぎうえ">右上</Ruby>にある大きめのキーだよ</p>
+            <p className="text-xs text-muted-foreground">キーボードの<Ruby rt="みぎうえ">右上</Ruby>にある大きめのキーだよ <T>Backspace deletes one character. It is a big key at the top right of the keyboard.</T></p>
             <BackspaceDemo />
             <div className="border-t border-gray-200 pt-3 mt-3">
               <p><span className="font-bold text-primary">{modKey} + Z</span>で<Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>せるよ！</p>
-              <p className="text-xs text-muted-foreground">{modKey}+Z = undo（やり<Ruby rt="なお">直</Ruby>し）</p>
+              <p className="text-xs text-muted-foreground">{modKey}+Z = undo（やり<Ruby rt="なお">直</Ruby>し） <T s="{key} undoes your last action." v={{ key: `${modKey}+Z` }} /></p>
               <UndoDemo modKey={modKey} />
             </div>
           </div>
@@ -479,7 +480,7 @@ export function Mission2({ onComplete }: Mission2Props) {
         return (
           <div className="space-y-2">
             <p className="font-bold text-primary">【コピー＆ペースト / <T>Copy & Paste</T>】</p>
-            <p><Ruby rt="じぶん">自分</Ruby>のキーボードで<Ruby rt="れんしゅう">練習</Ruby>するよ！</p>
+            <p><Ruby rt="じぶん">自分</Ruby>のキーボードで<Ruby rt="れんしゅう">練習</Ruby>するよ！<span className="block text-xs text-muted-foreground mt-1"><T>Practice with your own keyboard!</T></span></p>
             <div className="grid grid-cols-3 gap-4 mt-4">
               <div className="text-center">
                 <div className="flex gap-1 justify-center">
@@ -516,6 +517,7 @@ export function Mission2({ onComplete }: Mission2Props) {
         return (
           <>
             まずはひらがなで「<span className="font-bold text-primary">あした</span>」と<Ruby rt="にゅうりょく">入力</Ruby>してみよう！そのままEnterで<Ruby rt="かくてい">確定</Ruby>してね。
+            <span className="block text-xs text-muted-foreground mt-1"><T>First, type 「あした」 in hiragana. Then press Enter to confirm.</T></span>
             <RomajiHint romaji="a - si - ta" kana="あした" />
           </>
         )
@@ -523,6 +525,7 @@ export function Mission2({ onComplete }: Mission2Props) {
         return (
           <>
             <Ruby rt="つぎ">次</Ruby>は<Ruby rt="かんじ">漢字</Ruby>に<Ruby rt="へんかん">変換</Ruby>してみよう！「<span className="font-bold">きょう</span>」と<Ruby rt="にゅうりょく">入力</Ruby>して、<span className="font-bold text-primary">スペースキー</span>を<Ruby rt="お">押</Ruby>して「<Ruby rt="きょう">今日</Ruby>」に<Ruby rt="へんかん">変換</Ruby>、Enterで<Ruby rt="かくてい">確定</Ruby>！
+            <span className="block text-xs text-muted-foreground mt-1"><T>Next, convert to kanji! Type 「きょう」, press Space to get 「今日」, then press Enter.</T></span>
             <RomajiHint romaji="k - y - o - u" kana="きょう" />
           </>
         )
@@ -530,16 +533,18 @@ export function Mission2({ onComplete }: Mission2Props) {
         return (
           <>
             <Ruby rt="さいご">最後</Ruby>はカタカナ！「<span className="font-bold">こんぴゅーた</span>」と<Ruby rt="にゅうりょく">入力</Ruby>して、スペースを<Ruby rt="なんかい">何回</Ruby>か<Ruby rt="お">押</Ruby>して「<span className="font-bold text-primary">コンピュータ</span>」に<Ruby rt="へんかん">変換</Ruby>してみよう！
+            <span className="block text-xs text-muted-foreground mt-1"><T>Last is katakana! Type 「こんぴゅーた」 and press Space a few times to get 「コンピュータ」.</T></span>
             <RomajiHint romaji="k - o - n - p - y - u - - - t - a" kana="こんぴゅーた" />
           </>
         )
       case "delete-practice":
         return deleteStepText === "こんにちは"
-          ? <><Ruby rt="かんぺき">完璧</Ruby>！次は「元に戻す」練習だよ！</>
+          ? <><Ruby rt="かんぺき">完璧</Ruby>！次は「元に戻す」練習だよ！<span className="block text-xs text-muted-foreground mt-1"><T>Perfect! Next, let's practice undo!</T></span></>
           : deleteStepText.includes("あ")
             ? (
               <>
                 あれ？「こんにち<span className="font-bold text-primary">は</span>」って<Ruby rt="う">打</Ruby>ちたかったのに、<Ruby rt="まちが">間違</Ruby>えて「<span className="font-bold text-destructive">あ</span>」を<Ruby rt="う">打</Ruby>っちゃった！
+                <span className="block text-xs text-muted-foreground mt-1"><T>Oh? You wanted to type 「こんにちは」, but you typed 「あ」 by mistake!</T></span>
                 <span className="block mt-1 font-bold text-primary">「Backspace（←）」で「あ」を<Ruby rt="け">消</Ruby>して、「は」に<Ruby rt="なお">直</Ruby>そう！</span>
                 <span className="block text-xs text-muted-foreground mt-1"><T>Press Backspace to delete &quot;あ&quot;, then type &quot;は&quot; (ha).</T></span>
               </>
@@ -547,20 +552,23 @@ export function Mission2({ onComplete }: Mission2Props) {
             : (
               <>
                 よし、<Ruby rt="け">消</Ruby>せたね！<Ruby rt="つぎ">次</Ruby>は「<span className="font-bold text-primary">は</span>」を<Ruby rt="にゅうりょく">入力</Ruby>して「こんにちは」にしよう！
+                <span className="block text-xs text-muted-foreground mt-1"><T>Good, it's deleted! Now type 「は」 to make 「こんにちは」.</T></span>
                 <RomajiHint romaji="h - a" kana="は" />
               </>
             )
       case "undo-practice":
         return undoText === "こんにちは"
-          ? <><Ruby rt="すば">素晴</Ruby>らしい！ショートカットをマスターしたね！</>
+          ? <><Ruby rt="すば">素晴</Ruby>らしい！ショートカットをマスターしたね！<span className="block text-xs text-muted-foreground mt-1"><T>Great! You mastered the shortcut!</T></span></>
           : (
             <>
               あ！<Ruby rt="まちが">間違</Ruby>えて<Ruby rt="け">消</Ruby>しすぎちゃった！
+              <span className="block text-xs text-muted-foreground mt-1"><T>Oops! You deleted too much!</T></span>
               <span className="block mt-1 font-bold text-primary">「{modKey} + Z」で<Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>そう！</span>
               <span className="block text-xs text-muted-foreground mt-1"><T s="Press {key} to undo!" v={{ key: `${modKey}+Z` }} /></span>
               <div className="mt-2 bg-orange-50 border border-orange-200 rounded-lg p-2">
                 <p className="text-xs text-orange-700">
                   <Ruby rt="もくひょう">目標</Ruby>：「<span className="font-bold">こんにちは</span>」に<Ruby rt="もど">戻</Ruby>す（あと{undoText === "こんに" ? "2" : "1"}<Ruby rt="かい">回</Ruby>！）
+                  <span className="block"><T s="Goal: back to 「こんにちは」 ({n} more times!)" v={{ n: undoText === "こんに" ? 2 : 1 }} /></span>
                 </p>
               </div>
             </>
@@ -572,7 +580,7 @@ export function Mission2({ onComplete }: Mission2Props) {
             ? <><Ruby rt="ぜんぶえら">全部選</Ruby>べたね！キーボードで<span className="font-bold text-primary">「{modKey}+C」</span>を<Ruby rt="お">押</Ruby>してコピーして！<span className="block text-xs text-muted-foreground mt-1"><T s="Press {key} to copy!" v={{ key: `${modKey}+C` }} /></span></>
             : <><Ruby rt="うえ">上</Ruby>の<Ruby rt="はこ">箱</Ruby>をクリックして、キーボードで<span className="font-bold text-primary">「{modKey}+A」</span>を<Ruby rt="お">押</Ruby>して<Ruby rt="ぜんぶえら">全部選</Ruby>んで！<span className="block text-xs text-muted-foreground mt-1"><T s="Click the top box, then press {key}!" v={{ key: `${modKey}+A` }} /></span></>
       case "complete":
-        return <>ミッション2クリア！タイピングマスターだね！</>
+        return <>ミッション2クリア！タイピングマスターだね！<span className="block text-xs text-muted-foreground mt-1"><T>Mission 2 clear! You are a typing master!</T></span></>
       default:
         return ""
     }
@@ -676,7 +684,7 @@ export function Mission2({ onComplete }: Mission2Props) {
                     あ/A <Ruby rt="きりかえ">切替</Ruby>
                   </Button>
                   <p className="text-sm text-gray-500">
-                    キーボードの「{isMac ? "かな / 英数" : <><Ruby rt="はんかく">半角</Ruby>/<Ruby rt="ぜんかく">全角</Ruby></>}」キーでも<Ruby rt="きりか">切替</Ruby>えられるよ！
+                    キーボードの「{isMac ? "かな / 英数" : <><Ruby rt="はんかく">半角</Ruby>/<Ruby rt="ぜんかく">全角</Ruby></>}」キーでも<Ruby rt="きりか">切替</Ruby>えられるよ！ <T>You can also switch with this key on the keyboard!</T>
                   </p>
                 </div>
               )}
@@ -705,7 +713,7 @@ export function Mission2({ onComplete }: Mission2Props) {
                     />
                     {/* ローマ字ヒント */}
                     <div className="mt-3 bg-indigo-50 border border-indigo-200 rounded-lg p-3">
-                      <p className="text-xs text-indigo-600 font-bold mb-2 text-center">⌨️ キーボードでこの<Ruby rt="じゅんばん">順番</Ruby>に<Ruby rt="お">押</Ruby>してね：</p>
+                      <p className="text-xs text-indigo-600 font-bold mb-2 text-center">⌨️ キーボードでこの<Ruby rt="じゅんばん">順番</Ruby>に<Ruby rt="お">押</Ruby>してね： <span className="font-normal"><T>Press the keys in this order:</T></span></p>
                       <div className="flex items-center justify-center gap-2">
                         {[
                           { key: "A", kana: "あ" },
@@ -752,7 +760,7 @@ export function Mission2({ onComplete }: Mission2Props) {
                     />
                     {/* ローマ字ヒント */}
                     <div className="mt-3 bg-indigo-50 border border-indigo-200 rounded-lg p-3">
-                      <p className="text-xs text-indigo-600 font-bold mb-2 text-center">⌨️ キーボードでこの<Ruby rt="じゅんばん">順番</Ruby>に<Ruby rt="お">押</Ruby>してね：</p>
+                      <p className="text-xs text-indigo-600 font-bold mb-2 text-center">⌨️ キーボードでこの<Ruby rt="じゅんばん">順番</Ruby>に<Ruby rt="お">押</Ruby>してね： <span className="font-normal"><T>Press the keys in this order:</T></span></p>
                       <div className="flex items-center justify-center gap-2">
                         {[
                           { key: "K", kana: "" },
@@ -807,7 +815,7 @@ export function Mission2({ onComplete }: Mission2Props) {
                     />
                     {/* ローマ字ヒント */}
                     <div className="mt-3 bg-indigo-50 border border-indigo-200 rounded-lg p-3">
-                      <p className="text-xs text-indigo-600 font-bold mb-2 text-center">⌨️ キーボードでこの<Ruby rt="じゅんばん">順番</Ruby>に<Ruby rt="お">押</Ruby>してね：</p>
+                      <p className="text-xs text-indigo-600 font-bold mb-2 text-center">⌨️ キーボードでこの<Ruby rt="じゅんばん">順番</Ruby>に<Ruby rt="お">押</Ruby>してね： <span className="font-normal"><T>Press the keys in this order:</T></span></p>
                       <div className="flex items-center justify-center gap-1.5 flex-wrap">
                         {[
                           { key: "K", kana: "" },
@@ -831,7 +839,7 @@ export function Mission2({ onComplete }: Mission2Props) {
                       </div>
                     </div>
                     <p className="text-sm text-muted-foreground mt-2 text-center">
-                      スペースを<Ruby rt="なんかい">何回</Ruby>か<Ruby rt="お">押</Ruby>すと<Ruby rt="べつ">別</Ruby>の<Ruby rt="こうほ">候補</Ruby>が<Ruby rt="で">出</Ruby>るよ！
+                      スペースを<Ruby rt="なんかい">何回</Ruby>か<Ruby rt="お">押</Ruby>すと<Ruby rt="べつ">別</Ruby>の<Ruby rt="こうほ">候補</Ruby>が<Ruby rt="で">出</Ruby>るよ！ <T>Press Space a few times to see other choices!</T>
                     </p>
                   </div>
                 </div>
@@ -863,7 +871,7 @@ export function Mission2({ onComplete }: Mission2Props) {
                     </div>
 
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Backspace（←）で「<span className="text-destructive font-bold">あ</span>」を<Ruby rt="け">消</Ruby>して、「<span className="text-success font-bold">は</span>」に<Ruby rt="なお">直</Ruby>してね：
+                      Backspace（←）で「<span className="text-destructive font-bold">あ</span>」を<Ruby rt="け">消</Ruby>して、「<span className="text-success font-bold">は</span>」に<Ruby rt="なお">直</Ruby>してね： <T>Delete 「あ」 with Backspace and change it to 「は」:</T>
                     </label>
                     <input
                       type="text"
@@ -931,7 +939,7 @@ export function Mission2({ onComplete }: Mission2Props) {
                     </div>
 
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      {modKey} + Z で「こんにちは」に<Ruby rt="もど">戻</Ruby>そう：
+                      {modKey} + Z で「こんにちは」に<Ruby rt="もど">戻</Ruby>そう： <T s="Undo with {key} to get back 「こんにちは」:" v={{ key: `${modKey}+Z` }} />
                     </label>
                     <input
                       type="text"
@@ -992,14 +1000,14 @@ export function Mission2({ onComplete }: Mission2Props) {
                     {/* Instructions */}
                     <div className="bg-primary/10 border border-primary/30 rounded-lg p-3 text-center">
                       <p className="text-sm text-primary font-medium">
-                        <Ruby rt="じぶん">自分</Ruby>のキーボードで<Ruby rt="そうさ">操作</Ruby>してね！
+                        <Ruby rt="じぶん">自分</Ruby>のキーボードで<Ruby rt="そうさ">操作</Ruby>してね！ <T>Use your own keyboard!</T>
                       </p>
                     </div>
 
                     {/* Source input */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        コピー<Ruby rt="もと">元</Ruby>（ここをクリック → {modKey}+A → {modKey}+C）：
+                        コピー<Ruby rt="もと">元</Ruby>（ここをクリック → {modKey}+A → {modKey}+C）： <T>Copy from here</T>
                       </label>
                       <input
                         ref={inputRef}
@@ -1037,7 +1045,7 @@ export function Mission2({ onComplete }: Mission2Props) {
                     {/* Target input */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
-                        ペースト<Ruby rt="さき">先</Ruby>（ここをクリック → {modKey}+V）：
+                        ペースト<Ruby rt="さき">先</Ruby>（ここをクリック → {modKey}+V）： <T>Paste here</T>
                       </label>
                       <input
                         ref={pasteInputRef}

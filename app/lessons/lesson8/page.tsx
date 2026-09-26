@@ -1,6 +1,7 @@
 "use client"
 
 import { MissionLesson } from "@/components/lesson/mission-lesson"
+import { tx } from "@/lib/i18n"
 import { RealAppMission } from "@/components/lesson/real-app"
 import { Ruby } from "@/components/game/character"
 import { ArithmeticMission, WhyCellsMission } from "@/components/lessons/l8/arithmetic"
@@ -18,24 +19,28 @@ export default function Lesson8Page() {
           title: "計算",
           titleFull: <><Ruby rt="しそくけいさん">四則計算</Ruby></>,
           learned: <>+ - * / の<Ruby rt="しき">式</Ruby>を、<Ruby rt="かず">数</Ruby>とセルの<Ruby rt="りょうほう">両方</Ruby>で<Ruby rt="い">入</Ruby>れる</>,
+          learnedEn: tx("Enter + - * / formulas with numbers and with cells"),
           render: (done) => <ArithmeticMission onComplete={done} />,
         },
         {
           title: "セル",
           titleFull: <>セルで<Ruby rt="い">入</Ruby>れる<Ruby rt="りゆう">理由</Ruby></>,
           learned: <>セルで<Ruby rt="い">入</Ruby>れると、<Ruby rt="すうじ">数字</Ruby>を<Ruby rt="か">変</Ruby>えても<Ruby rt="じどう">自動</Ruby>で<Ruby rt="けいさん">計算</Ruby>される</>,
+          learnedEn: tx("With cells, the answer updates by itself when you change a number"),
           render: (done) => <WhyCellsMission onComplete={done} />,
         },
         {
           title: "請求書",
           titleFull: <><Ruby rt="せいきゅうしょ">請求書</Ruby></>,
           learned: <><Ruby rt="けつごう">結合</Ruby>・オートフィル・SUM・<Ruby rt="けいせん">罫線</Ruby>・¥<Ruby rt="ひょうじ">表示</Ruby>で<Ruby rt="せいきゅうしょ">請求書</Ruby>を<Ruby rt="つく">作</Ruby>る</>,
+          learnedEn: tx("Make an invoice: merge, autofill, SUM, borders, ¥ format"),
           render: (done) => <InvoiceMission onComplete={done} />,
         },
         {
           title: "本物",
           titleFull: <><Ruby rt="ほんもの">本物</Ruby>で<Ruby rt="しあ">仕上</Ruby>げ</>,
           learned: <>Googleスプレッドシートで<Ruby rt="せいきゅうしょ">請求書</Ruby>を<Ruby rt="つく">作</Ruby>って<Ruby rt="きょうゆう">共有</Ruby>する</>,
+          learnedEn: tx("Make an invoice in Google Sheets and share it"),
           render: (done) => (
             <RealAppMission
               onComplete={done}
@@ -44,6 +49,14 @@ export default function Lesson8Page() {
                 appName: "Googleスプレッドシート",
                 openUrl: "https://sheets.new",
                 linkPrefix: "https://docs.google.com/spreadsheets/",
+                checklistEn: [
+                  tx("Named the file 「請求書_さくら商事」"),
+                  tx("Typed the same table as Mission 3 (to, date, item, unit price, quantity)"),
+                  tx("Merged A1–D1 and centered 「請求書」"),
+                  tx("Entered the amounts with cells like =B6*C6, then used autofill"),
+                  tx("Entered the subtotal (SUM), tax and total with formulas (total: 6,050 yen)"),
+                  tx("Added borders and the ¥ format (Format → Number → Currency is OK too)"),
+                ],
                 checklist: [
                   <>ファイル<Ruby rt="めい">名</Ruby>を「<Ruby rt="せいきゅうしょ">請求書</Ruby>_さくら<Ruby rt="しょうじ">商事</Ruby>」にした</>,
                   <>ミッション3と<Ruby rt="おな">同</Ruby>じ<Ruby rt="ひょう">表</Ruby>を<Ruby rt="にゅうりょく">入力</Ruby>した（あて<Ruby rt="さき">先</Ruby>・<Ruby rt="ひづけ">日付</Ruby>・<Ruby rt="ひんめい">品名</Ruby>・<Ruby rt="たんか">単価</Ruby>・<Ruby rt="すうりょう">数量</Ruby>）</>,

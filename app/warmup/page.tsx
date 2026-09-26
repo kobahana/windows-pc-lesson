@@ -99,7 +99,7 @@ export default function WarmupPage() {
             {task && (
               <Card key={`${task.id}-${idx}`} className="space-y-4 animate-fade-in">
                 <div className="flex items-center justify-between">
-                  <p className="text-xl font-bold text-slate-800">{task.title}</p>
+                  <p className="text-xl font-bold text-slate-800">{task.title} <span className="text-sm font-normal text-slate-400"><T>{task.en}</T></span></p>
                   <span className="font-mono text-slate-400 tabular-nums">{elapsed}秒</span>
                 </div>
                 <task.Component onDone={done} award={award} />
@@ -109,7 +109,7 @@ export default function WarmupPage() {
         ) : (
           <Card className="text-center space-y-4 py-8">
             <p className="text-4xl font-bold">おつかれさま！</p>
-            <p className="text-lg text-slate-600"><span className="font-mono font-bold text-3xl text-slate-800">{elapsed}</span> <Ruby rt="びょう">秒</Ruby>でできたよ</p>
+            <p className="text-lg text-slate-600"><span className="font-mono font-bold text-3xl text-slate-800">{elapsed}</span> <Ruby rt="びょう">秒</Ruby>でできたよ <span className="text-sm"><T s="Done in {sec} seconds" v={{ sec: elapsed }} /></span></p>
             <p className="flex items-center justify-center gap-2 text-amber-600 font-bold"><Stamp className="w-5 h-5" /> スタンプ {got} / {SKILLS.length}</p>
             <div className="flex gap-3 justify-center flex-wrap">
               <Button size="lg" variant="outline" className="gap-2" onClick={start}><RotateCcw className="w-5 h-5" /> もう<Ruby rt="いっかい">1回</Ruby></Button>

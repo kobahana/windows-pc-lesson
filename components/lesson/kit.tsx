@@ -228,6 +228,7 @@ export interface QuizChoice {
   label: React.ReactNode
   ok: boolean
   why?: React.ReactNode
+  whyEn?: string // why の英語（tx で）
 }
 export interface QuizQuestion {
   q: React.ReactNode
@@ -274,8 +275,9 @@ export function ChoiceQuiz({ questions, onDone, columns = 1 }: { questions: Quiz
       </div>
       {choice && (
         <div className={cn("rounded-xl p-4 animate-fade-in", choice.ok ? "bg-success/10 text-slate-800" : "bg-amber-50 text-amber-900")}>
-          <p className="font-bold">{choice.ok ? "正解！🎉" : "ちがうよ。もう一度えらんでね"}</p>
+          <p className="font-bold">{choice.ok ? "正解！🎉" : <>ちがうよ。もう一度えらんでね <span className="text-sm font-normal"><T>Not quite. Choose again.</T></span></>}</p>
           {choice.why && <p className="mt-1">{choice.why}</p>}
+          {choice.whyEn && <p className="text-sm text-slate-500 mt-1"><T>{choice.whyEn}</T></p>}
           {choice.ok && (
             <div className="text-right mt-2">
               <button type="button" onClick={next} className="bg-primary text-primary-foreground font-bold rounded-lg px-5 py-2">

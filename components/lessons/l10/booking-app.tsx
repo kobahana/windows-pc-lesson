@@ -11,12 +11,12 @@ import { Card, MissionFrame, RuleBadge, Ruby, Warn, useStepFlow } from "@/compon
 import { HoverIcon } from "@/components/lessons/l6/five-rules"
 import { CalendarDays, Settings, Menu, Bell, Pencil, Trash2, X, Lightbulb, ChevronDown } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { T } from "@/lib/i18n"
+import { T, tx, useT } from "@/lib/i18n"
 
-const GOALS: { goal: React.ReactNode; rule: number }[] = [
-  { goal: <><b><Ruby rt="あした">明日</Ruby></b>の <b>14:00</b> に <b><Ruby rt="かいぎしつ">会議室</Ruby>A</b> を、<Ruby rt="けんめい">件名</Ruby>「<Ruby rt="めんだん">面談</Ruby>」で<Ruby rt="よやく">予約</Ruby>しよう</>, rule: 1 },
-  { goal: <><Ruby rt="よやく">予約</Ruby>した<Ruby rt="じかん">時間</Ruby>を <b>15:00</b> に<Ruby rt="へんこう">変更</Ruby>しよう</>, rule: 2 },
-  { goal: <>メールの<Ruby rt="つうち">通知</Ruby>をオフにしよう</>, rule: 4 },
+const GOALS: { goal: React.ReactNode; en: string; rule: number }[] = [
+  { goal: <><b><Ruby rt="あした">明日</Ruby></b>の <b>14:00</b> に <b><Ruby rt="かいぎしつ">会議室</Ruby>A</b> を、<Ruby rt="けんめい">件名</Ruby>「<Ruby rt="めんだん">面談</Ruby>」で<Ruby rt="よやく">予約</Ruby>しよう</>, en: tx("Book 会議室A (room A) for 14:00 tomorrow, with the title 「面談」"), rule: 1 },
+  { goal: <><Ruby rt="よやく">予約</Ruby>した<Ruby rt="じかん">時間</Ruby>を <b>15:00</b> に<Ruby rt="へんこう">変更</Ruby>しよう</>, en: tx("Change the time of your booking to 15:00"), rule: 2 },
+  { goal: <>メールの<Ruby rt="つうち">通知</Ruby>をオフにしよう</>, en: tx("Turn off email notifications"), rule: 4 },
 ]
 
 const HOURS = [9, 10, 11, 12, 13, 14, 15, 16, 17]
@@ -25,6 +25,7 @@ interface Booking { day: 0 | 1; room: string; hour: number; title: string; mine:
 
 export function BookingAppMission({ onComplete }: { onComplete: () => void }) {
   const { step, succeed, showSuccess, successMsg } = useStepFlow(GOALS.length, onComplete)
+  const t = useT()
   const [warn, setWarn] = useState<React.ReactNode>(null)
   const [showHint, setShowHint] = useState(false)
   const [day, setDay] = useState<0 | 1>(0)
@@ -45,7 +46,7 @@ export function BookingAppMission({ onComplete }: { onComplete: () => void }) {
     const b = bookings.find((x) => x.day === day && x.room === room && x.hour === hour)
     if (b) {
       if (b.mine) setDetail(b)
-      else setWarn(`そこは「${b.title}」で使われているよ`)
+      else setWarn(`そこは「${b.title}」で使われているよ / ${t("That is used for 「{title}」", { title: b.title })}`)
       return
     }
     setDialog({ room, hour, title: "" })
@@ -55,19 +56,19 @@ export function BookingAppMission({ onComplete }: { onComplete: () => void }) {
   const checkGoal = (bs: Booking[], last: Booking) => {
     if (step === 0) {
       if (bs.some((b) => b.mine && b.day === 1 && b.room === "A" && b.hour === 14 && b.title === "面談")) return succeed("予約できた！")
-      const why = last.day !== 1 ? "今日ではなく「明日」だよ" : last.room !== "A" ? "会議室Aだよ" : last.hour !== 14 ? "14:00 だよ" : "件名は「面談」にしよう"
-      setWarn(<>おしい！{why}。<Ruby rt="よやく">予約</Ruby>をクリックすると、<Ruby rt="へんこう">変更</Ruby>や<Ruby rt="さくじょ">削除</Ruby>ができるよ</>)
+      const [why, whyEn] = last.day !== 1 ? ["今日ではなく「明日」だよ", tx("Not today — tomorrow")] : last.room !== "A" ? ["会議室Aだよ", tx("It's 会議室A (room A)")] : last.hour !== 14 ? ["14:00 だよ", tx("It's 14:00")] : ["件名は「面談」にしよう", tx("Make the title 「面談」")]
+      setWarn(<>おしい！{why}。<Ruby rt="よやく">予約</Ruby>をクリックすると、<Ruby rt="へんこう">変更</Ruby>や<Ruby rt="さくじょ">削除</Ruby>ができるよ<span className="block text-sm font-normal"><T>{whyEn}</T> <T>Click your booking to change or delete it.</T></span></>)
     }
     if (step === 1) {
       if (bs.some((b) => b.mine && b.day === 1 && b.room === "A" && b.hour === 15)) return succeed("変更できた！")
-      setWarn("15:00 に変更しよう")
+      setWarn(`15:00 に変更しよう / ${tx("Change it to 15:00")}`)
     }
   }
 
   const saveDialog = () => {
     if (!dialog) return
     if (!dialog.title.trim()) {
-      setWarn("件名を入れてね")
+      setWarn(`件名を入れてね / ${tx("Enter a title")}`)
       return
     }
     const ed = dialog.editing
@@ -75,7 +76,7 @@ export function BookingAppMission({ onComplete }: { onComplete: () => void }) {
       ? { ...ed, hour: dialog.hour, title: dialog.title.trim() }
       : { day, room: dialog.room, hour: dialog.hour, title: dialog.title.trim(), mine: true }
     if (bookings.some((b) => b !== ed && b.day === target.day && b.room === target.room && b.hour === target.hour)) {
-      setWarn("その時間はほかの予約があるよ")
+      setWarn(`その時間はほかの予約があるよ / ${tx("That time is already booked")}`)
       return
     }
     const next = ed ? bookings.map((b) => (b === ed ? target : b)) : [...bookings, target]
@@ -97,7 +98,7 @@ export function BookingAppMission({ onComplete }: { onComplete: () => void }) {
     >
       <div className="space-y-4">
         <Card className="flex flex-col md:flex-row md:items-center gap-3 border-indigo-300 bg-indigo-50/50">
-          <p className="text-xl font-bold text-slate-800 flex-1">🎯 {GOALS[step].goal}</p>
+          <p className="text-xl font-bold text-slate-800 flex-1">🎯 {GOALS[step].goal}<span className="block text-sm font-normal text-slate-500"><T>{GOALS[step].en}</T></span></p>
           {showHint ? <RuleBadge n={GOALS[step].rule} /> : (
             <button onClick={() => setShowHint(true)} className="flex items-center gap-1.5 text-sm font-bold text-indigo-700 border-2 border-indigo-200 rounded-full px-4 py-1.5 bg-white hover:bg-indigo-50">
               <Lightbulb className="w-4 h-4" /> <Ruby rt="こま">困</Ruby>ったらヒント
@@ -111,7 +112,7 @@ export function BookingAppMission({ onComplete }: { onComplete: () => void }) {
             <CalendarDays className="w-5 h-5" />
             <span className="font-bold">RoomBook</span>
             <div className="ml-auto flex items-center gap-1">
-              <HoverIcon icon={<Bell className="w-5 h-5" />} name="お知らせ" onClick={() => setWarn("お知らせはありません")} />
+              <HoverIcon icon={<Bell className="w-5 h-5" />} name="お知らせ" onClick={() => setWarn(`お知らせはありません / ${tx("No notifications")}`)} />
               <HoverIcon icon={<Settings className="w-5 h-5" />} name="設定" onClick={() => setSettings(true)} />
             </div>
           </div>
@@ -161,7 +162,7 @@ export function BookingAppMission({ onComplete }: { onComplete: () => void }) {
 
           {sideMenu && (
             <div className="absolute left-0 top-10 z-20 w-48 bg-white border shadow-xl rounded-br-xl py-1 text-sm">
-              {["使い方", "予約の一覧", "ログアウト"].map((m) => <button key={m} onClick={() => { setSideMenu(false); setWarn(`「${m}」ではないよ`) }} className="w-full text-left px-4 py-2 hover:bg-teal-50">{m}</button>)}
+              {["使い方", "予約の一覧", "ログアウト"].map((m) => <button key={m} onClick={() => { setSideMenu(false); setWarn(`「${m}」ではないよ / ${t("Not 「{m}」", { m })}`) }} className="w-full text-left px-4 py-2 hover:bg-teal-50">{m}</button>)}
             </div>
           )}
 
@@ -171,7 +172,7 @@ export function BookingAppMission({ onComplete }: { onComplete: () => void }) {
                 <div className="flex items-center gap-1">
                   <p className="font-bold text-lg flex-1">{detail.title}</p>
                   <HoverIcon icon={<Pencil className="w-4 h-4" />} name="編集" onClick={() => { setDialog({ room: detail.room, hour: detail.hour, title: detail.title, editing: detail }); setDetail(null) }} />
-                  <HoverIcon icon={<Trash2 className="w-4 h-4" />} name="削除" onClick={() => { setBookings((bs) => bs.filter((b) => b !== detail)); setDetail(null); setWarn("削除しちゃった！もう一度予約しよう") }} />
+                  <HoverIcon icon={<Trash2 className="w-4 h-4" />} name="削除" onClick={() => { setBookings((bs) => bs.filter((b) => b !== detail)); setDetail(null); setWarn(`削除しちゃった！もう一度予約しよう / ${tx("You deleted it! Book again")}`) }} />
                   <HoverIcon icon={<X className="w-4 h-4" />} name="閉じる" onClick={() => setDetail(null)} />
                 </div>
                 <p className="text-sm text-slate-600">会議室{detail.room}・{detail.day === 1 ? "明日" : "今日"} {detail.hour}:00〜{detail.hour + 1}:00</p>
@@ -207,7 +208,7 @@ export function BookingAppMission({ onComplete }: { onComplete: () => void }) {
               <div className="flex items-center"><p className="font-bold text-lg flex-1">設定</p><HoverIcon icon={<X className="w-4 h-4" />} name="閉じる" onClick={() => setSettings(false)} /></div>
               {[
                 { label: "メール通知", on: notify, toggle: () => { setNotify(!notify); if (step === 2 && notify) succeed("設定も見つけた！") } },
-                { label: "ダークモード", on: false, toggle: () => setWarn("ダークモードではないよ") },
+                { label: "ダークモード", on: false, toggle: () => setWarn(`ダークモードではないよ / ${tx("Not dark mode")}`) },
               ].map((row) => (
                 <div key={row.label} className="flex items-center justify-between">
                   <span>{row.label}</span>

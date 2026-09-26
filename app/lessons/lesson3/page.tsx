@@ -8,7 +8,7 @@ import { ArrowLeft, Star, RotateCcw, Trophy, Clock, Target } from "lucide-react"
 import { LessonHeader } from "@/components/layout/lesson-header"
 import { useSettings } from "@/components/providers/settings-provider"
 import { sounds } from "@/lib/sounds"
-import { T } from "@/lib/i18n"
+import { T, tx } from "@/lib/i18n"
 
 function cn(...classes: (string | boolean | undefined)[]) {
   return classes.filter(Boolean).join(" ");
@@ -175,8 +175,9 @@ export default function Lesson3() {
 
   if (showSuccess) {
     let evaluationMessage = "すばらしい！ローマ字マスターです！";
-    if (missCount > 5) evaluationMessage = "よくがんばりました！次はノーミスをめざそう！";
-    if (missCount > 15) evaluationMessage = "最後までやりきりました！くりかえし練習しよう！";
+    let evaluationEn = tx("Excellent! You are a romaji master!");
+    if (missCount > 5) { evaluationMessage = "よくがんばりました！次はノーミスをめざそう！"; evaluationEn = tx("Good job! Next time, aim for no mistakes!"); }
+    if (missCount > 15) { evaluationMessage = "最後までやりきりました！くりかえし練習しよう！"; evaluationEn = tx("You finished! Keep practicing!"); }
 
     return (
       <div className="h-screen bg-slate-50 flex flex-col">
@@ -189,7 +190,7 @@ export default function Lesson3() {
             </div>
             
             <h2 className="text-3xl font-bold text-slate-800 mb-2">クリアおめでとう！</h2>
-            <p className="text-slate-600 mb-8 font-medium">{evaluationMessage}</p>
+            <p className="text-slate-600 mb-8 font-medium">{evaluationMessage}<span className="block text-sm font-normal text-slate-400"><T>{evaluationEn}</T></span></p>
 
             <div className="grid grid-cols-2 gap-4 mb-8">
               <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">

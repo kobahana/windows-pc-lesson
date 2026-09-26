@@ -1,6 +1,8 @@
 // 練習用スプレッドシートの計算エンジン（小さな数式パーサー）
 // 対応：数値、セル参照（A1）、範囲（A1:B3）、+ - * /、かっこ、SUM / AVERAGE / MAX / MIN
 
+import { tx } from "@/lib/i18n/tx"
+
 export interface CellFmt {
   bold?: boolean
   align?: "left" | "center" | "right"
@@ -31,15 +33,15 @@ export const isError = (v: Value): v is { error: string } => typeof v === "objec
 // 数式の入力ミスの声かけ（数式として計算する前に確認）
 export function formulaProblem(raw: string): string | null {
   const t = raw.trim()
-  if (t.startsWith("＝")) return "「＝」が全角だよ。「半角/全角」キーで半角にしてから「=」を打とう / Use half-width ="
+  if (t.startsWith("＝")) return `「＝」が全角だよ。「半角/全角」キーで半角にしてから「=」を打とう / ${tx("Use half-width =")}`
   if (!t.startsWith("=")) {
-    if (/^[0-9０-９.]+\s*[+\-*/×÷＋－＊／]\s*[0-9０-９.]+/.test(t)) return "計算するときは、最初に「=」を付けよう / Start with ="
-    if (/^[A-Za-z]\d+\s*[+\-*/×÷]/.test(t)) return "計算するときは、最初に「=」を付けよう / Start with ="
+    if (/^[0-9０-９.]+\s*[+\-*/×÷＋－＊／]\s*[0-9０-９.]+/.test(t)) return `計算するときは、最初に「=」を付けよう / ${tx("Start with =")}`
+    if (/^[A-Za-z]\d+\s*[+\-*/×÷]/.test(t)) return `計算するときは、最初に「=」を付けよう / ${tx("Start with =")}`
     return null
   }
-  if (t.includes("×") || /\d\s*[xX]\s*\d/.test(t)) return "かけ算は「×」ではなく「*」（Shift＋け）を使うよ / Use * for ×"
-  if (t.includes("÷")) return "わり算は「÷」ではなく「/」（「め」のキー）を使うよ / Use / for ÷"
-  if (/[０-９Ａ-Ｚａ-ｚ＋－＊／（）：]/.test(t)) return "式の中に全角の文字があるよ。半角で入力しよう / Use half-width characters"
+  if (t.includes("×") || /\d\s*[xX]\s*\d/.test(t)) return `かけ算は「×」ではなく「*」（Shift＋け）を使うよ / ${tx("Use * for ×")}`
+  if (t.includes("÷")) return `わり算は「÷」ではなく「/」（「め」のキー）を使うよ / ${tx("For ÷, use 「/」")}`
+  if (/[０-９Ａ-Ｚａ-ｚ＋－＊／（）：]/.test(t)) return `式の中に全角の文字があるよ。半角で入力しよう / ${tx("Use half-width characters")}`
   return null
 }
 

@@ -408,7 +408,7 @@ export function Sheet({
             </div>
             <div className="flex flex-wrap text-sm text-slate-700">
               {["ファイル", "編集", "表示", "挿入", "表示形式", "データ", "ツール"].map((m) => (
-                <button key={m} type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => onMessage?.("メニューは、今回の練習では使わないよ。ツールバーのボタンを使おう")} className="px-1.5 py-0.5 rounded hover:bg-slate-200">{m}</button>
+                <button key={m} type="button" onMouseDown={(e) => e.preventDefault()} onClick={() => onMessage?.(`メニューは、今回の練習では使わないよ。ツールバーのボタンを使おう / ${tx("Use the toolbar buttons")}`)} className="px-1.5 py-0.5 rounded hover:bg-slate-200">{m}</button>
               ))}
             </div>
           </div>

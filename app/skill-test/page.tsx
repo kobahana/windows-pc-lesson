@@ -15,7 +15,7 @@ import { WARMUP_TASKS } from "@/components/warmup/tasks"
 import { useTestEnabled } from "@/lib/test-settings"
 import { AlignCenter, AlignLeft, AlignRight, AlignJustify, ClipboardCheck, Home, SkipForward, Timer } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { T } from "@/lib/i18n"
+import { T, tx } from "@/lib/i18n"
 
 const LESSON_ID = 14
 const TIME_LIMIT_SEC = 5 * 60
@@ -23,23 +23,23 @@ const DONE_KEY = "pclesson_skilltest_done_v1"
 
 type Item =
   | { kind: "op"; taskId: string }
-  | { kind: "mc"; q: React.ReactNode; choices: React.ReactNode[]; answer: number }
+  | { kind: "mc"; q: React.ReactNode; en: string; choices: React.ReactNode[]; answer: number }
 
 const ITEMS: Item[] = [
   { kind: "op", taskId: "halfwidth" },
   { kind: "op", taskId: "katakana" },
   { kind: "op", taskId: "copypaste" },
-  { kind: "mc", q: <>「<Ruby rt="ちゅうおう">中央</Ruby>そろえ」のボタンはどれ？</>, choices: [<AlignLeft key="l" className="w-8 h-8" />, <AlignCenter key="c" className="w-8 h-8" />, <AlignRight key="r" className="w-8 h-8" />, <AlignJustify key="j" className="w-8 h-8" />], answer: 1 },
+  { kind: "mc", q: <>「<Ruby rt="ちゅうおう">中央</Ruby>そろえ」のボタンはどれ？</>, en: tx("Which is the \"center align\" button?"), choices: [<AlignLeft key="l" className="w-8 h-8" />, <AlignCenter key="c" className="w-8 h-8" />, <AlignRight key="r" className="w-8 h-8" />, <AlignJustify key="j" className="w-8 h-8" />], answer: 1 },
   { kind: "op", taskId: "cut" },
-  { kind: "mc", q: <><Ruby rt="か">書</Ruby>き<Ruby rt="か">換</Ruby>えられない<Ruby rt="かたち">形</Ruby>で<Ruby rt="せいきゅうしょ">請求書</Ruby>を<Ruby rt="おく">送</Ruby>りたい。ファイルの<Ruby rt="しゅるい">種類</Ruby>は？</>, choices: ["請求書.xlsx", "請求書.docx", "請求書.pdf"], answer: 2 },
+  { kind: "mc", q: <><Ruby rt="か">書</Ruby>き<Ruby rt="か">換</Ruby>えられない<Ruby rt="かたち">形</Ruby>で<Ruby rt="せいきゅうしょ">請求書</Ruby>を<Ruby rt="おく">送</Ruby>りたい。ファイルの<Ruby rt="しゅるい">種類</Ruby>は？</>, en: tx("You want to send an invoice in a form that can't be changed. Which file type?"), choices: ["請求書.xlsx", "請求書.docx", "請求書.pdf"], answer: 2 },
   { kind: "op", taskId: "undoredo" },
-  { kind: "mc", q: <>B2 が<Ruby rt="たんか">単価</Ruby>、C2 が<Ruby rt="すうりょう">数量</Ruby>。<Ruby rt="きんがく">金額</Ruby>を<Ruby rt="だ">出</Ruby>す<Ruby rt="ただ">正</Ruby>しい<Ruby rt="しき">式</Ruby>は？</>, choices: ["B2×C2", "=B2*C2", "＝B2*C2", "=120*3"], answer: 1 },
+  { kind: "mc", q: <>B2 が<Ruby rt="たんか">単価</Ruby>、C2 が<Ruby rt="すうりょう">数量</Ruby>。<Ruby rt="きんがく">金額</Ruby>を<Ruby rt="だ">出</Ruby>す<Ruby rt="ただ">正</Ruby>しい<Ruby rt="しき">式</Ruby>は？</>, en: tx("B2 is the unit price and C2 is the quantity. Which formula gives the amount?"), choices: ["B2×C2", "=B2*C2", "＝B2*C2", "=120*3"], answer: 1 },
   { kind: "op", taskId: "tab" },
-  { kind: "mc", q: <>100<Ruby rt="にん">人</Ruby>のお<Ruby rt="きゃく">客</Ruby>さまに<Ruby rt="いっせい">一斉</Ruby>にメールを<Ruby rt="おく">送</Ruby>る。<Ruby rt="あてさき">宛先</Ruby>はどこに<Ruby rt="い">入</Ruby>れる？</>, choices: ["To", "CC", "BCC"], answer: 2 },
+  { kind: "mc", q: <>100<Ruby rt="にん">人</Ruby>のお<Ruby rt="きゃく">客</Ruby>さまに<Ruby rt="いっせい">一斉</Ruby>にメールを<Ruby rt="おく">送</Ruby>る。<Ruby rt="あてさき">宛先</Ruby>はどこに<Ruby rt="い">入</Ruby>れる？</>, en: tx("You send an email to 100 customers at once. Where do you put the addresses?"), choices: ["To", "CC", "BCC"], answer: 2 },
   { kind: "op", taskId: "find" },
-  { kind: "mc", q: <>「お<Ruby rt="にもつ">荷物</Ruby>を<Ruby rt="も">持</Ruby>ち<Ruby rt="かえ">帰</Ruby>りました。<Ruby rt="かくにん">確認</Ruby>はこちら http://…」という SMS。どうする？</>, choices: ["リンクを開いて確認する", "リンクは開かず、公式アプリや不在票で確認する", "返信して聞く"], answer: 1 },
+  { kind: "mc", q: <>「お<Ruby rt="にもつ">荷物</Ruby>を<Ruby rt="も">持</Ruby>ち<Ruby rt="かえ">帰</Ruby>りました。<Ruby rt="かくにん">確認</Ruby>はこちら http://…」という SMS。どうする？</>, en: tx("An SMS says \"We took your package back. Check here http://…\". What do you do?"), choices: ["リンクを開いて確認する", "リンクは開かず、公式アプリや不在票で確認する", "返信して聞く"], answer: 1 },
   { kind: "op", taskId: "rightclick" },
-  { kind: "mc", q: <><Ruby rt="せき">席</Ruby>を<Ruby rt="はな">離</Ruby>れるときに<Ruby rt="がめん">画面</Ruby>をロックするキーは？</>, choices: ["Windows + L", "Ctrl + L", "Alt + F4"], answer: 0 },
+  { kind: "mc", q: <><Ruby rt="せき">席</Ruby>を<Ruby rt="はな">離</Ruby>れるときに<Ruby rt="がめん">画面</Ruby>をロックするキーは？</>, en: tx("Which keys lock the screen when you leave your seat?"), choices: ["Windows + L", "Ctrl + L", "Alt + F4"], answer: 0 },
   { kind: "op", taskId: "save" },
 ]
 const MAX = ITEMS.length
@@ -165,7 +165,7 @@ export default function SkillTestPage() {
             <Character mood="happy" message={<>PC<Ruby rt="そうさ">操作</Ruby>テストだよ。5<Ruby rt="ふんかん">分間</Ruby>で{MAX}<Ruby rt="もん">問</Ruby>。わからない<Ruby rt="もんだい">問題</Ruby>はスキップしてOK！<span className="block text-sm text-muted-foreground mt-1"><T s="{n} tasks in 5 minutes. You can skip." v={{ n: MAX }} /></span></>} />
             <Card className="text-center space-y-4">
               <p className="text-slate-600"><Ruby rt="がくせきばんごう">学籍番号</Ruby>：<b className="font-mono text-xl text-slate-800">{student.id}</b>{student.name && <>（{student.name}）</>}</p>
-              <p className="text-sm text-slate-500">この<Ruby rt="がくせきばんごう">学籍番号</Ruby>で<Ruby rt="きろく">記録</Ruby>されます。ちがうときは、ホームでログアウトしてね。</p>
+              <p className="text-sm text-slate-500">この<Ruby rt="がくせきばんごう">学籍番号</Ruby>で<Ruby rt="きろく">記録</Ruby>されます。ちがうときは、ホームでログアウトしてね。<span className="block"><T>Your result is saved with this student ID. If it is not yours, log out on the home page.</T></span></p>
               <Button size="lg" className="text-xl px-12 h-14 bg-amber-500 hover:bg-amber-600" onClick={start}>スタート！</Button>
             </Card>
           </>
@@ -182,12 +182,12 @@ export default function SkillTestPage() {
             <Card key={idx} className="space-y-4">
               {opTask ? (
                 <>
-                  <p className="text-xl font-bold text-slate-800">{opTask.title}</p>
+                  <p className="text-xl font-bold text-slate-800">{opTask.title} <span className="text-sm font-normal text-slate-400"><T>{opTask.en}</T></span></p>
                   <opTask.Component onDone={() => next(true)} award={noAward} />
                 </>
               ) : item.kind === "mc" ? (
                 <>
-                  <p className="text-xl font-bold text-slate-800">{item.q}</p>
+                  <p className="text-xl font-bold text-slate-800">{item.q}<span className="block text-sm font-normal text-slate-400"><T>{item.en}</T></span></p>
                   <div className="grid gap-3 md:grid-cols-2">
                     {item.choices.map((c, i) => (
                       <button

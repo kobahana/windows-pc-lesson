@@ -278,7 +278,7 @@ const chunks = currentWord.chunks || splitIntoChunks(currentWord.k, currentWord.
               <Trophy className="w-12 h-12 text-white" />
             </div>
             <h2 className="text-3xl font-bold text-slate-800 mb-2">クリアおめでとう！</h2>
-            <p className="text-slate-600 mb-8 font-medium">漢字変換マスターの文を最後まで打てたね！</p>
+            <p className="text-slate-600 mb-8 font-medium">漢字変換マスターの文を最後まで打てたね！<span className="block text-sm font-normal text-slate-400"><T>You typed all the kanji conversion sentences!</T></span></p>
             <div className="grid grid-cols-2 gap-4 mb-8">
               <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
                 <div className="flex items-center justify-center gap-2 text-slate-500 mb-2 font-bold"><Target className="w-5 h-5 text-red-500" />ミス</div>
@@ -442,7 +442,7 @@ const chunks = currentWord.chunks || splitIntoChunks(currentWord.k, currentWord.
 
                 {showHint && (
                   <div className="w-full md:w-64 shrink-0 bg-amber-50 border-2 border-amber-200 rounded-xl px-4 py-3 shadow-sm text-left">
-                    <p className="text-base font-bold text-amber-800 mb-2">ヒント（かたまりで変換）:</p>
+                    <p className="text-base font-bold text-amber-800 mb-2">ヒント（かたまりで変換）: <span className="font-normal text-sm"><T>Hint: convert in chunks</T></span></p>
                     <div className="space-y-1">
                       {chunks.map((chunk, i) => (
                         <p key={i} className="text-sm font-medium text-amber-700">

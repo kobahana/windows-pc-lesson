@@ -49,7 +49,7 @@ export function normalizeStudentId(raw: string): { value?: string; error?: strin
   const v = toHalfWidth(raw.trim()).toLowerCase()
   if (!v) return { error: `学籍番号を入力してね / ${tx("Enter your student ID")}` }
   if (!STUDENT_ID_RE.test(v)) {
-    return { error: `学籍番号の形がちがうよ。「${STUDENT_ID_EXAMPLE}」のように、半角の数字4つ＋ローマ字1つ＋数字3つで入力してね` }
+    return { error: `学籍番号の形がちがうよ。「${STUDENT_ID_EXAMPLE}」のように、半角の数字4つ＋ローマ字1つ＋数字3つで入力してね / ${tx("Wrong format. Type 4 numbers + 1 letter + 3 numbers in half-width, like the example")}` }
   }
   return { value: v }
 }
@@ -58,7 +58,7 @@ export function normalizeStudentId(raw: string): { value?: string; error?: strin
 export function normalizeStudentName(raw: string): { value?: string; error?: string } {
   const v = toKatakana(raw.trim().replace(/　/g, " ").replace(/\s+/g, " "))
   if (!v) return { error: `名前（カタカナ）を入力してね / ${tx("Enter your name in katakana")}` }
-  if (hasHalfKana(v)) return { error: "半角カタカナはつかえないよ。全角カタカナで入力してね（例：タナカ タロウ）" }
-  if (!/^[ァ-ヶー・ ]+$/.test(v)) return { error: "名前は全角カタカナで入力してね（例：タナカ タロウ）" }
+  if (hasHalfKana(v)) return { error: `半角カタカナはつかえないよ。全角カタカナで入力してね（例：タナカ タロウ） / ${tx("Half-width katakana can't be used. Use full-width katakana")}` }
+  if (!/^[ァ-ヶー・ ]+$/.test(v)) return { error: `名前は全角カタカナで入力してね（例：タナカ タロウ） / ${tx("Type your name in full-width katakana")}` }
   return { value: v }
 }

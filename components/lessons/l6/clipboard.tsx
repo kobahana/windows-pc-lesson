@@ -153,18 +153,18 @@ export function ClipboardMission({ onComplete }: { onComplete: () => void }) {
           <>
             <Card className="space-y-4">
               <div>
-                <p className="text-sm font-bold text-slate-500 mb-1">① この<Ruby rt="じゅうしょ">住所</Ruby>をマウスでなぞって<Ruby rt="えら">選</Ruby>び、<Keys k="Mod+C" /> でコピー</p>
+                <p className="text-sm font-bold text-slate-500 mb-1">① この<Ruby rt="じゅうしょ">住所</Ruby>をマウスでなぞって<Ruby rt="えら">選</Ruby>び、<Keys k="Mod+C" /> でコピー<span className="block text-xs font-normal text-slate-400"><T s="① Select this address with the mouse and copy with {key}" v={{ key: `${modKey}+C` }} /></span></p>
                 <p className="text-2xl md:text-3xl font-bold bg-slate-50 rounded-xl p-4 select-text">{ADDRESS}</p>
               </div>
               <div>
-                <p className="text-sm font-bold text-slate-500 mb-1">② ここをクリックして、<Keys k="Mod+V" /> で<Ruby rt="はりつ">貼り付</Ruby>け</p>
+                <p className="text-sm font-bold text-slate-500 mb-1">② ここをクリックして、<Keys k="Mod+V" /> で<Ruby rt="はりつ">貼り付</Ruby>け<span className="block text-xs font-normal text-slate-400"><T s="② Click here and paste with {key}" v={{ key: `${modKey}+V` }} /></span></p>
                 <Input
                   placeholder={`ここに貼り付け / ${t("Paste here")}`}
                   className="h-14 text-xl"
                   onPaste={(e) => {
                     const t = pasted(e)
                     if (t.trim() === ADDRESS) succeed("コピペ成功！")
-                    else setWarn(<>コピーした<Ruby rt="もじ">文字</Ruby>が<Ruby rt="ちが">違</Ruby>うみたい。<Ruby rt="じゅうしょ">住所</Ruby>を<Ruby rt="ぜんぶ">全部</Ruby><Ruby rt="えら">選</Ruby>べているかな？</>)
+                    else setWarn(<>コピーした<Ruby rt="もじ">文字</Ruby>が<Ruby rt="ちが">違</Ruby>うみたい。<Ruby rt="じゅうしょ">住所</Ruby>を<Ruby rt="ぜんぶ">全部</Ruby><Ruby rt="えら">選</Ruby>べているかな？<span className="block text-sm font-normal"><T>The copied text is different. Did you select the whole address?</T></span></>)
                   }}
                   onChange={(e) => { if (e.target.value && !e.target.value.includes("東京")) setWarn(<><Ruby rt="て">手</Ruby>で<Ruby rt="う">打</Ruby>たずに、コピーして<Ruby rt="はりつ">貼り付</Ruby>けてね / <T>Don&apos;t type — paste!</T></>) }}
                 />
@@ -172,14 +172,14 @@ export function ClipboardMission({ onComplete }: { onComplete: () => void }) {
               <Warn>{warn}</Warn>
             </Card>
             <Tip>
-              <Ruby rt="みぎ">右</Ruby>クリックのメニューにも「コピー」「<Ruby rt="はりつ">貼り付</Ruby>け」があるよ。でも <Keys k="Mod+C" /> <Keys k="Mod+V" /> は<b>どのアプリでも</b><Ruby rt="おな">同</Ruby>じ。<Ruby rt="おぼ">覚</Ruby>えると<Ruby rt="いっしょう">一生</Ruby><Ruby rt="つか">使</Ruby>えるよ！
+              <Ruby rt="みぎ">右</Ruby>クリックのメニューにも「コピー」「<Ruby rt="はりつ">貼り付</Ruby>け」があるよ。でも <Keys k="Mod+C" /> <Keys k="Mod+V" /> は<b>どのアプリでも</b><Ruby rt="おな">同</Ruby>じ。<Ruby rt="おぼ">覚</Ruby>えると<Ruby rt="いっしょう">一生</Ruby><Ruby rt="つか">使</Ruby>えるよ！<span className="block text-sm text-muted-foreground mt-1"><T>The right-click menu also has Copy and Paste. But the shortcut keys are the same in every app. Learn them once and use them forever!</T></span>
             </Tip>
           </>
         )}
 
         {step === 1 && (
           <Card className="space-y-4">
-            <p className="font-bold text-slate-600">① 「りんご」をコピー → ② 「みかん」をコピー → ③ <Ruby rt="した">下</Ruby>に<Ruby rt="はりつ">貼り付</Ruby>け。<Ruby rt="なに">何</Ruby>が<Ruby rt="で">出</Ruby>るかな？</p>
+            <p className="font-bold text-slate-600">① 「りんご」をコピー → ② 「みかん」をコピー → ③ <Ruby rt="した">下</Ruby>に<Ruby rt="はりつ">貼り付</Ruby>け。<Ruby rt="なに">何</Ruby>が<Ruby rt="で">出</Ruby>るかな？<span className="block text-xs font-normal text-slate-400"><T>Copy 「りんご」, then copy 「みかん」, then paste below. What comes out?</T></span></p>
             <div className="flex gap-4 justify-center">
               <span className="text-3xl font-bold bg-red-50 border-2 border-red-200 rounded-xl px-6 py-3 select-text">りんご</span>
               <span className="text-3xl font-bold bg-orange-50 border-2 border-orange-200 rounded-xl px-6 py-3 select-text">みかん</span>
@@ -191,8 +191,8 @@ export function ClipboardMission({ onComplete }: { onComplete: () => void }) {
               onPaste={(e) => {
                 const t = pasted(e).trim()
                 if (t === "みかん" && copiedRef.current.has("りんご")) succeed(<>りんごは<Ruby rt="き">消</Ruby>えたね！</>)
-                else if (t === "みかん") setWarn(<>まず「りんご」もコピーしてから、もう<Ruby rt="いちど">一度</Ruby>「みかん」をコピーしてみて</>)
-                else if (t === "りんご") setWarn(<>「みかん」もコピーしてから<Ruby rt="はりつ">貼り付</Ruby>けてね</>)
+                else if (t === "みかん") setWarn(<>まず「りんご」もコピーしてから、もう<Ruby rt="いちど">一度</Ruby>「みかん」をコピーしてみて<span className="block text-sm font-normal"><T>First copy 「りんご」 too, then copy 「みかん」 again.</T></span></>)
+                else if (t === "りんご") setWarn(<>「みかん」もコピーしてから<Ruby rt="はりつ">貼り付</Ruby>けてね<span className="block text-sm font-normal"><T>Copy 「みかん」 too, then paste.</T></span></>)
               }}
             />
             <Warn>{warn}</Warn>
@@ -201,7 +201,7 @@ export function ClipboardMission({ onComplete }: { onComplete: () => void }) {
 
         {step === 2 && (
           <Card className="space-y-4">
-            <p className="font-bold text-slate-600">「<Ruby rt="かいぎしつ">会議室</Ruby>B」が<Ruby rt="まちが">間違</Ruby>った<Ruby rt="らん">欄</Ruby>にあるよ。<Keys k="Mod+X" /> で<Ruby rt="き">切</Ruby>り<Ruby rt="と">取</Ruby>って、「<Ruby rt="ばしょ">場所</Ruby>」に<Ruby rt="はりつ">貼り付</Ruby>けよう。</p>
+            <p className="font-bold text-slate-600">「<Ruby rt="かいぎしつ">会議室</Ruby>B」が<Ruby rt="まちが">間違</Ruby>った<Ruby rt="らん">欄</Ruby>にあるよ。<Keys k="Mod+X" /> で<Ruby rt="き">切</Ruby>り<Ruby rt="と">取</Ruby>って、「<Ruby rt="ばしょ">場所</Ruby>」に<Ruby rt="はりつ">貼り付</Ruby>けよう。<span className="block text-xs font-normal text-slate-400"><T s="「会議室B」 is in the wrong field. Cut it with {key} and paste it into 「場所」." v={{ key: `${modKey}+X` }} /></span></p>
             <div className="space-y-1">
               <label className="font-bold text-slate-700"><Ruby rt="も">持</Ruby>ち<Ruby rt="もの">物</Ruby></label>
               <Input value={itemsField} onChange={(e) => setItemsField(e.target.value)} className="h-14 text-xl" />
@@ -210,18 +210,18 @@ export function ClipboardMission({ onComplete }: { onComplete: () => void }) {
               <label className="font-bold text-slate-700"><Ruby rt="ばしょ">場所</Ruby></label>
               <Input value={placeField} onChange={(e) => setPlaceField(e.target.value)} onPaste={(e) => { pasted(e) }} placeholder="ここに貼り付け" className="h-14 text-xl" />
             </div>
-            <p className="text-sm text-slate-500">「、」が<Ruby rt="のこ">残</Ruby>ってもOK。<Ruby rt="き">気</Ruby>になったら <Keys k="Backspace" /> で<Ruby rt="け">消</Ruby>そう。</p>
+            <p className="text-sm text-slate-500">「、」が<Ruby rt="のこ">残</Ruby>ってもOK。<Ruby rt="き">気</Ruby>になったら <Keys k="Backspace" /> で<Ruby rt="け">消</Ruby>そう。<span className="block text-xs text-slate-400"><T>It's OK if 「、」 is left. If you want, delete it with Backspace.</T></span></p>
           </Card>
         )}
 
         {step === 3 && (
           <Card className="space-y-4">
             <div>
-              <p className="text-sm font-bold text-slate-500 mb-1">① <Ruby rt="した">下</Ruby>の<Ruby rt="ぶんしょう">文章</Ruby>をクリック → <Keys k="Mod+A" /> → <Keys k="Mod+C" /></p>
+              <p className="text-sm font-bold text-slate-500 mb-1">① <Ruby rt="した">下</Ruby>の<Ruby rt="ぶんしょう">文章</Ruby>をクリック → <Keys k="Mod+A" /> → <Keys k="Mod+C" /><span className="block text-xs font-normal text-slate-400"><T>① Click the text below, select all, then copy</T></span></p>
               <Textarea readOnly value={SELF_INTRO} className="text-lg h-32 bg-slate-50" />
             </div>
             <div>
-              <p className="text-sm font-bold text-slate-500 mb-1">② ここをクリック → <Keys k="Mod+V" /></p>
+              <p className="text-sm font-bold text-slate-500 mb-1">② ここをクリック → <Keys k="Mod+V" /><span className="block text-xs font-normal text-slate-400"><T>② Click here and paste</T></span></p>
               <Textarea
                 placeholder={`ここに貼り付け / ${t("Paste here")}`}
                 className="text-lg h-32"
@@ -231,7 +231,7 @@ export function ClipboardMission({ onComplete }: { onComplete: () => void }) {
                     if (pressedSelectAllRef.current) award("selectall")
                     succeed("全部コピーできた！")
                   } else {
-                    setWarn(<><Ruby rt="ぜんぶ">全部</Ruby>ではないみたい。<Ruby rt="うえ">上</Ruby>の<Ruby rt="ぶんしょう">文章</Ruby>をクリックしてから <Keys k="Mod+A" /> を<Ruby rt="お">押</Ruby>してね</>)
+                    setWarn(<><Ruby rt="ぜんぶ">全部</Ruby>ではないみたい。<Ruby rt="うえ">上</Ruby>の<Ruby rt="ぶんしょう">文章</Ruby>をクリックしてから <Keys k="Mod+A" /> を<Ruby rt="お">押</Ruby>してね<span className="block text-sm font-normal"><T s="Not all of it. Click the text above, then press {key}." v={{ key: `${modKey}+A` }} /></span></>)
                   }
                 }}
               />
@@ -252,6 +252,7 @@ export function ClipboardMission({ onComplete }: { onComplete: () => void }) {
               ① ブラウザのいちばん<Ruby rt="うえ">上</Ruby>の URL をクリック（<Keys k="Mod+L" /> でもOK）<br />
               ② <Ruby rt="ぜんぶ">全部</Ruby><Ruby rt="えら">選</Ruby>ばれたら <Keys k="Mod+C" /><br />
               ③ <Ruby rt="した">下</Ruby>をクリックして <Keys k="Mod+V" />
+              <span className="block text-xs font-normal text-slate-400"><T>Click the URL at the top of the browser, copy it, then click below and paste.</T></span>
             </p>
             <Input
               placeholder={`URLを貼り付け / ${t("Paste the URL")}`}
@@ -259,12 +260,12 @@ export function ClipboardMission({ onComplete }: { onComplete: () => void }) {
               onPaste={(e) => {
                 const t = pasted(e).trim()
                 if (t.startsWith(window.location.origin) || t.startsWith(window.location.host)) succeed("URLのコピー、完璧！")
-                else setWarn(<>このページの URL ではないみたい。{isMac ? "画面" : "ブラウザ"}のいちばん<Ruby rt="うえ">上</Ruby>をよく<Ruby rt="み">見</Ruby>てね</>)
+                else setWarn(<>このページの URL ではないみたい。{isMac ? "画面" : "ブラウザ"}のいちばん<Ruby rt="うえ">上</Ruby>をよく<Ruby rt="み">見</Ruby>てね<span className="block text-sm font-normal"><T>This is not the URL of this page. Look at the very top of the screen.</T></span></>)
               }}
             />
             <Warn>{warn}</Warn>
             <Tip>
-              <Ruby rt="ともだち">友達</Ruby>にお<Ruby rt="みせ">店</Ruby>のページを<Ruby rt="おし">教</Ruby>えるとき、LINE やメールに URL を<Ruby rt="はりつ">貼り付</Ruby>けて<Ruby rt="おく">送</Ruby>れるよ。<Ruby rt="て">手</Ruby>で<Ruby rt="う">打</Ruby>つと<Ruby rt="まちが">間違</Ruby>えるので、URL は<b>かならずコピペ</b>！
+              <Ruby rt="ともだち">友達</Ruby>にお<Ruby rt="みせ">店</Ruby>のページを<Ruby rt="おし">教</Ruby>えるとき、LINE やメールに URL を<Ruby rt="はりつ">貼り付</Ruby>けて<Ruby rt="おく">送</Ruby>れるよ。<Ruby rt="て">手</Ruby>で<Ruby rt="う">打</Ruby>つと<Ruby rt="まちが">間違</Ruby>えるので、URL は<b>かならずコピペ</b>！<span className="block text-sm text-muted-foreground mt-1"><T>To tell a friend about a shop's page, paste the URL into LINE or email. Typing it by hand causes mistakes, so always copy and paste URLs!</T></span>
             </Tip>
           </Card>
         )}

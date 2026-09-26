@@ -177,7 +177,7 @@ export default function TypingPage() {
               <div className="flex justify-center gap-3 flex-wrap text-sm">
                 {GOALS.map((g) => <span key={g.cpm} className="px-3 py-1 rounded-full bg-slate-100 text-slate-600 font-bold">{g.label}<Ruby rt="もじ">文字</Ruby></span>)}
               </div>
-              {best > 0 && <p className="text-slate-600"><Ruby rt="じこ">自己</Ruby>ベスト：<b className="text-2xl text-slate-800">{best}</b> <Ruby rt="もじ">文字</Ruby>/<Ruby rt="ぷん">分</Ruby></p>}
+              {best > 0 && <p className="text-slate-600"><Ruby rt="じこ">自己</Ruby>ベスト：<b className="text-2xl text-slate-800">{best}</b> <Ruby rt="もじ">文字</Ruby>/<Ruby rt="ぷん">分</Ruby> <span className="text-sm text-slate-400"><T>Personal best (characters per minute)</T></span></p>}
               <Button size="lg" className="text-xl px-12 h-14" onClick={start}>スタート！</Button>
             </Card>
             <HistoryChart history={history} />
@@ -214,7 +214,7 @@ export default function TypingPage() {
               <p className="text-slate-600">1<Ruby rt="ぷんかん">分間</Ruby>で</p>
               <p className="text-6xl font-black text-slate-800 tabular-nums">{last.cpm}<span className="text-2xl font-bold text-slate-500"> 文字</span></p>
               <p className="text-slate-500">ミス {last.miss}<Ruby rt="かい">回</Ruby>{last.cpm >= best && history.length > 1 && <b className="ml-2 text-rose-500">自己ベスト！</b>}</p>
-              {nextGoal && <p className="text-slate-600"><Ruby rt="つぎ">次</Ruby>の<Ruby rt="もくひょう">目標</Ruby>：<b>{nextGoal.label}</b> <Ruby rt="もじ">文字</Ruby>（あと {nextGoal.cpm - last.cpm}<Ruby rt="もじ">文字</Ruby>）</p>}
+              {nextGoal && <p className="text-slate-600"><Ruby rt="つぎ">次</Ruby>の<Ruby rt="もくひょう">目標</Ruby>：<b>{nextGoal.label}</b> <Ruby rt="もじ">文字</Ruby>（あと {nextGoal.cpm - last.cpm}<Ruby rt="もじ">文字</Ruby>）<span className="block text-sm text-slate-400"><T s="Next goal: {goal} characters ({n} more)" v={{ goal: nextGoal.cpm, n: nextGoal.cpm - last.cpm }} /></span></p>}
               <div className="flex gap-3 justify-center pt-2">
                 <Button size="lg" variant="outline" className="gap-2" onClick={start}><RotateCcw className="w-5 h-5" /> もう<Ruby rt="いちど">一度</Ruby></Button>
                 <Link href="/"><Button size="lg" className="gap-2"><Home className="w-5 h-5" /> ホームへ</Button></Link>

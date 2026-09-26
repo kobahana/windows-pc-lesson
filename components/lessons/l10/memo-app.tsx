@@ -12,15 +12,15 @@ import { Card, MissionFrame, RuleBadge, Ruby, Warn, useAward, useStepFlow } from
 import { HoverIcon } from "@/components/lessons/l6/five-rules"
 import { Bold, Italic, Link2, Palette, MoreVertical, StickyNote, Search, Pin, Plus, Lightbulb } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { T } from "@/lib/i18n"
+import { T, tx, useT } from "@/lib/i18n"
 
 const LESSON_ID = 11
 
-const GOALS: { goal: React.ReactNode; rule: number }[] = [
-  { goal: <>「<Ruby rt="ぎゅうにゅう">牛乳</Ruby>」だけを<Ruby rt="ふとじ">太字</Ruby>にしよう</>, rule: 1 },
-  { goal: <>このメモを<Ruby rt="ほぞん">保存</Ruby>しよう</>, rule: 4 },
-  { goal: <>「<Ruby rt="ふる">古</Ruby>いメモ」を<Ruby rt="さくじょ">削除</Ruby>しよう</>, rule: 3 },
-  { goal: <>あっ！<Ruby rt="まちが">間違</Ruby>えて<Ruby rt="け">消</Ruby>しちゃった…ということにして、<Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>そう</>, rule: 5 },
+const GOALS: { goal: React.ReactNode; en: string; rule: number }[] = [
+  { goal: <>「<Ruby rt="ぎゅうにゅう">牛乳</Ruby>」だけを<Ruby rt="ふとじ">太字</Ruby>にしよう</>, en: tx("Make only 「牛乳」 bold"), rule: 1 },
+  { goal: <>このメモを<Ruby rt="ほぞん">保存</Ruby>しよう</>, en: tx("Save this memo"), rule: 4 },
+  { goal: <>「<Ruby rt="ふる">古</Ruby>いメモ」を<Ruby rt="さくじょ">削除</Ruby>しよう</>, en: tx("Delete 「古いメモ」"), rule: 3 },
+  { goal: <>あっ！<Ruby rt="まちが">間違</Ruby>えて<Ruby rt="け">消</Ruby>しちゃった…ということにして、<Ruby rt="もと">元</Ruby>に<Ruby rt="もど">戻</Ruby>そう</>, en: tx("Oops! Let's say you deleted it by mistake. Bring it back"), rule: 5 },
 ]
 
 const ITEMS = ["卵", "牛乳", "パン", "りんご", "コーヒー"]
@@ -28,6 +28,7 @@ const ITEMS = ["卵", "牛乳", "パン", "りんご", "コーヒー"]
 export function MemoAppMission({ onComplete }: { onComplete: () => void }) {
   const { step, succeed, showSuccess, successMsg } = useStepFlow(GOALS.length, onComplete)
   const award = useAward(LESSON_ID)
+  const t = useT()
   const [warn, setWarn] = useState<React.ReactNode>(null)
   const [showHint, setShowHint] = useState(false)
   const [bold, setBold] = useState<boolean[]>(ITEMS.map(() => false))
@@ -65,7 +66,7 @@ export function MemoAppMission({ onComplete }: { onComplete: () => void }) {
     window.getSelection()?.removeAllRanges()
     if (step !== 0) return
     if (next[1] && next.every((b, i) => i === 1 || !b)) succeed("太字にできた！")
-    else if (next.some((b, i) => i !== 1 && b)) setWarn("「牛乳」だけを太字にしよう。ほかの文字は、もう一度選んで同じボタンを押すと元に戻るよ")
+    else if (next.some((b, i) => i !== 1 && b)) setWarn(`「牛乳」だけを太字にしよう。ほかの文字は、もう一度選んで同じボタンを押すと元に戻るよ / ${tx("Make only 「牛乳」 bold. For other words, select them again and press the same button to undo")}`)
   }
 
   const save = () => {
@@ -96,7 +97,7 @@ export function MemoAppMission({ onComplete }: { onComplete: () => void }) {
   const remove = (note: string) => {
     setCtx(null)
     if (note !== "古いメモ") {
-      setWarn(`「${note}」は消さないで！消したいのは「古いメモ」だよ`)
+      setWarn(`「${note}」は消さないで！消したいのは「古いメモ」だよ / ${t("Don't delete 「{note}」! Delete 「古いメモ」", { note })}`)
       return
     }
     setNotes((n) => n.filter((x) => x !== note))
@@ -121,7 +122,7 @@ export function MemoAppMission({ onComplete }: { onComplete: () => void }) {
     >
       <div className="space-y-4">
         <Card className="flex flex-col md:flex-row md:items-center gap-3 border-indigo-300 bg-indigo-50/50">
-          <p className="text-xl font-bold text-slate-800 flex-1">🎯 {GOALS[step].goal}</p>
+          <p className="text-xl font-bold text-slate-800 flex-1">🎯 {GOALS[step].goal}<span className="block text-sm font-normal text-slate-500"><T>{GOALS[step].en}</T></span></p>
           {showHint ? <RuleBadge n={GOALS[step].rule} /> : (
             <button onClick={() => setShowHint(true)} className="flex items-center gap-1.5 text-sm font-bold text-indigo-700 border-2 border-indigo-200 rounded-full px-4 py-1.5 bg-white hover:bg-indigo-50">
               <Lightbulb className="w-4 h-4" /> <Ruby rt="こま">困</Ruby>ったらヒント
@@ -149,7 +150,7 @@ export function MemoAppMission({ onComplete }: { onComplete: () => void }) {
                     const box = wrapRef.current!.getBoundingClientRect()
                     setCtx({ note: n, x: e.clientX - box.left, y: e.clientY - box.top })
                   }}
-                  onClick={() => { if (n === "古いメモ" && step === 2) setWarn("クリックでは開くだけ。消すには…？") }}
+                  onClick={() => { if (n === "古いメモ" && step === 2) setWarn(`クリックでは開くだけ。消すには…？ / ${tx("Clicking only opens it. To delete it...?")}`) }}
                   className={cn("rounded-lg px-3 py-2 text-sm cursor-default", n === "買い物リスト" ? "bg-[#343b52] text-white" : "text-slate-300 hover:bg-[#2a2f3f]")}
                 >
                   {n === "バイトのシフト" && <Pin className="inline w-3 h-3 mr-1 text-yellow-300" />}{n}
@@ -165,7 +166,7 @@ export function MemoAppMission({ onComplete }: { onComplete: () => void }) {
                   {menu && (
                     <div className="absolute right-0 top-full z-30 bg-[#2a2f3f] border border-slate-600 rounded-lg shadow-xl py-1 w-40 text-sm">
                       {["複製", "保存", "共有", "印刷"].map((m) => (
-                        <button key={m} className="w-full text-left px-4 py-2 !text-slate-100" onClick={(e) => { e.stopPropagation(); if (m === "保存") save(); else { setMenu(false); setWarn(`「${m}」ではないよ`) } }}>{m}</button>
+                        <button key={m} className="w-full text-left px-4 py-2 !text-slate-100" onClick={(e) => { e.stopPropagation(); if (m === "保存") save(); else { setMenu(false); setWarn(`「${m}」ではないよ / ${t("Not 「{m}」", { m })}`) } }}>{m}</button>
                       ))}
                     </div>
                   )}
@@ -181,15 +182,15 @@ export function MemoAppMission({ onComplete }: { onComplete: () => void }) {
           {floating && (
             <div className="absolute z-30 flex gap-0.5 bg-[#0f1118] rounded-lg px-1 py-1 shadow-xl -translate-x-1/2 [&_button]:text-slate-100 [&_button:hover]:bg-slate-700" style={{ left: floating.x, top: floating.y }} onMouseDown={(e) => e.preventDefault()}>
               <HoverIcon icon={<Bold className="w-4 h-4" />} name="太字" onClick={applyBold} />
-              <HoverIcon icon={<Italic className="w-4 h-4" />} name="斜体" onClick={() => setWarn("それは斜体（ななめの文字）だよ")} />
-              <HoverIcon icon={<Palette className="w-4 h-4" />} name="文字の色" onClick={() => setWarn("それは文字の色だよ")} />
-              <HoverIcon icon={<Link2 className="w-4 h-4" />} name="リンク" onClick={() => setWarn("それはリンクだよ")} />
+              <HoverIcon icon={<Italic className="w-4 h-4" />} name="斜体" onClick={() => setWarn(`それは斜体（ななめの文字）だよ / ${tx("That is italic (slanted letters)")}`)} />
+              <HoverIcon icon={<Palette className="w-4 h-4" />} name="文字の色" onClick={() => setWarn(`それは文字の色だよ / ${tx("That is text color")}`)} />
+              <HoverIcon icon={<Link2 className="w-4 h-4" />} name="リンク" onClick={() => setWarn(`それはリンクだよ / ${tx("That is a link")}`)} />
             </div>
           )}
           {ctx && (
             <div className="absolute z-30 bg-[#2a2f3f] border border-slate-600 rounded-lg shadow-xl py-1 w-40 text-sm" style={{ left: ctx.x, top: ctx.y }} onClick={(e) => e.stopPropagation()}>
-              <button className="w-full text-left px-4 py-2 hover:bg-[#343b52]" onClick={() => { setCtx(null); setWarn("ピン留めではないよ") }}>ピン留め</button>
-              <button className="w-full text-left px-4 py-2 hover:bg-[#343b52]" onClick={() => { setCtx(null); setWarn("名前の変更ではないよ") }}>名前の変更</button>
+              <button className="w-full text-left px-4 py-2 hover:bg-[#343b52]" onClick={() => { setCtx(null); setWarn(`ピン留めではないよ / ${tx("Not 「ピン留め」 (pin)")}`) }}>ピン留め</button>
+              <button className="w-full text-left px-4 py-2 hover:bg-[#343b52]" onClick={() => { setCtx(null); setWarn(`名前の変更ではないよ / ${tx("Not 「名前の変更」 (rename)")}`) }}>名前の変更</button>
               <button className="w-full text-left px-4 py-2 hover:bg-[#343b52] text-red-300" onClick={() => remove(ctx.note)}>削除</button>
             </div>
           )}

@@ -115,7 +115,7 @@ export function ArithmeticMission({ onComplete }: { onComplete: () => void }) {
             </table>
           </Card>
           <Tip>
-            <p><Ruby rt="しき">式</Ruby>は <b><Ruby rt="はんかく">半角</Ruby></b>で<Ruby rt="う">打</Ruby>とう。「＝」（<Ruby rt="ぜんかく">全角</Ruby>）だと<Ruby rt="けいさん">計算</Ruby>されないよ。</p>
+            <p><Ruby rt="しき">式</Ruby>は <b><Ruby rt="はんかく">半角</Ruby></b>で<Ruby rt="う">打</Ruby>とう。「＝」（<Ruby rt="ぜんかく">全角</Ruby>）だと<Ruby rt="けいさん">計算</Ruby>されないよ。<span className="block text-sm text-slate-500"><T>Type formulas in half-width. Full-width 「＝」 does not calculate.</T></span></p>
             <p className="mt-1"><Ruby rt="れい">例</Ruby>：<span className="font-mono font-bold">=100*3</span> → <b>300</b></p>
           </Tip>
           <div className="text-center">
@@ -215,9 +215,9 @@ export function WhyCellsMission({ onComplete }: { onComplete: () => void }) {
           {step === 1 && <p className={cn("flex gap-2", priceChanged ? "text-success" : "text-slate-700")}><Circle className="w-5 h-5 text-slate-300" /> B2 を 150 に</p>}
           {step === 2 && (
             <div className="space-y-3">
-              <p className="text-red-600 font-bold">D2（<Ruby rt="かず">数</Ruby>）：{String(evaluate(state, "D2"))} のまま… ✕</p>
-              <p className="text-success font-bold">E2（セル）：{String(evaluate(state, "E2"))} に<Ruby rt="か">変</Ruby>わった！ ◯</p>
-              <p className="text-slate-700 text-sm">セルで<Ruby rt="い">入</Ruby>れると、<Ruby rt="すうじ">数字</Ruby>を<Ruby rt="か">変</Ruby>えたときに<Ruby rt="こた">答</Ruby>えも<Ruby rt="じどう">自動</Ruby>で<Ruby rt="か">変</Ruby>わる。<Ruby rt="しごと">仕事</Ruby>では<b><Ruby rt="かなら">必</Ruby>ずセルで<Ruby rt="い">入</Ruby>れよう</b>！</p>
+              <p className="text-red-600 font-bold">D2（<Ruby rt="かず">数</Ruby>）：{String(evaluate(state, "D2"))} のまま… ✕<span className="block text-sm font-normal"><T>D2 (numbers): did not change</T></span></p>
+              <p className="text-success font-bold">E2（セル）：{String(evaluate(state, "E2"))} に<Ruby rt="か">変</Ruby>わった！ ◯<span className="block text-sm font-normal"><T>E2 (cells): changed!</T></span></p>
+              <p className="text-slate-700 text-sm">セルで<Ruby rt="い">入</Ruby>れると、<Ruby rt="すうじ">数字</Ruby>を<Ruby rt="か">変</Ruby>えたときに<Ruby rt="こた">答</Ruby>えも<Ruby rt="じどう">自動</Ruby>で<Ruby rt="か">変</Ruby>わる。<Ruby rt="しごと">仕事</Ruby>では<b><Ruby rt="かなら">必</Ruby>ずセルで<Ruby rt="い">入</Ruby>れよう</b>！<span className="block text-sm text-slate-500 mt-1"><T>With cells, the answer changes by itself when you change a number. At work, always use cells!</T></span></p>
               <Button className="w-full" onClick={() => succeed("セルで入れる理由、わかった！")}>わかった！ / <T>Got it</T></Button>
             </div>
           )}

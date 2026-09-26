@@ -7,7 +7,7 @@ import { useState } from "react"
 import { Card, ChoiceQuiz, Keys, MissionFrame, Ruby, Tip, Warn, useAward, useStepFlow } from "@/components/lesson/kit"
 import { Lock, ShieldAlert, MessageSquare, Mail } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { T } from "@/lib/i18n"
+import { T, tx } from "@/lib/i18n"
 
 const LESSON_ID = 10
 
@@ -48,35 +48,35 @@ export function SecurityMission({ onComplete }: { onComplete: () => void }) {
           onDone={() => succeed("詐欺を見破った！")}
           questions={[
             {
-              q: "このメールは？",
+              q: "このメールは？", en: tx("What about this email?"),
               visual: <Message kind="mail" from="Amazon セキュリティ <info@amaz0n-security.xyz>">【<Ruby rt="きんきゅう">緊急</Ruby>】お<Ruby rt="しはら">支払</Ruby>い<Ruby rt="ほうほう">方法</Ruby>に<Ruby rt="もんだい">問題</Ruby>があります。24<Ruby rt="じかんいない">時間以内</Ruby>に<Ruby rt="いか">以下</Ruby>から<Ruby rt="かくにん">確認</Ruby>しないと、アカウントが<Ruby rt="と">止</Ruby>まります。<br /><span className="text-blue-600 underline">http://amaz0n-security.xyz/login</span></Message>,
               choices: [
-                { label: SAFE.label, ok: false, why: "よく見て！アドレスが amaz0n（ゼロ）になっているよ" },
-                { label: DANGER.label, ok: true, why: "①「24時間以内」と急がせる ② アドレスが amaz0n（数字の0）③ 本物は .co.jp。リンクは押さず、公式アプリで確認しよう" },
+                { label: SAFE.label, ok: false, why: "よく見て！アドレスが amaz0n（ゼロ）になっているよ", whyEn: tx("Look closely! The address says amaz0n (with a zero)") },
+                { label: DANGER.label, ok: true, why: "①「24時間以内」と急がせる ② アドレスが amaz0n（数字の0）③ 本物は .co.jp。リンクは押さず、公式アプリで確認しよう", whyEn: tx("① It rushes you: \"within 24 hours\" ② The address is amaz0n (number 0) ③ The real one is .co.jp. Don't click the link. Check in the official app.") },
               ],
             },
             {
-              q: "この SMS は？",
+              q: "この SMS は？", en: tx("What about this SMS?"),
               visual: <Message kind="sms" from="+81 80-XXXX-XXXX">お<Ruby rt="にもつ">荷物</Ruby>をお<Ruby rt="とど">届</Ruby>けにあがりましたが、<Ruby rt="ふざい">不在</Ruby>のため<Ruby rt="も">持</Ruby>ち<Ruby rt="かえ">帰</Ruby>りました。<Ruby rt="かくにん">確認</Ruby>はこちら <span className="text-blue-600 underline">http://sagawa-xp.top</span></Message>,
               choices: [
-                { label: SAFE.label, ok: false, why: "宅配便のふりをした詐欺SMSはとても多いよ" },
-                { label: DANGER.label, ok: true, why: "宅配会社は SMS でリンクを送ってこないことがほとんど。.top など見慣れないアドレスも注意。不在票（紙）や公式アプリで確認しよう" },
+                { label: SAFE.label, ok: false, why: "宅配便のふりをした詐欺SMSはとても多いよ", whyEn: tx("There are many scam SMS pretending to be delivery companies") },
+                { label: DANGER.label, ok: true, why: "宅配会社は SMS でリンクを送ってこないことがほとんど。.top など見慣れないアドレスも注意。不在票（紙）や公式アプリで確認しよう", whyEn: tx("Delivery companies almost never send links by SMS. Be careful of strange addresses like .top. Check the paper notice or the official app.") },
               ],
             },
             {
-              q: "このメールは？",
+              q: "このメールは？", en: tx("What about this email?"),
               visual: <Message kind="mail" from="日本語学校 事務室 <office@school.example.jp>"><Ruby rt="らいしゅう">来週</Ruby>の<Ruby rt="じかんわり">時間割</Ruby>が<Ruby rt="か">変</Ruby>わりました。くわしくは<Ruby rt="きょうしつ">教室</Ruby>の<Ruby rt="けいじばん">掲示板</Ruby>を<Ruby rt="み">見</Ruby>てください。</Message>,
               choices: [
-                { label: SAFE.label, ok: true, why: "いつもの学校のアドレスで、急がせたり、お金や個人情報を聞いたりしていないね。でも、心配なら先生に直接聞こう" },
-                { label: DANGER.label, ok: false, why: "いつものアドレスで、リンクもなく、お金や個人情報も聞いていないね" },
+                { label: SAFE.label, ok: true, why: "いつもの学校のアドレスで、急がせたり、お金や個人情報を聞いたりしていないね。でも、心配なら先生に直接聞こう", whyEn: tx("It is the usual school address. It does not rush you or ask for money or personal information. But if you are worried, ask your teacher directly.") },
+                { label: DANGER.label, ok: false, why: "いつものアドレスで、リンクもなく、お金や個人情報も聞いていないね", whyEn: tx("It is the usual address, there is no link, and it does not ask for money or personal information") },
               ],
             },
             {
-              q: "この SMS は？",
+              q: "この SMS は？", en: tx("What about this SMS?"),
               visual: <Message kind="sms" from="当選事務局">おめでとうございます！10<Ruby rt="まんえん">万円</Ruby>が<Ruby rt="とうせん">当選</Ruby>しました。<Ruby rt="う">受</Ruby>け<Ruby rt="と">取</Ruby>るには、<Ruby rt="ぎんこう">銀行</Ruby>の<Ruby rt="こうざばんごう">口座番号</Ruby>と<Ruby rt="あんしょうばんごう">暗証番号</Ruby>を<Ruby rt="へんしん">返信</Ruby>してください。</Message>,
               choices: [
-                { label: SAFE.label, ok: false, why: "応募していないのに当選はおかしいね" },
-                { label: DANGER.label, ok: true, why: "暗証番号を聞くのは100%詐欺！銀行も警察も、暗証番号は絶対に聞かないよ" },
+                { label: SAFE.label, ok: false, why: "応募していないのに当選はおかしいね", whyEn: tx("You didn't enter anything, so winning is strange") },
+                { label: DANGER.label, ok: true, why: "暗証番号を聞くのは100%詐欺！銀行も警察も、暗証番号は絶対に聞かないよ", whyEn: tx("Asking for your PIN is 100% a scam! Banks and police never ask for your PIN.") },
               ],
             },
           ]}
@@ -97,9 +97,9 @@ export function SecurityMission({ onComplete }: { onComplete: () => void }) {
               <div className="w-80 border border-slate-200 rounded-xl p-6 space-y-4 text-center">
                 <p className="text-2xl font-bold"><span className="text-blue-500">G</span><span className="text-red-500">o</span><span className="text-yellow-500">o</span><span className="text-blue-500">g</span><span className="text-green-500">l</span><span className="text-red-500">e</span></p>
                 <p className="text-lg">ログイン</p>
-                <button onClick={() => setWarn("まって！入力する前に、どこかおかしいところがないか確認しよう")} className="w-full border rounded px-3 py-2 text-left text-slate-400 text-sm">メールアドレス</button>
-                <button onClick={() => setWarn("パスワードを入れる前に、アドレスバーを見て！")} className="w-full border rounded px-3 py-2 text-left text-slate-400 text-sm">パスワード</button>
-                <button onClick={() => setWarn("ロゴは本物そっくりにまねできる。ほかのところを見よう")} className="w-full bg-blue-600 text-white rounded px-3 py-2 text-sm">次へ</button>
+                <button onClick={() => setWarn(`まって！入力する前に、どこかおかしいところがないか確認しよう / ${tx("Wait! Before typing, check if something is strange")}`)} className="w-full border rounded px-3 py-2 text-left text-slate-400 text-sm">メールアドレス</button>
+                <button onClick={() => setWarn(`パスワードを入れる前に、アドレスバーを見て！ / ${tx("Look at the address bar before you type your password!")}`)} className="w-full border rounded px-3 py-2 text-left text-slate-400 text-sm">パスワード</button>
+                <button onClick={() => setWarn(`ロゴは本物そっくりにまねできる。ほかのところを見よう / ${tx("Logos are easy to copy. Look somewhere else")}`)} className="w-full bg-blue-600 text-white rounded px-3 py-2 text-sm">次へ</button>
               </div>
             </div>
           </div>
@@ -107,7 +107,8 @@ export function SecurityMission({ onComplete }: { onComplete: () => void }) {
           {foundUrl && (
             <Card className="border-red-300 bg-red-50 animate-fade-in">
               <p className="font-bold text-red-700 flex items-center gap-2"><ShieldAlert className="w-5 h-5" /> goog<b className="text-2xl">1</b>e（<Ruby rt="すうじ">数字</Ruby>の1）！<Ruby rt="ほんもの">本物</Ruby>は accounts.google.com</p>
-              <p className="text-slate-700 mt-1">パスワードを<Ruby rt="い">入</Ruby>れる<Ruby rt="まえ">前</Ruby>に、<b>アドレスバー</b>を<Ruby rt="かなら">必</Ruby>ず<Ruby rt="み">見</Ruby>よう。<Ruby rt="み">見</Ruby>た<Ruby rt="め">目</Ruby>はいくらでもまねできるよ。</p>
+              <span className="block text-sm text-red-700"><T>goog1e (the number 1)! The real one is accounts.google.com</T></span>
+              <p className="text-slate-700 mt-1">パスワードを<Ruby rt="い">入</Ruby>れる<Ruby rt="まえ">前</Ruby>に、<b>アドレスバー</b>を<Ruby rt="かなら">必</Ruby>ず<Ruby rt="み">見</Ruby>よう。<Ruby rt="み">見</Ruby>た<Ruby rt="め">目</Ruby>はいくらでもまねできるよ。<span className="block text-sm text-slate-500 mt-1"><T>Always look at the address bar before you type a password. How a page looks is easy to copy.</T></span></p>
             </Card>
           )}
         </div>
@@ -118,18 +119,18 @@ export function SecurityMission({ onComplete }: { onComplete: () => void }) {
           key="password"
           onDone={() => succeed("パスワード名人！")}
           questions={[
-            { q: "いちばん安全なパスワードは？", choices: [
-              { label: "20050415（誕生日）", ok: false, why: "誕生日は SNS などからすぐわかるよ" },
-              { label: "password123", ok: false, why: "よく使われるパスワードは、最初にためされるよ" },
-              { label: "Sakura!Bus7Ramen", ok: true, why: "長くて、大文字・小文字・数字・記号がまざっている。関係ない言葉をつなげると覚えやすいよ" },
+            { q: "いちばん安全なパスワードは？", en: tx("Which password is the safest?"), choices: [
+              { label: "20050415（誕生日）", ok: false, why: "誕生日は SNS などからすぐわかるよ", whyEn: tx("Birthdays are easy to find on social media") },
+              { label: "password123", ok: false, why: "よく使われるパスワードは、最初にためされるよ", whyEn: tx("Common passwords are tried first") },
+              { label: "Sakura!Bus7Ramen", ok: true, why: "長くて、大文字・小文字・数字・記号がまざっている。関係ない言葉をつなげると覚えやすいよ", whyEn: tx("It is long and mixes capital letters, small letters, numbers and symbols. Joining unrelated words makes it easy to remember.") },
             ] },
-            { q: "学校と銀行とSNS。パスワードはどうする？", choices: [
-              { label: "全部同じにする（覚えやすい）", ok: false, why: "1つもれたら、全部のアカウントに入られてしまう！" },
-              { label: "全部ちがうものにする", ok: true, why: "使い回しはしない。覚えられなければ、パスワード管理アプリを使おう" },
+            { q: "学校と銀行とSNS。パスワードはどうする？", en: tx("School, bank and social media. What do you do with the passwords?"), choices: [
+              { label: "全部同じにする（覚えやすい）", ok: false, why: "1つもれたら、全部のアカウントに入られてしまう！", whyEn: tx("If one leaks, someone can get into all your accounts!") },
+              { label: "全部ちがうものにする", ok: true, why: "使い回しはしない。覚えられなければ、パスワード管理アプリを使おう", whyEn: tx("Don't reuse passwords. If you can't remember them, use a password manager app.") },
             ] },
-            { q: "友だちに「パスワード教えて。代わりにログインしてあげる」と言われた。", choices: [
-              { label: "友だちだから教える", ok: false, why: "パスワードは家族や友だちにも教えないのがルールだよ" },
-              { label: "教えない", ok: true, why: "先生・会社の人・銀行も、パスワードは聞かないよ。聞いてくる人は疑おう" },
+            { q: "友だちに「パスワード教えて。代わりにログインしてあげる」と言われた。", en: tx("A friend says, \"Tell me your password. I'll log in for you.\""), choices: [
+              { label: "友だちだから教える", ok: false, why: "パスワードは家族や友だちにも教えないのがルールだよ", whyEn: tx("The rule is: don't tell your password even to family or friends") },
+              { label: "教えない", ok: true, why: "先生・会社の人・銀行も、パスワードは聞かないよ。聞いてくる人は疑おう", whyEn: tx("Teachers, companies and banks never ask for your password. Be careful of people who ask.") },
             ] },
           ]}
         />
@@ -144,25 +145,25 @@ export function SecurityMission({ onComplete }: { onComplete: () => void }) {
             </div>
             <div className="space-y-2 text-slate-700">
               <p className="text-2xl font-bold"><Keys k="Win+L" /></p>
-              <p>Windowsキー（<Ruby rt="ひだりした">左下</Ruby>の <span className="font-bold">⊞</span>）を<Ruby rt="お">押</Ruby>しながら <b>L</b>。<Ruby rt="いっしゅん">一瞬</Ruby>でロックできるよ。<Ruby rt="もど">戻</Ruby>るときはパスワードかPINを<Ruby rt="い">入</Ruby>れる。</p>
+              <p>Windowsキー（<Ruby rt="ひだりした">左下</Ruby>の <span className="font-bold">⊞</span>）を<Ruby rt="お">押</Ruby>しながら <b>L</b>。<Ruby rt="いっしゅん">一瞬</Ruby>でロックできるよ。<Ruby rt="もど">戻</Ruby>るときはパスワードかPINを<Ruby rt="い">入</Ruby>れる。<span className="block text-sm text-slate-500 mt-1"><T>Hold the Windows key (⊞ at the bottom left) and press L. It locks at once. To come back, enter your password or PIN.</T></span></p>
             </div>
           </Card>
           <ChoiceQuiz
             key="lock"
             onDone={() => { award("lock"); succeed("セキュリティ名人！") }}
             questions={[
-              { q: "トイレに行くため、5分だけ席を離れる。パソコンは？", choices: [
-                { label: "5分だけだから、そのまま", ok: false, why: "その5分で、メールを送られたり、情報を見られたりすることがあるよ" },
-                { label: "Windows + L でロック", ok: true, why: "短い時間でも必ずロック。会社ではこれがルールのところが多いよ" },
-                { label: "電源を切る", ok: false, why: "安全だけど、作業中のファイルが消えるかも。ロックで十分だよ" },
+              { q: "トイレに行くため、5分だけ席を離れる。パソコンは？", en: tx("You leave your seat for 5 minutes to go to the toilet. What about the computer?"), choices: [
+                { label: "5分だけだから、そのまま", ok: false, why: "その5分で、メールを送られたり、情報を見られたりすることがあるよ", whyEn: tx("In those 5 minutes, someone could send emails or see information") },
+                { label: "Windows + L でロック", ok: true, why: "短い時間でも必ずロック。会社ではこれがルールのところが多いよ", whyEn: tx("Always lock, even for a short time. Many companies have this rule.") },
+                { label: "電源を切る", ok: false, why: "安全だけど、作業中のファイルが消えるかも。ロックで十分だよ", whyEn: tx("It is safe, but files you are working on might be lost. Locking is enough.") },
               ] },
-              { q: "駅で USB メモリを拾った。中身が気になる…", choices: [
-                { label: "自分のパソコンにさして中身を見る", ok: false, why: "ウイルスが入っているかもしれない！知らない USB は絶対にささないで" },
-                { label: "さわらずに、駅の人に届ける", ok: true, why: "落とし物として届けよう。会社のパソコンに知らない機器をつなぐのも禁止だよ" },
+              { q: "駅で USB メモリを拾った。中身が気になる…", en: tx("You found a USB memory stick at the station. You want to see what's inside..."), choices: [
+                { label: "自分のパソコンにさして中身を見る", ok: false, why: "ウイルスが入っているかもしれない！知らない USB は絶対にささないで", whyEn: tx("It may have a virus! Never plug in a USB you don't know.") },
+                { label: "さわらずに、駅の人に届ける", ok: true, why: "落とし物として届けよう。会社のパソコンに知らない機器をつなぐのも禁止だよ", whyEn: tx("Give it in as a lost item. Connecting unknown devices to company computers is also not allowed.") },
               ] },
             ]}
           />
-          <Tip>このキーはブラウザではためせないので、<Ruby rt="きょうしつ">教室</Ruby>で<Ruby rt="ほんもの">本物</Ruby>のパソコンで<Ruby rt="ため">試</Ruby>してみよう（<Ruby rt="まえ">前</Ruby>もってパスワードを<Ruby rt="かくにん">確認</Ruby>してね）。</Tip>
+          <Tip>このキーはブラウザではためせないので、<Ruby rt="きょうしつ">教室</Ruby>で<Ruby rt="ほんもの">本物</Ruby>のパソコンで<Ruby rt="ため">試</Ruby>してみよう（<Ruby rt="まえ">前</Ruby>もってパスワードを<Ruby rt="かくにん">確認</Ruby>してね）。<span className="block text-sm text-slate-500 mt-1"><T>You can't try this key in the browser. Try it on a real computer in class (check your password first).</T></span></Tip>
         </div>
       )}
     </MissionFrame>
